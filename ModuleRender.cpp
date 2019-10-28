@@ -25,7 +25,7 @@ bool ModuleRender::Init()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
-	SDL_GL_CreateContext(App->window->window);
+	glContext = SDL_GL_CreateContext(App->window->window);
 
 	GLenum err = glewInit(); // … check for errors 
 	LOG("Using Glew %s", glewGetString(GLEW_VERSION)); // Should be 2.0	
@@ -76,6 +76,7 @@ bool ModuleRender::CleanUp()
 	LOG("Destroying renderer");
 
 	//Destroy window
+	SDL_GL_DeleteContext(glContext);
 
 	return true;
 }
