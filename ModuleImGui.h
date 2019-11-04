@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "Globals.h"
 #include "imgui.h"
+#include <vector>
 
 class ModuleImGui : public Module {
 public:
@@ -13,8 +14,16 @@ public:
 	bool Init();
 	update_status Update();
 	bool CleanUp();
-public: 
+	void AddLog(const char*, ...);
+private: 
 	bool show_demo_window = true;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	ImGuiIO io;
+	ImGuiTextBuffer buffer;
+	bool scrollToBottom;
+	char title[25];
+	std::vector<float> fps_log{0.0F};
+	std::vector<float> ms_log{0.0F};
+	bool resizable;
 }; 
 #endif 

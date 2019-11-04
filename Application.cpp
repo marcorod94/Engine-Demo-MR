@@ -5,6 +5,7 @@
 #include "ModuleInput.h"
 #include "ModuleTriangle.h"
 #include "ModuleProgram.h"
+#include "ModuleImGui.h"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ Application::Application()
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(triangle = new ModuleTriangle());
 	modules.push_back(program = new ModuleProgram());
+	modules.push_back(imgui = new ModuleImGui());
 }
 
 Application::~Application()
