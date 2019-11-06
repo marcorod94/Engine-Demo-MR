@@ -16,7 +16,7 @@ public:
 	bool CleanUp();
 	float4x4 LookAt(float3, float3, float3);
 private:
-	GLuint vbo = 1;
+	GLuint vbo, ebo, vao;
 	float4x4 proj, view, model;
 };
 #endif
