@@ -126,6 +126,7 @@
     </ClCompile>
     <ClCompile Include="ModuleTexture.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
+    <ClCompile Include="ModuleModelLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -163,6 +164,7 @@
     </ClInclude>
     <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleCamera.h" />
+    <ClInclude Include="ModuleModelLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">
