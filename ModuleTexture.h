@@ -18,7 +18,6 @@ public:
 	void LoadTexture(const char*);
 public:
 	GLuint textureID;
-	ILubyte *data;
 	ILuint imageName;
 
 };
