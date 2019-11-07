@@ -14,7 +14,6 @@ public:
 	~ModuleTexture();
 
 	bool Init();
-	update_status Update();
 	bool CleanUp();
 	void LoadTexture(const char*);
 public:
