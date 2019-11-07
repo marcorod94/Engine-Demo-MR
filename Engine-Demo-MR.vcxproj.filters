@@ -124,6 +124,8 @@
     <ClCompile Include="Libraries\imgui\imgui_impl_sdl.cpp">
       <Filter>IMGUI</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleTexture.cpp" />
+    <ClCompile Include="ModuleCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -159,6 +161,8 @@
     <ClInclude Include="Libraries\imgui\imgui_impl_sdl.h">
       <Filter>IMGUI</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleTexture.h" />
+    <ClInclude Include="ModuleCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">

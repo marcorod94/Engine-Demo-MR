@@ -11,6 +11,7 @@ class ModuleInput;
 class ModuleTriangle;
 class ModuleProgram;
 class ModuleImGui;
+class ModuleTexture;
 
 class Application
 {
@@ -30,6 +31,7 @@ public:
 	ModuleTriangle* triangle = nullptr;
 	ModuleProgram* program = nullptr;
 	ModuleImGui* imgui = nullptr;
+	ModuleTexture* texture = nullptr;
 
 private:
 
