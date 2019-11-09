@@ -10,20 +10,20 @@ bool ModuleCamera::Init() {
 	frustum.pos = float3::zero;
 	frustum.front = -float3::unitZ;
 	frustum.up = float3::unitY;
-	frustum.nearPlaneDistance = 0.3f;
+	frustum.nearPlaneDistance = 0.3F;
 	frustum.farPlaneDistance = 250.0F;
 	frustum.verticalFov = math::pi / 4.0F;
-	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5F) * 2.f);
+	frustum.horizontalFov = 2.0F * atanf(tanf(frustum.verticalFov * 0.5F) * 2.F);
+	return true;
+}
+
+update_status  ModuleCamera::PreUpdate() {
 	proj = frustum.ProjectionMatrix();
 	model =
-		float4x4::FromTRS(float3(0.0F, 0.0F, -4.0F),
-			float3x3::RotateY(math::pi / 4.0F), float3(1.0F,
-				1.0F, 1.0F));
-	view =
-		LookAt(float3(0.0F, 1.f, 4.0F),
-			float3(0.0F, 0.0F, 0.0F), float3(0.0F,
-				1.0F, 0.0F));
-	return true;
+		float4x4::FromTRS(helper1,
+			float3x3::RotateY(frustum.verticalFov), helper2);
+	view = LookAt(frustum.pos, frustum.pos + frustum.front, frustum.up);
+	return UPDATE_CONTINUE;
 }
 
 float4x4 ModuleCamera::LookAt(float3 eye, float3 target, float3 up) {
