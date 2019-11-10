@@ -20,8 +20,6 @@ ModuleImGui::~ModuleImGui() {
 bool ModuleImGui::Init() {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	io = ImGui::GetIO();
-	(void)io;
 	ImGui::StyleColorsDark();
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->glContext);
 	ImGui_ImplOpenGL3_Init();
@@ -29,10 +27,11 @@ bool ModuleImGui::Init() {
 }
 
 update_status ModuleImGui::Update() {
-
+	ImGuiIO& io = ImGui::GetIO();
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
+	ImGui::ShowDemoWindow();
 	ImGui::BeginMainMenuBar();
 	if(ImGui::BeginMenu("Help")) {
 		ImGui::MenuItem("Gui Demo");
@@ -51,8 +50,10 @@ update_status ModuleImGui::Update() {
 	ImGui::End();
 	// Frame Rate
 	ImGui::Begin("Frame rate");
+	fps_log.push_back(io.Framerate);
 	sprintf_s(title, 25, "Framerate %.1F", fps_log[fps_log.size()-1]);
 	ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0F, 100.0F, ImVec2(310, 100));
+	ms_log.push_back(1000.0F / io.Framerate);
 	sprintf_s(title, 25, "Milliseconds %.1F", ms_log[ms_log.size() - 1]);
 	ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0F, 40.0F, ImVec2(310, 100));
 	ImGui::End();
