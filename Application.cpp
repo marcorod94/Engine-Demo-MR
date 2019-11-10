@@ -7,6 +7,7 @@
 #include "ModuleProgram.h"
 #include "ModuleImGui.h"
 #include "ModuleTexture.h"
+#include "ModuleCamera.h"
 
 using namespace std;
 
@@ -16,10 +17,11 @@ Application::Application()
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(input = new ModuleInput());
-	modules.push_back(imgui = new ModuleImGui());
 	modules.push_back(program = new ModuleProgram());
 	modules.push_back(texture = new ModuleTexture());
+	modules.push_back(camera = new ModuleCamera());
 	modules.push_back(triangle = new ModuleTriangle());
+	modules.push_back(imgui = new ModuleImGui());
 }
 
 Application::~Application()

@@ -12,6 +12,7 @@ class ModuleTriangle;
 class ModuleProgram;
 class ModuleImGui;
 class ModuleTexture;
+class ModuleCamera;
 
 class Application
 {
@@ -32,6 +33,7 @@ public:
 	ModuleProgram* program = nullptr;
 	ModuleImGui* imgui = nullptr;
 	ModuleTexture* texture = nullptr;
+	ModuleCamera* camera = nullptr;
 
 private:
 
