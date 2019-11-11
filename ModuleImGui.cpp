@@ -2,6 +2,7 @@
 #include "ModuleImGui.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
+#include "ModuleCamera.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
@@ -69,6 +70,37 @@ update_status ModuleImGui::Update() {
 	ImGui::Text("System RAM: %d Mb", SDL_GetSystemRAM());
 	ImGui::Text("GPU Vendor: %s", glGetString(GL_VENDOR));
 	ImGui::Text("GPU Model: %s", glGetString(GL_RENDERER));
+	ImGui::End();
+	// Camera
+
+	ImGui::Begin("Camera Position");
+	ImGui::SliderFloat("X", &(App->camera->frustum.pos.x), -50.0F, 50.0F);
+	ImGui::SliderFloat("Y", &(App->camera->frustum.pos.y), -50.0F, 50.0F);
+	ImGui::SliderFloat("Z", &(App->camera->frustum.pos.z), -50.0F, 50.0F);
+	ImGui::End();
+
+	ImGui::Begin("Camera Front");
+	ImGui::SliderFloat("X", &(App->camera->frustum.front.x), -50.0F, 50.0F);
+	ImGui::SliderFloat("Y", &(App->camera->frustum.front.y), -50.0F, 50.0F);
+	ImGui::SliderFloat("Z", &(App->camera->frustum.front.z), -50.0F, 50.0F);
+	ImGui::End();
+
+	ImGui::Begin("Camera Up");
+	ImGui::SliderFloat("X", &(App->camera->frustum.up.x), -50.0F, 50.0F);
+	ImGui::SliderFloat("Y", &(App->camera->frustum.up.y), -50.0F, 50.0F);
+	ImGui::SliderFloat("Z", &(App->camera->frustum.up.z), -50.0F, 50.0F);
+	ImGui::End();
+
+	ImGui::Begin("Helper 1");
+	ImGui::SliderFloat("X", &(App->camera->helper1.x), -50.0F, 50.0F);
+	ImGui::SliderFloat("Y", &(App->camera->helper1.y), -50.0F, 50.0F);
+	ImGui::SliderFloat("Z", &(App->camera->helper1.z), -50.0F, 50.0F);
+	ImGui::End();
+
+	ImGui::Begin("helepr2");
+	ImGui::SliderFloat("X", &(App->camera->helper2.x), -50.0F, 50.0F);
+	ImGui::SliderFloat("Y", &(App->camera->helper2.y), -50.0F, 50.0F);
+	ImGui::SliderFloat("Z", &(App->camera->helper2.z), -50.0F, 50.0F);
 	ImGui::End();
 	// Render
 	ImGui::Render();

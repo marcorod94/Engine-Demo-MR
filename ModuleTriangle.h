@@ -3,7 +3,6 @@
 #include "Module.h"
 #include "Globals.h"
 #include "GL/glew.h"
-#include "MathGeoLib.h"
 
 class ModuleTriangle : public Module {
 public:
@@ -14,10 +13,11 @@ public:
 	update_status PreUpdate();
 	update_status Update();
 	bool CleanUp();
-	float4x4 LookAt(float3, float3, float3);
+private:
+	void ShowGrid();
+	void ShowAxis();
 private:
 	GLuint vbo, ebo, vao;
-	float4x4 proj, view, model;
 };
 #endif
 
