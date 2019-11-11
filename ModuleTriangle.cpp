@@ -49,7 +49,6 @@ bool ModuleTriangle::Init() {
 	}
 	
 	App->program->LoadShaders("default.vs", "default.fs");
-	SetupTexture(App->texture->LoadTexture("Lenna.png"));
 	return true;
 }
 
@@ -63,10 +62,7 @@ update_status ModuleTriangle::Update() {
 	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "model"), 1, GL_TRUE, &(App->camera->model[0][0]));
 	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "view"), 1, GL_TRUE, &(App->camera->view[0][0]));
 	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "proj"), 1, GL_TRUE, &(App->camera->proj[0][0]));
-	/*glUniform1i(glGetUniformLocation(App->program->program, "texture0"), 0);
-
-	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);*/
+	
 	for (unsigned int i = 0; i < App->modelLoader->meshes.size(); i++) {
 		DrawMesh(App->modelLoader->meshes[i]);
 	}
@@ -165,21 +161,19 @@ void ModuleTriangle::DrawMesh(Mesh& mesh) {
     unsigned int specularNr = 1;
     unsigned int normalNr   = 1;
     unsigned int heightNr   = 1;
-    for(unsigned int i = 0; i < mesh.textures.size(); i++)
-    {
+    for(unsigned int i = 0; i < mesh.textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         std::string number;
         std::string name = mesh.textures[i].type;
         if(name == "texture_diffuse")
 			number = std::to_string(++diffuseNr);
 		else if(name == "texture_specular")
-			number = std::to_string(++specularNr); // transfer unsigned int to stream
+			number = std::to_string(++specularNr);
         else if(name == "texture_normal")
-			number = std::to_string(++normalNr); // transfer unsigned int to stream
-            else if(name == "texture_height")
-			number = std::to_string(++heightNr); // transfer unsigned int to stream
-
-													// now set the sampler to the correct texture unit
+			number = std::to_string(++normalNr);
+        else if(name == "texture_height")
+			number = std::to_string(++heightNr);
+													
 		glUniform1i(glGetUniformLocation(App->program->program, (name + number).c_str()), i);
         // and finally bind the texture
         glBindTexture(GL_TEXTURE_2D, mesh.textures[i].id);
@@ -190,6 +184,5 @@ void ModuleTriangle::DrawMesh(Mesh& mesh) {
     glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
-    // always good practice to set everything back to defaults once configured.
     glActiveTexture(GL_TEXTURE0);
 }

@@ -31,7 +31,11 @@ bool ModuleTexture::CleanUp() {
 Texture ModuleTexture::LoadTexture(const char* path) {
 	Texture texture;
 	ilLoadImage(path);
-	ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
+	iluGetImageInfo(&imageInfo);
+	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+	{
+		iluFlipImage();
+	}
 	texture.id = ilutGLBindTexImage();
 	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
 	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);

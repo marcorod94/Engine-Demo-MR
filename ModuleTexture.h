@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "Globals.h"
 #include "IL/il.h"
+#include "IL/ilu.h"
 
 
 class ModuleTexture :
@@ -18,5 +19,6 @@ public:
 	Texture LoadTexture(const char*);
 private:
 	ILuint imageName;
+	ILinfo imageInfo;
 };
 #endif
