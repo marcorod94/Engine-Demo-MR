@@ -28,17 +28,18 @@ bool ModuleTexture::CleanUp() {
 	return true;
 }
 
-void ModuleTexture::LoadTexture(const char* path) {
+Texture ModuleTexture::LoadTexture(const char* path) {
+	Texture texture;
 	ilLoadImage(path);
-	ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
-	textureID = ilutGLBindTexImage();
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGB, GL_UNSIGNED_BYTE, ilGetData());
-	glGenerateMipmap(GL_TEXTURE_2D);
-	
+	iluGetImageInfo(&imageInfo);
+	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+	{
+		iluFlipImage();
+	}
+	texture.id = ilutGLBindTexImage();
+	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
+	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);
+	texture.data = ilGetData();
+	texture.path = path;
+	return texture;
 }

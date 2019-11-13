@@ -126,6 +126,7 @@
     </ClCompile>
     <ClCompile Include="ModuleTexture.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
+    <ClCompile Include="ModuleModelLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -163,6 +164,7 @@
     </ClInclude>
     <ClInclude Include="ModuleTexture.h" />
     <ClInclude Include="ModuleCamera.h" />
+    <ClInclude Include="ModuleModelLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">
@@ -170,6 +172,9 @@
     </Filter>
     <Filter Include="IMGUI">
       <UniqueIdentifier>{f6038d14-0510-4b24-8e78-91632b0d20d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assimp">
+      <UniqueIdentifier>{79715c3a-3727-4a3e-abd9-0350ecfabd6e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

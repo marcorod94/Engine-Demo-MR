@@ -16,8 +16,12 @@ public:
 private:
 	void ShowGrid();
 	void ShowAxis();
+	void SetupMesh(Mesh&);
+	void SetupTexture(Texture&);
+	void DrawMesh(Mesh&);
 private:
 	GLuint vbo, ebo, vao;
+	Mesh mesh;
 };
 #endif
 
