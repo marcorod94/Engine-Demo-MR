@@ -21,7 +21,6 @@ private:
 	void DrawMesh(Mesh&);
 private:
 	GLuint vbo, ebo, vao;
-	Mesh mesh;
 };
 #endif
 

@@ -18,31 +18,6 @@ ModuleTriangle::~ModuleTriangle() {
 
 bool ModuleTriangle::Init() {
 	
-	Vertex v1;
-	v1.Position = float3(0.0F, 0.0F, 0.0F);
-	v1.TexCoords = float2(0.0F, 0.0F);
-
-	Vertex v2;
-	v2.Position = float3(1.0F, 0.0F, 0.0F);
-	v2.TexCoords = float2(1.0F, 0.0F);
-
-	Vertex v3;
-	v3.Position = float3(1.0F, 1.0F, 0.0F);
-	v3.TexCoords = float2(1.0F, 1.0F);
-
-	Vertex v4;
-	v4.Position = float3(0.0F, 1.0F, 0.0F);
-	v4.TexCoords = float2(0.0F, 1.0F);
-
-	mesh.vertices.push_back(v1);
-	mesh.vertices.push_back(v2);
-	mesh.vertices.push_back(v3);
-	mesh.vertices.push_back(v4);
-	mesh.indices = {
-		0, 1, 2,
-		0, 2, 3
-	};
-
 	App->modelLoader->LoadModel("BakerHouse.fbx");
 	for (unsigned int i = 0; i < App->modelLoader->meshes.size(); i++) {
 		SetupMesh(App->modelLoader->meshes[i]);
