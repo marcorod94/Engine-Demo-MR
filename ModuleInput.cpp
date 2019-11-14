@@ -38,15 +38,22 @@ update_status ModuleInput::Update()
 
 	while (SDL_PollEvent(&event) != 0)
 	{
+		mouse_down = false;
 		if (event.type == SDL_MOUSEMOTION) {
 			mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
 			mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
 			mouse.x = event.motion.x / SCREEN_SIZE;
 			mouse.y = event.motion.y / SCREEN_SIZE;
-			LOG("MMX: %f", mouse_motion.x);
-			LOG("MMY: %f", mouse_motion.y);
-			LOG("MX: %f", mouse.x);
-			LOG("MY: %f", mouse.y);
+			mouse_down = true;
+		}
+		if (event.type == SDL_MOUSEWHEEL) {
+			mouse_scroll.x = event.wheel.x / SCREEN_SIZE;
+			mouse_scroll.y = event.wheel.y / SCREEN_SIZE;
+			LOG("Scroll x: %f", mouse_scroll.x);
+			LOG("Scroll x: %y", mouse_scroll.y);
+		}
+		if (event.type == SDL_DROPFILE) {
+			LOG("Path : %s", event.drop.file);
 		}
 	}
 
@@ -69,4 +76,14 @@ const float2& ModuleInput::GetMousePosition() const
 const float2& ModuleInput::GetMouseMotion() const
 {
 	return mouse_motion;
+}
+
+const float2& ModuleInput::GetMouseScroll() const
+{
+	return mouse_scroll;
+}
+
+const bool& ModuleInput::IsMouseDown() const
+{
+	return mouse_down;
 }

@@ -42,7 +42,9 @@ update_status  ModuleCamera::Update() {
 	if (App->input->GetKey(SDL_SCANCODE_D)) {
 		frustum.pos += cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
 	}
-
+	if (App->input->IsMouseDown()) {
+		MouseMove();
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -76,17 +78,18 @@ void ModuleCamera::MouseMove()
 		pitch = -89.0F;
 
 	float3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.x = cos(DegToRad(yaw)) * cos(DegToRad(pitch));
+	front.y = sin(DegToRad(pitch));
+	front.z = sin(DegToRad(yaw)) * cos(DegToRad(pitch));
 	frustum.front = front.Normalized();
 }
 
 
 void ModuleCamera::MouseScrolling()
 {
+	float2 offset = App->input->GetMouseScroll();
 	if (frustum.verticalFov >= 1.0f && frustum.verticalFov <= 45.0f)
-		frustum.verticalFov -= yoffset;
+		frustum.verticalFov -= offset.y;
 	if (frustum.verticalFov <= 1.0f)
 		frustum.verticalFov = 1.0f;
 	if (frustum.verticalFov >= 45.0f)

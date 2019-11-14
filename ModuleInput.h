@@ -21,9 +21,13 @@ public:
 	}
 	const float2& GetMouseMotion() const;
 	const float2& GetMousePosition() const;
+	const float2& GetMouseScroll() const;
+	const bool& IsMouseDown() const;
 
 private:
 	const Uint8 *keyboard = NULL;
 	float2 mouse_motion;
 	float2 mouse;
+	float2 mouse_scroll;
+	bool mouse_down = false;
 };
