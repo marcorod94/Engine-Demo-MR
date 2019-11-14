@@ -3,8 +3,9 @@
 
 #include "Module.h"
 #include "Globals.h"
-#include "GL/glew.h"
 #include "IL/il.h"
+#include "IL/ilu.h"
+
 
 class ModuleTexture :
 	public Module
@@ -15,10 +16,9 @@ public:
 
 	bool Init();
 	bool CleanUp();
-	void LoadTexture(const char*);
-public:
-	GLuint textureID;
+	Texture LoadTexture(const char*);
+private:
 	ILuint imageName;
-
+	ILinfo imageInfo;
 };
 #endif
