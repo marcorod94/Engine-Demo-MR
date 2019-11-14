@@ -47,4 +47,5 @@ struct Mesh {
 
 // Configuration -----------
 #define VSYNC true
+#define SCREEN_SIZE 2
 #define TITLE "Super Awesome Engine"

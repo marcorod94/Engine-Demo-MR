@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleImGui.h"
-#include "Libraries/SDL/include/SDL.h"
+#include "SDL.h"
 
 ModuleInput::ModuleInput()
 {}
@@ -30,9 +30,25 @@ bool ModuleInput::Init()
 // Called every draw update
 update_status ModuleInput::Update()
 {
+	static SDL_Event event;
+
 	SDL_PumpEvents();
 
 	keyboard = SDL_GetKeyboardState(NULL);
+
+	while (SDL_PollEvent(&event) != 0)
+	{
+		if (event.type == SDL_MOUSEMOTION) {
+			mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
+			mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
+			mouse.x = event.motion.x / SCREEN_SIZE;
+			mouse.y = event.motion.y / SCREEN_SIZE;
+			LOG("MMX: %f", mouse_motion.x);
+			LOG("MMY: %f", mouse_motion.y);
+			LOG("MX: %f", mouse.x);
+			LOG("MY: %f", mouse.y);
+		}
+	}
 
 	return UPDATE_CONTINUE;
 }
@@ -43,4 +59,14 @@ bool ModuleInput::CleanUp()
 	App->imgui->AddLog("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
+}
+
+const float2& ModuleInput::GetMousePosition() const
+{
+	return mouse;
+}
+
+const float2& ModuleInput::GetMouseMotion() const
+{
+	return mouse_motion;
 }

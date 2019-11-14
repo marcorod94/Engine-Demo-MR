@@ -1,4 +1,7 @@
+#include "Application.h"
+#include "ModuleInput.h"
 #include "ModuleCamera.h"
+#include "SDL_scancode.h"
 
 
 ModuleCamera::ModuleCamera() {}
@@ -26,6 +29,23 @@ update_status  ModuleCamera::PreUpdate() {
 	return UPDATE_CONTINUE;
 }
 
+update_status  ModuleCamera::Update() {
+	if (App->input->GetKey(SDL_SCANCODE_W)) {
+		frustum.pos += cameraSpeed * frustum.front;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_S)) {
+		frustum.pos -= cameraSpeed * frustum.front;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_A)) {
+		frustum.pos -= cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+	}
+	if (App->input->GetKey(SDL_SCANCODE_D)) {
+		frustum.pos += cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+	}
+
+	return UPDATE_CONTINUE;
+}
+
 float4x4 ModuleCamera::LookAt(float3 eye, float3 target, float3 up) {
 	float3 f(target - eye); f.Normalize();
 	float3 s(f.Cross(up)); s.Normalize();
@@ -37,4 +57,38 @@ float4x4 ModuleCamera::LookAt(float3 eye, float3 target, float3 up) {
 	matrix.At(0, 3) = -s.Dot(eye); matrix.At(1, 3) = -u.Dot(eye); matrix.At(2, 3) = f.Dot(eye);
 	matrix.At(3, 0) = 0.0F; matrix.At(3, 1) = 0.0F; matrix.At(3, 2) = 0.0F; matrix.At(3, 3) = 1.0F;
 	return matrix;
+}
+void ModuleCamera::MouseMove()
+{
+	float2 offset = App->input->GetMouseMotion();
+
+	float sensitivity = 0.1F; // change this value to your liking
+	offset.x *= sensitivity;
+	offset.y *= sensitivity;
+
+	yaw += offset.x;
+	pitch += offset.y;
+
+	// make sure that when pitch is out of bounds, screen doesn't get flipped
+	if (pitch > 89.0F)
+		pitch = 89.0F;
+	if (pitch < -89.0F)
+		pitch = -89.0F;
+
+	float3 front;
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	frustum.front = front.Normalized();
+}
+
+
+void ModuleCamera::MouseScrolling()
+{
+	if (frustum.verticalFov >= 1.0f && frustum.verticalFov <= 45.0f)
+		frustum.verticalFov -= yoffset;
+	if (frustum.verticalFov <= 1.0f)
+		frustum.verticalFov = 1.0f;
+	if (frustum.verticalFov >= 45.0f)
+		frustum.verticalFov = 45.0f;
 }
