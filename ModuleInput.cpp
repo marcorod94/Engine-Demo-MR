@@ -2,7 +2,9 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleImGui.h"
+#include "ModuleTexture.h"
 #include "SDL.h"
+#include <string>
 
 ModuleInput::ModuleInput()
 {}
@@ -35,35 +37,44 @@ update_status ModuleInput::PreUpdate()
 	SDL_PumpEvents();
 
 	keyboard = SDL_GetKeyboardState(NULL);
-
+	std::string path;
+	std::size_t found;
+	std::string extension;
 	while (SDL_PollEvent(&event) != 0)
 	{
-		
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			LOG("mouse down");
-			mouse_buttons[event.button.button - 1] = 1;
-		}
+		switch (event.type) {
 
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			LOG("mouse UP evento %d: valor %d: ", event.button.button, mouse_buttons[event.button.button - 1]);
-			if (mouse_buttons[event.button.button - 1]) {
-				mouse_buttons[event.button.button - 1] = 0;
-			} else {
+			case SDL_DROPFILE:
+				path = event.drop.file;
+				LOG("Path : %s", path);
+				found = path.find_last_of(".");
+				extension = path.substr(found+1);
+				LOG("extension : %s", extension);
+				App->texture->LoadTexture(path.c_str());
+				break;
+			case SDL_MOUSEBUTTONDOWN :
+				LOG("mouse down");
 				mouse_buttons[event.button.button - 1] = 1;
-			}
-		}
-		if (event.type == SDL_MOUSEMOTION) {
-			mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
-			mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
-			mouse.x = event.motion.x / SCREEN_SIZE;
-			mouse.y = event.motion.y / SCREEN_SIZE;
-		}
-		if (event.type == SDL_MOUSEWHEEL) {
-			mouse_scroll.x = event.wheel.x;
-			mouse_scroll.y = event.wheel.y;
-		}
-		if (event.type == SDL_DROPFILE) {
-			LOG("Path : %s", event.drop.file);
+				break;
+
+			case SDL_MOUSEBUTTONUP :
+				LOG("mouse UP ");
+				mouse_buttons[event.button.button - 1] = 0; 
+				break;
+			case SDL_MOUSEMOTION :
+				LOG("Mouse motion");
+				mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
+				mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
+				mouse.x = event.motion.x / SCREEN_SIZE;
+				mouse.y = event.motion.y / SCREEN_SIZE;
+				break;
+
+			case SDL_MOUSEWHEEL :
+				LOG("Mouse wheel");
+				mouse_scroll.x = event.wheel.x;
+				mouse_scroll.y = event.wheel.y;
+				break;
+
 		}
 	}
 

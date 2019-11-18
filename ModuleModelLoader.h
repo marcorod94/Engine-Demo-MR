@@ -8,7 +8,6 @@ class ModuleModelLoader :
 	public Module
 {
 public:
-	std::vector<Texture> texturesLoaded;
 	std::vector<Mesh> meshes;
 
 	ModuleModelLoader();
@@ -16,6 +15,7 @@ public:
 	bool Init();
 	bool CleanUp();
 	void LoadModel(const char*);
+	void UpdateTexture(Texture&);
 
 private:
 	void processNode(aiNode*, const aiScene*);
