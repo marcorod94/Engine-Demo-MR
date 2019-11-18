@@ -21,12 +21,13 @@ bool ModuleModelLoader::CleanUp() {
 
 void ModuleModelLoader::LoadModel(const char* path) {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		App->imgui->AddLog("ERROR::ASSIMP:: %s", importer.GetErrorString());
 		return;
 	}
 	processNode(scene->mRootNode, scene);
+
 }
 
 void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene) {
@@ -107,8 +108,10 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 	{
 		aiString str;
 		mat->GetTexture(type, i, &str);
-
-		bool skip = false;
+		Texture texture = App->texture->LoadTexture(str.C_Str());
+		texture.type = typeName;
+		textures.push_back(texture);
+		/*bool skip = false;
 		for (unsigned int j = 0; j < texturesLoaded.size(); j++) {
 			if (std::strcmp(texturesLoaded[j].path, str.C_Str()) == 0)
 			{
@@ -121,7 +124,7 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 			texture.type = typeName;
 			textures.push_back(texture);
 			texturesLoaded.push_back(texture);
-		}
+		}*/
 	}
 	return textures;
 }

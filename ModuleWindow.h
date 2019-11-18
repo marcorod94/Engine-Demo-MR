@@ -21,6 +21,8 @@ public:
 	// Called before quitting
 	bool CleanUp();
 	void UpdateResizable();
+	void UpdateFullScreen();
+	void UpdateScreenSize();
 
 public:
 	//The window we'll be rendering to

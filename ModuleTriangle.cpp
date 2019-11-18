@@ -139,6 +139,7 @@ void ModuleTriangle::DrawMesh(Mesh& mesh) {
     for(unsigned int i = 0; i < mesh.textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         std::string number;
+		LOG("patch: %s", mesh.textures[i].path);
         std::string name = mesh.textures[i].type;
         if(name == "texture_diffuse")
 			number = std::to_string(++diffuseNr);

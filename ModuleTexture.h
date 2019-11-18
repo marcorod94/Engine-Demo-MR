@@ -7,10 +7,10 @@
 #include "IL/ilu.h"
 
 
-class ModuleTexture :
-	public Module
+class ModuleTexture : public Module
 {
 public:
+	std::vector<Texture> loadedTextures;
 	ModuleTexture();
 	~ModuleTexture();
 

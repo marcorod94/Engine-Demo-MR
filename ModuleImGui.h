@@ -18,12 +18,16 @@ public:
 private: 
 	bool show_demo_window = true;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-	//ImGuiIO* io = nullptr;
 	ImGuiTextBuffer buffer;
 	bool scrollToBottom;
 	char title[25];
 	std::vector<float> fps_log{0.0F};
 	std::vector<float> ms_log{0.0F};
-	bool resizable;
+
+	bool showMain = true;
+	bool showInfo = false;
+	bool showConsole = false;
+	bool showWindow = false;
+	bool showAbout = false;
 }; 
 #endif 

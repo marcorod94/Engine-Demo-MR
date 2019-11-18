@@ -2,6 +2,7 @@
 #include "ModuleInput.h"
 #include "ModuleCamera.h"
 #include "SDL_scancode.h"
+#include "SDL_mouse.h"
 
 
 ModuleCamera::ModuleCamera() {}
@@ -30,20 +31,29 @@ update_status  ModuleCamera::PreUpdate() {
 }
 
 update_status  ModuleCamera::Update() {
-	if (App->input->GetKey(SDL_SCANCODE_W)) {
-		frustum.pos += cameraSpeed * frustum.front;
+	cameraSpeed = CAM_SPEED;
+	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT)) {
+		cameraSpeed = CAM_SPEED * 2;
 	}
-	if (App->input->GetKey(SDL_SCANCODE_S)) {
-		frustum.pos -= cameraSpeed * frustum.front;
-	}
-	if (App->input->GetKey(SDL_SCANCODE_A)) {
-		frustum.pos -= cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
-	}
-	if (App->input->GetKey(SDL_SCANCODE_D)) {
-		frustum.pos += cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
-	}
-	if (App->input->IsMouseDown()) {
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
 		MouseMove();
+	}
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
+		MouseScrolling();
+	}
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT)) {
+		if (App->input->GetKey(SDL_SCANCODE_W)) {
+			frustum.pos += cameraSpeed * frustum.front;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_S)) {
+			frustum.pos -= cameraSpeed * frustum.front;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_A)) {
+			frustum.pos -= cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+		}
+		if (App->input->GetKey(SDL_SCANCODE_D)) {
+			frustum.pos += cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+		}
 	}
 	return UPDATE_CONTINUE;
 }
@@ -88,10 +98,10 @@ void ModuleCamera::MouseMove()
 void ModuleCamera::MouseScrolling()
 {
 	float2 offset = App->input->GetMouseScroll();
-	if (frustum.verticalFov >= 1.0f && frustum.verticalFov <= 45.0f)
-		frustum.verticalFov -= offset.y;
-	if (frustum.verticalFov <= 1.0f)
-		frustum.verticalFov = 1.0f;
-	if (frustum.verticalFov >= 45.0f)
-		frustum.verticalFov = 45.0f;
+	if (offset.y > 0) {
+		frustum.pos += cameraSpeed * frustum.front;
+	}
+	if (offset.y < 0) {
+		frustum.pos -= cameraSpeed * frustum.front;
+	}
 }

@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "MathGeoLib.h"
+#define CAM_SPEED 0.05f
 
 class ModuleCamera : public Module {
 public:
@@ -20,7 +21,7 @@ public:
 	float3 helper1 = float3(0.0F, -1.0F, -4.0F);
 	float3 helper2 = float3(1.0F, 1.0F, 1.0F);
 	float3 helper3 = float3(0.0F, 1.0F, 0.0F);
-	float cameraSpeed = 0.05f; 
+	float cameraSpeed = CAM_SPEED; 
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 };

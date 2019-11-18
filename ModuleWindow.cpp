@@ -77,3 +77,16 @@ void ModuleWindow::UpdateResizable() {
 
 }
 
+void ModuleWindow::UpdateFullScreen() {
+	if (fullScreen) {
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+	} else {
+		SDL_SetWindowFullscreen(window, 0);
+	}
+
+}
+
+void ModuleWindow::UpdateScreenSize() {
+	SDL_SetWindowSize(window, screenWidth, screenHeight);
+}
+
