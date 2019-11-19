@@ -3,15 +3,15 @@
 #include "ModuleInput.h"
 #include "ModuleImGui.h"
 #include "ModuleTexture.h"
+#include "ModuleModelLoader.h"
+#include "ModuleTriangle.h"
 #include "SDL.h"
 #include <string>
 
-ModuleInput::ModuleInput()
-{}
+ModuleInput::ModuleInput() {}
 
 // Destructor
-ModuleInput::~ModuleInput()
-{}
+ModuleInput::~ModuleInput() {}
 
 // Called before render is available
 bool ModuleInput::Init()
@@ -37,30 +37,33 @@ update_status ModuleInput::PreUpdate()
 	SDL_PumpEvents();
 
 	keyboard = SDL_GetKeyboardState(NULL);
+
 	std::string path;
 	std::size_t found;
 	std::string extension;
+	
 	while (SDL_PollEvent(&event) != 0)
 	{
+
+		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+
+			LOG("mouse down");
+		}
 		switch (event.type) {
 
 			case SDL_DROPFILE:
 				path = event.drop.file;
 				LOG("Path : %s", path);
 				found = path.find_last_of(".");
-				extension = path.substr(found+1);
-				LOG("extension : %s", extension);
-				App->texture->LoadTexture(path.c_str());
+				extension = path.substr(found + 1);
+				LOG("extension : %s", extension.c_str());
+				//App->texture->LoadTexture(path.c_str());
+				App->modelLoader->LoadModel(path.c_str());
+				for (unsigned int i = 0; i < App->modelLoader->meshes.size(); i++) {
+					App->triangle->SetupMesh(App->modelLoader->meshes[i]);
+				}
 				break;
-			case SDL_MOUSEBUTTONDOWN :
-				LOG("mouse down");
-				mouse_buttons[event.button.button - 1] = 1;
-				break;
-
-			case SDL_MOUSEBUTTONUP :
-				LOG("mouse UP ");
-				mouse_buttons[event.button.button - 1] = 0; 
-				break;
+			
 			case SDL_MOUSEMOTION :
 				LOG("Mouse motion");
 				mouse_motion.x = event.motion.xrel / SCREEN_SIZE;

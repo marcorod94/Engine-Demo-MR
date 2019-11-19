@@ -2,10 +2,9 @@
 #include "Module.h"
 #include "Globals.h"
 #include "MathGeoLib.h"
+#include "SDL.h"
 
-#define NUM_MOUSE_BUTTONS 5
-
-typedef unsigned __int8 Uint8;
+typedef uint8_t Uint8;
 
 class ModuleInput : public Module
 {
@@ -23,15 +22,14 @@ public:
 	}
 	Uint8 GetMouseButtonDown(int id) const
 	{
-		return mouse_buttons[id - 1];
+		return (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(id));
 	}
 	const float2& GetMouseMotion() const;
 	const float2& GetMousePosition() const;
 	const float2& GetMouseScroll() const;
 
 private:
-	const Uint8 *keyboard = NULL;
-	Uint8	mouse_buttons[NUM_MOUSE_BUTTONS] = { 0,0,0,0,0 };
+	const Uint8*	keyboard;
 	float2 mouse_motion;
 	float2 mouse;
 	float2 mouse_scroll;
