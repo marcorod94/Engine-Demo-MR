@@ -33,9 +33,6 @@ struct Texture {
 	unsigned int id;
 	char*  type;
 	const char* path;
-	int width;
-	int height;
-	unsigned char *data;
 };
 
 struct Mesh {

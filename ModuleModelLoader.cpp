@@ -20,6 +20,7 @@ bool ModuleModelLoader::CleanUp() {
 }
 
 void ModuleModelLoader::LoadModel(const char* path) {
+	meshes.clear();
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
@@ -111,21 +112,14 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 		Texture texture = App->texture->LoadTexture(str.C_Str());
 		texture.type = typeName;
 		textures.push_back(texture);
-		/*bool skip = false;
-		for (unsigned int j = 0; j < texturesLoaded.size(); j++) {
-			if (std::strcmp(texturesLoaded[j].path, str.C_Str()) == 0)
-			{
-				textures.push_back(texturesLoaded[j]);
-				skip = true;
-				break;
-			}
-		} if (!skip) {
-			Texture texture = App->texture->LoadTexture(str.C_Str());
-			texture.type = typeName;
-			textures.push_back(texture);
-			texturesLoaded.push_back(texture);
-		}*/
 	}
 	return textures;
 }
 
+
+void ModuleModelLoader::UpdateTexture(Texture& texture) {
+	for (unsigned int i = 0; i < meshes.size(); i++) {
+		meshes[i].textures.clear();
+		meshes[i].textures.push_back(texture);
+	}
+}

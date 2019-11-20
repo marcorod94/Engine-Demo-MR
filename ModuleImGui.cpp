@@ -3,6 +3,8 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
+#include "ModuleTexture.h"
+#include "ModuleModelLoader.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
@@ -36,6 +38,7 @@ update_status ModuleImGui::Update() {
 		showInfo = ImGui::MenuItem("Information");
 		showConsole = ImGui::MenuItem("Console Window");
 		showWindow = ImGui::MenuItem("Window Configuration");
+		showTextures = ImGui::MenuItem("Textures Configuration");
 		ImGui::EndMenu();
 	}
 	if(ImGui::BeginMenu("Help")) {
@@ -82,6 +85,17 @@ update_status ModuleImGui::Update() {
 		}
 		if (ImGui::Checkbox("Full Screen", &(App->window->fullScreen))) {
 			App->window->UpdateFullScreen();
+		}
+		ImGui::End();
+	}
+	if (showTextures) {
+		bool test = false;
+		ImGui::Begin("Textures", &showTextures);
+		for (unsigned int i = 0; i < App->texture->loadedTextures.size(); i++) {
+			if (ImGui::ImageButton((void*)(intptr_t)App->texture->loadedTextures[i].id, ImVec2(128, 128))) {
+				App->modelLoader->UpdateTexture(App->texture->loadedTextures[i]);
+			}
+
 		}
 		ImGui::End();
 	}

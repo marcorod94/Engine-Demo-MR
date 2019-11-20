@@ -12,12 +12,11 @@ public:
 	bool Init();
 	update_status PreUpdate();
 	update_status Update();
+	void SetupMesh(Mesh&);
 	bool CleanUp();
 private:
 	void ShowGrid();
 	void ShowAxis();
-	void SetupMesh(Mesh&);
-	void SetupTexture(Texture&);
 	void DrawMesh(Mesh&);
 private:
 	GLuint vbo, ebo, vao;

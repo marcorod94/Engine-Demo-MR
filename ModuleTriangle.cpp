@@ -123,14 +123,6 @@ void ModuleTriangle::SetupMesh(Mesh& mesh) {
 	glBindVertexArray(0);
 }
 
-void ModuleTriangle::SetupTexture(Texture& texture) {
-	glBindTexture(GL_TEXTURE_2D, texture.id);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture.width, texture.height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture.data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-}
-
 void ModuleTriangle::DrawMesh(Mesh& mesh) {
     unsigned int diffuseNr  = 1;
     unsigned int specularNr = 1;
@@ -139,7 +131,6 @@ void ModuleTriangle::DrawMesh(Mesh& mesh) {
     for(unsigned int i = 0; i < mesh.textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         std::string number;
-		LOG("patch: %s", mesh.textures[i].path);
         std::string name = mesh.textures[i].type;
         if(name == "texture_diffuse")
 			number = std::to_string(++diffuseNr);

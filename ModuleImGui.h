@@ -28,6 +28,7 @@ private:
 	bool showInfo = false;
 	bool showConsole = false;
 	bool showWindow = false;
+	bool showTextures = false;
 	bool showAbout = false;
 }; 
 #endif 

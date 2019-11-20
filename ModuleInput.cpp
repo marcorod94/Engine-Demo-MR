@@ -2,14 +2,16 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleImGui.h"
+#include "ModuleTexture.h"
+#include "ModuleModelLoader.h"
+#include "ModuleTriangle.h"
 #include "SDL.h"
+#include <string>
 
-ModuleInput::ModuleInput()
-{}
+ModuleInput::ModuleInput() {}
 
 // Destructor
-ModuleInput::~ModuleInput()
-{}
+ModuleInput::~ModuleInput() {}
 
 // Called before render is available
 bool ModuleInput::Init()
@@ -36,34 +38,46 @@ update_status ModuleInput::PreUpdate()
 
 	keyboard = SDL_GetKeyboardState(NULL);
 
+	std::string path;
+	std::size_t found;
+	std::string extension;
+	
 	while (SDL_PollEvent(&event) != 0)
 	{
-		
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
-			LOG("mouse down");
-			mouse_buttons[event.button.button - 1] = 1;
-		}
 
-		if (event.type == SDL_MOUSEBUTTONUP) {
-			LOG("mouse UP evento %d: valor %d: ", event.button.button, mouse_buttons[event.button.button - 1]);
-			if (mouse_buttons[event.button.button - 1]) {
-				mouse_buttons[event.button.button - 1] = 0;
-			} else {
-				mouse_buttons[event.button.button - 1] = 1;
-			}
+		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+
+			LOG("mouse down");
 		}
-		if (event.type == SDL_MOUSEMOTION) {
-			mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
-			mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
-			mouse.x = event.motion.x / SCREEN_SIZE;
-			mouse.y = event.motion.y / SCREEN_SIZE;
-		}
-		if (event.type == SDL_MOUSEWHEEL) {
-			mouse_scroll.x = event.wheel.x;
-			mouse_scroll.y = event.wheel.y;
-		}
-		if (event.type == SDL_DROPFILE) {
-			LOG("Path : %s", event.drop.file);
+		switch (event.type) {
+
+			case SDL_DROPFILE:
+				path = event.drop.file;
+				LOG("Path : %s", path);
+				found = path.find_last_of(".");
+				extension = path.substr(found + 1);
+				LOG("extension : %s", extension.c_str());
+				//App->texture->LoadTexture(path.c_str());
+				App->modelLoader->LoadModel(path.c_str());
+				for (unsigned int i = 0; i < App->modelLoader->meshes.size(); i++) {
+					App->triangle->SetupMesh(App->modelLoader->meshes[i]);
+				}
+				break;
+			
+			case SDL_MOUSEMOTION :
+				LOG("Mouse motion");
+				mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
+				mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
+				mouse.x = event.motion.x / SCREEN_SIZE;
+				mouse.y = event.motion.y / SCREEN_SIZE;
+				break;
+
+			case SDL_MOUSEWHEEL :
+				LOG("Mouse wheel");
+				mouse_scroll.x = event.wheel.x;
+				mouse_scroll.y = event.wheel.y;
+				break;
+
 		}
 	}
 
