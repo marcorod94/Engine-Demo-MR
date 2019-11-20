@@ -2,6 +2,7 @@
 #include "ModuleInput.h"
 #include "ModuleCamera.h"
 #include "SDL_scancode.h"
+#include "SDL_mouse.h"
 
 
 ModuleCamera::ModuleCamera() {}
@@ -30,19 +31,30 @@ update_status  ModuleCamera::PreUpdate() {
 }
 
 update_status  ModuleCamera::Update() {
-	if (App->input->GetKey(SDL_SCANCODE_W)) {
-		frustum.pos += cameraSpeed * frustum.front;
+	cameraSpeed = CAM_SPEED;
+	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT)) {
+		cameraSpeed = CAM_SPEED * 2;
 	}
-	if (App->input->GetKey(SDL_SCANCODE_S)) {
-		frustum.pos -= cameraSpeed * frustum.front;
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
+		MouseMove();
 	}
-	if (App->input->GetKey(SDL_SCANCODE_A)) {
-		frustum.pos -= cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
+		MouseScrolling();
 	}
-	if (App->input->GetKey(SDL_SCANCODE_D)) {
-		frustum.pos += cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT)) {
+		if (App->input->GetKey(SDL_SCANCODE_W)) {
+			frustum.pos += cameraSpeed * frustum.front;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_S)) {
+			frustum.pos -= cameraSpeed * frustum.front;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_A)) {
+			frustum.pos -= cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+		}
+		if (App->input->GetKey(SDL_SCANCODE_D)) {
+			frustum.pos += cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+		}
 	}
-
 	return UPDATE_CONTINUE;
 }
 
@@ -76,19 +88,20 @@ void ModuleCamera::MouseMove()
 		pitch = -89.0F;
 
 	float3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.x = cos(DegToRad(yaw)) * cos(DegToRad(pitch));
+	front.y = sin(DegToRad(pitch));
+	front.z = sin(DegToRad(yaw)) * cos(DegToRad(pitch));
 	frustum.front = front.Normalized();
 }
 
 
 void ModuleCamera::MouseScrolling()
 {
-	if (frustum.verticalFov >= 1.0f && frustum.verticalFov <= 45.0f)
-		frustum.verticalFov -= yoffset;
-	if (frustum.verticalFov <= 1.0f)
-		frustum.verticalFov = 1.0f;
-	if (frustum.verticalFov >= 45.0f)
-		frustum.verticalFov = 45.0f;
+	float2 offset = App->input->GetMouseScroll();
+	if (offset.y > 0) {
+		frustum.pos += cameraSpeed * frustum.front;
+	}
+	if (offset.y < 0) {
+		frustum.pos -= cameraSpeed * frustum.front;
+	}
 }

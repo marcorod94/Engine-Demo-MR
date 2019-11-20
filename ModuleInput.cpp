@@ -28,7 +28,7 @@ bool ModuleInput::Init()
 }
 
 // Called every draw update
-update_status ModuleInput::Update()
+update_status ModuleInput::PreUpdate()
 {
 	static SDL_Event event;
 
@@ -38,15 +38,32 @@ update_status ModuleInput::Update()
 
 	while (SDL_PollEvent(&event) != 0)
 	{
+		
+		if (event.type == SDL_MOUSEBUTTONDOWN) {
+			LOG("mouse down");
+			mouse_buttons[event.button.button - 1] = 1;
+		}
+
+		if (event.type == SDL_MOUSEBUTTONUP) {
+			LOG("mouse UP evento %d: valor %d: ", event.button.button, mouse_buttons[event.button.button - 1]);
+			if (mouse_buttons[event.button.button - 1]) {
+				mouse_buttons[event.button.button - 1] = 0;
+			} else {
+				mouse_buttons[event.button.button - 1] = 1;
+			}
+		}
 		if (event.type == SDL_MOUSEMOTION) {
 			mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
 			mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
 			mouse.x = event.motion.x / SCREEN_SIZE;
 			mouse.y = event.motion.y / SCREEN_SIZE;
-			LOG("MMX: %f", mouse_motion.x);
-			LOG("MMY: %f", mouse_motion.y);
-			LOG("MX: %f", mouse.x);
-			LOG("MY: %f", mouse.y);
+		}
+		if (event.type == SDL_MOUSEWHEEL) {
+			mouse_scroll.x = event.wheel.x;
+			mouse_scroll.y = event.wheel.y;
+		}
+		if (event.type == SDL_DROPFILE) {
+			LOG("Path : %s", event.drop.file);
 		}
 	}
 
@@ -69,4 +86,9 @@ const float2& ModuleInput::GetMousePosition() const
 const float2& ModuleInput::GetMouseMotion() const
 {
 	return mouse_motion;
+}
+
+const float2& ModuleInput::GetMouseScroll() const
+{
+	return mouse_scroll;
 }

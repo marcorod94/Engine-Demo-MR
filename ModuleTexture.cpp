@@ -29,17 +29,24 @@ bool ModuleTexture::CleanUp() {
 }
 
 Texture ModuleTexture::LoadTexture(const char* path) {
+	for (unsigned int i = 0; i < loadedTextures.size(); i++) {
+		if (std::strcmp(loadedTextures[i].path, path) == 0) {
+			LOG("Cargada: %s", loadedTextures[i].path);
+			return loadedTextures[i];
+		}
+	}
 	Texture texture;
 	ilLoadImage(path);
 	iluGetImageInfo(&imageInfo);
-	if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+	/*if (imageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
 	{
 		iluFlipImage();
-	}
+	}*/
 	texture.id = ilutGLBindTexImage();
 	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
 	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);
 	texture.data = ilGetData();
 	texture.path = path;
+	loadedTextures.push_back(texture);
 	return texture;
 }
