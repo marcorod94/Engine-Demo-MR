@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleTexture.h"
 #include "ModuleProgram.h"
+#include "ModuleImGui.h"
 #include "IL/il.h"
 #include "IL/ilu.h"
 #include "IL/ilut.h"
@@ -28,15 +29,15 @@ bool ModuleTexture::CleanUp() {
 	return true;
 }
 
-Texture ModuleTexture::LoadTexture(const char* path) {
+Texture ModuleTexture::LoadTexture(std::string& path) {
 	for (unsigned int i = 0; i < loadedTextures.size(); i++) {
-		if (std::strcmp(loadedTextures[i].path, path) == 0) {
-			LOG("Cargada: %s", loadedTextures[i].path);
+		if (path.compare(loadedTextures[i].path) == 0) {
+			App->imgui->AddLog("Texture already loaded: %s", loadedTextures[i].path.c_str());
 			return loadedTextures[i];
 		}
 	}
 	Texture texture;
-	ilLoadImage(path);
+	ilLoadImage(path.c_str());
 	iluGetImageInfo(&imageInfo);
 	texture.id = ilutGLBindTexImage();
 	texture.type = "texture_diffuse";

@@ -30,7 +30,7 @@ public:
 
 private:
 	const Uint8*	keyboard;
-	float2 mouse_motion;
-	float2 mouse;
-	float2 mouse_scroll;
+	float2 mouse_motion = float2::zero;
+	float2 mouse = float2::zero;
+	float2 mouse_scroll = float2::zero;
 };

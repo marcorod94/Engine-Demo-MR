@@ -30,10 +30,11 @@ public:
 
 	//The surface contained by the window
 	SDL_Surface* screen_surface = NULL;
-	int screenWidth = 640;
-	int screenHeight = 480;
+	int maxScreenWidth, maxScreenHeight, minScreenWidth, minScreenHeight, screenWidth, screenHeight;
 	bool fullScreen = false;
 	bool resizable = false;
+private:
+	float aspectRatio = 2;
 };
 
 #endif // __ModuleWindow_H__

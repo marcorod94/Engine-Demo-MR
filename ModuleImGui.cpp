@@ -9,6 +9,7 @@
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
 #include "GL/glew.h"
+#include "assimp/version.h"
 
 
 ModuleImGui::ModuleImGui() {
@@ -73,11 +74,19 @@ update_status ModuleImGui::Update() {
 			ImGui::Text("GPU Model: %s", glGetString(GL_RENDERER));
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("Libraries")) {
+			ImGui::Text("DevIL: %d", IL_VERSION);
+			ImGui::Text("Glew: %s", glewGetString(GLEW_VERSION));
+			ImGui::Text("ImGui: %s", IMGUI_VERSION);
+			ImGui::Text("Assimp: %d.%d.%d", ASSIMP_API::aiGetVersionMajor(), ASSIMP_API::aiGetVersionMinor(), ASSIMP_API::aiGetVersionRevision());
+			ImGui::TreePop();
+		}
 		ImGui::End();
 	}
 	if (showWindow) {
 		ImGui::Begin("Window Configuration", &showWindow);
-		if (ImGui::SliderInt("Width", &(App->window->screenWidth), 640, 1024) || ImGui::SliderInt("Height", &(App->window->screenHeight), 480, 720)) {
+		if (ImGui::SliderInt("Width", &(App->window->screenWidth), App->window->minScreenWidth, App->window->maxScreenWidth)
+			|| ImGui::SliderInt("Height", &(App->window->screenHeight), App->window->minScreenHeight, App->window->maxScreenHeight)) {
 			App->window->UpdateScreenSize();
 		}
 		if (ImGui::Checkbox("Resizable", &(App->window->resizable))) {
@@ -126,5 +135,6 @@ void ModuleImGui::AddLog(const char* fmt, ...) {
 	va_start(args, fmt);
 	buffer.appendfv(fmt, args);
 	va_end(args);
+	buffer.append("\n");
 	scrollToBottom = true;
 }

@@ -22,7 +22,7 @@ bool ModuleInput::Init()
 
 	if(SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
 	{
-		App->imgui->AddLog("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
+		App->imgui->AddLog("SDL_EVENTS could not initialize! SDL_Error: %s", SDL_GetError());
 		ret = false;
 	}
 
@@ -39,7 +39,6 @@ update_status ModuleInput::PreUpdate()
 	keyboard = SDL_GetKeyboardState(NULL);
 
 	std::string path;
-	std::size_t found;
 	std::string extension;
 	
 	while (SDL_PollEvent(&event) != 0)
@@ -53,19 +52,19 @@ update_status ModuleInput::PreUpdate()
 
 			case SDL_DROPFILE:
 				path = event.drop.file;
-				LOG("Path : %s", path);
-				found = path.find_last_of(".");
-				extension = path.substr(found + 1);
-				LOG("extension : %s", extension.c_str());
-				//App->texture->LoadTexture(path.c_str());
-				App->modelLoader->LoadModel(path.c_str());
-				for (unsigned int i = 0; i < App->modelLoader->meshes.size(); i++) {
-					App->triangle->SetupMesh(App->modelLoader->meshes[i]);
+				extension = path.substr(path.find_last_of(".") + 1);
+				if (extension.compare("png") == 0 || extension.compare("bmp") == 0 || extension.compare("jpg") == 0) {
+					App->texture->LoadTexture(path);
+				}
+				if (extension.compare("fbx") == 0 || extension.compare("FBX") == 0) {
+					App->modelLoader->LoadModel(path);
+					for (unsigned int i = 0; i < App->modelLoader->meshes.size(); i++) {
+						App->triangle->SetupMesh(App->modelLoader->meshes[i]);
+					}
 				}
 				break;
 			
 			case SDL_MOUSEMOTION :
-				LOG("Mouse motion");
 				mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
 				mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
 				mouse.x = event.motion.x / SCREEN_SIZE;
@@ -73,7 +72,6 @@ update_status ModuleInput::PreUpdate()
 				break;
 
 			case SDL_MOUSEWHEEL :
-				LOG("Mouse wheel");
 				mouse_scroll.x = event.wheel.x;
 				mouse_scroll.y = event.wheel.y;
 				break;

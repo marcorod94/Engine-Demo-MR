@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <vector>
 #include "MathGeoLib.h"
+#include <string>
 
 #define LOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
 
@@ -31,8 +32,8 @@ struct Vertex {
 
 struct Texture {
 	unsigned int id;
-	char*  type;
-	const char* path;
+	std::string  type;
+	std::string path;
 };
 
 struct Mesh {

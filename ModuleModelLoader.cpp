@@ -5,7 +5,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-
+#include  <io.h>
 
 ModuleModelLoader::ModuleModelLoader() {}
 
@@ -19,7 +19,7 @@ bool ModuleModelLoader::CleanUp() {
 	return true;
 }
 
-void ModuleModelLoader::LoadModel(const char* path) {
+void ModuleModelLoader::LoadModel(std::string& path) {
 	meshes.clear();
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
@@ -27,6 +27,7 @@ void ModuleModelLoader::LoadModel(const char* path) {
 		App->imgui->AddLog("ERROR::ASSIMP:: %s", importer.GetErrorString());
 		return;
 	}
+	directory = path.substr(0, path.find_last_of('/') + 1);
 	processNode(scene->mRootNode, scene);
 
 }
@@ -103,17 +104,45 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene) {
 	return meshAux;
 }
 
-std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, char* typeName) {
+std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const char* typeName) {
 	std::vector<Texture> textures;
+	App->imgui->AddLog("\nLoading textures of type : %s", typeName);
 	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 	{
 		aiString str;
 		mat->GetTexture(type, i, &str);
-		Texture texture = App->texture->LoadTexture(str.C_Str());
+		std::string path = str.C_Str();
+		App->imgui->AddLog("Trying to load texture: %s", path.c_str());
+		if (existsFile(path.c_str()) == 1) {
+			path = directory;
+			path = path.append(str.C_Str());
+			App->imgui->AddLog("Trying to load texture: %s", path.c_str());
+			if (existsFile(path.c_str()) == 1) {
+				path = TEXTURE_PATH;
+				path = path.append(str.C_Str());
+				App->imgui->AddLog("Trying to load texture: %s", path.c_str());
+				if (existsFile(path.c_str()) == 1) {
+					path = TEXTURE_PATH;
+					path = path.append(DEFAULT_TEXTURE);
+					App->imgui->AddLog("Trying to load texture: %s", path.c_str());
+				}
+			}
+		}
+		Texture texture = App->texture->LoadTexture(path);
 		texture.type = typeName;
 		textures.push_back(texture);
 	}
 	return textures;
+}
+
+
+int  ModuleModelLoader::existsFile(const char* path) {
+	if ((_access(path, 0)) == -1 ) {
+		App->imgui->AddLog("Couldn't find: %s", path);
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 

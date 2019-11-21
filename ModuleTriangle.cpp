@@ -18,12 +18,12 @@ ModuleTriangle::~ModuleTriangle() {
 
 bool ModuleTriangle::Init() {
 	
-	App->modelLoader->LoadModel("BakerHouse.fbx");
+	App->modelLoader->LoadModel(std::string("Models/BakerHouse.fbx"));
 	for (unsigned int i = 0; i < App->modelLoader->meshes.size(); i++) {
 		SetupMesh(App->modelLoader->meshes[i]);
 	}
 	
-	App->program->LoadShaders("default.vs", "default.fs");
+	App->program->LoadShaders("Shaders/default.vs", "Shaders/default.fs");
 	return true;
 }
 
