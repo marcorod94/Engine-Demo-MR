@@ -34,8 +34,6 @@ update_status ModuleInput::PreUpdate()
 {
 	static SDL_Event event;
 
-	SDL_PumpEvents();
-
 	keyboard = SDL_GetKeyboardState(NULL);
 
 	std::string path;
@@ -44,19 +42,11 @@ update_status ModuleInput::PreUpdate()
 	
 	while (SDL_PollEvent(&event) != 0)
 	{
-
-		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-
-			LOG("mouse down");
-		}
 		switch (event.type) {
 
 			case SDL_DROPFILE:
-				path = event.drop.file;
-				LOG("Path : %s", path);
 				found = path.find_last_of(".");
 				extension = path.substr(found + 1);
-				LOG("extension : %s", extension.c_str());
 				//App->texture->LoadTexture(path.c_str());
 				App->modelLoader->LoadModel(path.c_str());
 				for (unsigned int i = 0; i < App->modelLoader->meshes.size(); i++) {
@@ -65,15 +55,11 @@ update_status ModuleInput::PreUpdate()
 				break;
 			
 			case SDL_MOUSEMOTION :
-				LOG("Mouse motion");
 				mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
 				mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
-				mouse.x = event.motion.x / SCREEN_SIZE;
-				mouse.y = event.motion.y / SCREEN_SIZE;
 				break;
 
 			case SDL_MOUSEWHEEL :
-				LOG("Mouse wheel");
 				mouse_scroll.x = event.wheel.x;
 				mouse_scroll.y = event.wheel.y;
 				break;
@@ -84,17 +70,18 @@ update_status ModuleInput::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
+
+update_status ModuleInput::Update() {
+	SDL_PumpEvents();
+	return UPDATE_CONTINUE;
+}
+
 // Called before quitting
 bool ModuleInput::CleanUp()
 {
 	App->imgui->AddLog("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
-}
-
-const float2& ModuleInput::GetMousePosition() const
-{
-	return mouse;
 }
 
 const float2& ModuleInput::GetMouseMotion() const

@@ -27,8 +27,7 @@ private:
 	bool showMain = true;
 	bool showInfo = false;
 	bool showConsole = false;
-	bool showWindow = false;
-	bool showTextures = false;
+	bool showModule = false;
 	bool showAbout = false;
 }; 
 #endif 

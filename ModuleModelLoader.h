@@ -9,7 +9,12 @@ class ModuleModelLoader :
 {
 public:
 	std::vector<Mesh> meshes;
-
+	aiVector3D scaling;
+	aiVector3D position;
+	aiVector3D rotation;
+	int totalPrimitives = 0;
+	int totalVertex = 0;
+	int totalMaterials = 0;
 	ModuleModelLoader();
 	~ModuleModelLoader();
 	bool Init();
