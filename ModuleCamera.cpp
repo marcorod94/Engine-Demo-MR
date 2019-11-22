@@ -11,13 +11,15 @@ ModuleCamera::~ModuleCamera() {}
 
 bool ModuleCamera::Init() {
 	frustum.type = FrustumType::PerspectiveFrustum;
-	frustum.pos = float3::zero;
+	frustum.pos = float3(-1.0F, 1.0F, 1.0F);
 	frustum.front = -float3::unitZ;
 	frustum.up = float3::unitY;
 	frustum.nearPlaneDistance = 0.3F;
 	frustum.farPlaneDistance = 250.0F;
 	frustum.verticalFov = math::pi / 4.0F;
 	frustum.horizontalFov = 2.0F * atanf(tanf(frustum.verticalFov * 0.5F) * 2.F);
+	pitch = -RadToDeg(asin(frustum.front.y));
+	yaw = -RadToDeg(acos(frustum.front.x / cos(DegToRad(pitch))));
 	return true;
 }
 
@@ -31,9 +33,17 @@ update_status  ModuleCamera::PreUpdate() {
 }
 
 update_status  ModuleCamera::Update() {
-	cameraSpeed = CAM_SPEED;
+	movementSpeed = cameraSpeed;
+	orbit = false;
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT)) {
-		cameraSpeed = CAM_SPEED * 2;
+		movementSpeed = cameraSpeed * 2;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT)) {
+		orbit = true;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_F)) {
+		frustum.pos = float3(0.0F, 0.0F, 0.0F);
+		view = LookAt(frustum.pos, frustum.pos + frustum.front, frustum.up);
 	}
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
 		MouseMove();
@@ -43,16 +53,16 @@ update_status  ModuleCamera::Update() {
 	}
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT)) {
 		if (App->input->GetKey(SDL_SCANCODE_W)) {
-			frustum.pos += cameraSpeed * frustum.front;
+			frustum.pos += movementSpeed * frustum.front;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_S)) {
-			frustum.pos -= cameraSpeed * frustum.front;
+			frustum.pos -= movementSpeed * frustum.front;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_A)) {
-			frustum.pos -= cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+			frustum.pos -= movementSpeed * (frustum.front.Cross(frustum.up)).Normalized();
 		}
 		if (App->input->GetKey(SDL_SCANCODE_D)) {
-			frustum.pos += cameraSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+			frustum.pos += movementSpeed * (frustum.front.Cross(frustum.up)).Normalized();
 		}
 	}
 	return UPDATE_CONTINUE;

@@ -15,6 +15,7 @@ public:
 
 	bool Init();
 	update_status PreUpdate();
+	update_status Update();
 	bool CleanUp();
 	Uint8 GetKey(int id) const
 	{
@@ -25,12 +26,10 @@ public:
 		return (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(id));
 	}
 	const float2& GetMouseMotion() const;
-	const float2& GetMousePosition() const;
 	const float2& GetMouseScroll() const;
 
 private:
 	const Uint8*	keyboard;
 	float2 mouse_motion = float2::zero;
-	float2 mouse = float2::zero;
 	float2 mouse_scroll = float2::zero;
 };

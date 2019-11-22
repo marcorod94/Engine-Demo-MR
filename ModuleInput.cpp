@@ -34,8 +34,6 @@ update_status ModuleInput::PreUpdate()
 {
 	static SDL_Event event;
 
-	SDL_PumpEvents();
-
 	keyboard = SDL_GetKeyboardState(NULL);
 
 	std::string path;
@@ -43,11 +41,6 @@ update_status ModuleInput::PreUpdate()
 	
 	while (SDL_PollEvent(&event) != 0)
 	{
-
-		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-
-			LOG("mouse down");
-		}
 		switch (event.type) {
 
 			case SDL_DROPFILE:
@@ -67,8 +60,6 @@ update_status ModuleInput::PreUpdate()
 			case SDL_MOUSEMOTION :
 				mouse_motion.x = event.motion.xrel / SCREEN_SIZE;
 				mouse_motion.y = event.motion.yrel / SCREEN_SIZE;
-				mouse.x = event.motion.x / SCREEN_SIZE;
-				mouse.y = event.motion.y / SCREEN_SIZE;
 				break;
 
 			case SDL_MOUSEWHEEL :
@@ -82,17 +73,18 @@ update_status ModuleInput::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
+
+update_status ModuleInput::Update() {
+	SDL_PumpEvents();
+	return UPDATE_CONTINUE;
+}
+
 // Called before quitting
 bool ModuleInput::CleanUp()
 {
 	App->imgui->AddLog("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
-}
-
-const float2& ModuleInput::GetMousePosition() const
-{
-	return mouse;
 }
 
 const float2& ModuleInput::GetMouseMotion() const

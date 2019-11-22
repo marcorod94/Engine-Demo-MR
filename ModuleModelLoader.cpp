@@ -21,6 +21,9 @@ bool ModuleModelLoader::CleanUp() {
 
 void ModuleModelLoader::LoadModel(std::string& path) {
 	meshes.clear();
+	totalPrimitives = 0;
+	totalVertex = 0;
+	totalMaterials = 0;
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
@@ -32,7 +35,7 @@ void ModuleModelLoader::LoadModel(std::string& path) {
 
 }
 
-void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene) {
+void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene) {	
 	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.push_back(processMesh(mesh, scene));
@@ -44,6 +47,9 @@ void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene) {
 }
 
 Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene) {
+	totalPrimitives += mesh->mNumFaces;
+	totalVertex += mesh->mNumVertices;
+	totalMaterials = scene->mNumMaterials;
 	Mesh meshAux;
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{

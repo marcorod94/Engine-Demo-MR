@@ -35,17 +35,19 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 	ImGui::BeginMainMenuBar();
-	if (ImGui::BeginMenu("Main")) {
+	if (ImGui::BeginMenu("Menu")) {
 		showInfo = ImGui::MenuItem("Information");
 		showConsole = ImGui::MenuItem("Console Window");
-		showWindow = ImGui::MenuItem("Window Configuration");
-		showTextures = ImGui::MenuItem("Textures Configuration");
-		ImGui::EndMenu();
-	}
-	if(ImGui::BeginMenu("Help")) {
+		showModule = ImGui::MenuItem("Module Configuration");
 		showAbout = ImGui::MenuItem("About");
+		if (ImGui::MenuItem("Visit Page")) {
+			ShellExecute(0, 0, "https://github.com/marcorod94/Engine-Demo-MR", 0,0, SW_SHOW);
+		}
+		if (ImGui::MenuItem("Quit")) {
+			return UPDATE_STOP;
+		}
 		ImGui::EndMenu();
-	}
+	}	
 	ImGui::EndMainMenuBar();
 	
 	if (showConsole) {
@@ -83,33 +85,46 @@ update_status ModuleImGui::Update() {
 		}
 		ImGui::End();
 	}
-	if (showWindow) {
-		ImGui::Begin("Window Configuration", &showWindow);
-		if (ImGui::SliderInt("Width", &(App->window->screenWidth), App->window->minScreenWidth, App->window->maxScreenWidth)
-			|| ImGui::SliderInt("Height", &(App->window->screenHeight), App->window->minScreenHeight, App->window->maxScreenHeight)) {
-			App->window->UpdateScreenSize();
-		}
-		if (ImGui::Checkbox("Resizable", &(App->window->resizable))) {
-			App->window->UpdateResizable();
-		}
-		if (ImGui::Checkbox("Full Screen", &(App->window->fullScreen))) {
-			App->window->UpdateFullScreen();
-		}
-		ImGui::End();
-	}
-	if (showTextures) {
-		bool test = false;
-		ImGui::Begin("Textures", &showTextures);
-		for (unsigned int i = 0; i < App->texture->loadedTextures.size(); i++) {
-			if (ImGui::ImageButton((void*)(intptr_t)App->texture->loadedTextures[i].id, ImVec2(128, 128))) {
-				App->modelLoader->UpdateTexture(App->texture->loadedTextures[i]);
+	if (showModule) {
+		ImGui::Begin("Module Configuration", &showModule);
+		if (ImGui::TreeNode("Window")) {
+			if (ImGui::SliderInt("Width", &(App->window->screenWidth), 640, 1024) || ImGui::SliderInt("Height", &(App->window->screenHeight), 480, 720)) {
+				App->window->UpdateScreenSize();
 			}
-
+			if (ImGui::Checkbox("Resizable", &(App->window->resizable))) {
+				App->window->UpdateResizable();
+			}
+			if (ImGui::Checkbox("Full Screen", &(App->window->fullScreen))) {
+				App->window->UpdateFullScreen();
+			}
+			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("Camera")) {
+			ImGui::SliderFloat("Camera Speed", &(App->camera->cameraSpeed), 0.01F, 2.0F);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Textures")) {
+			for (unsigned int i = 0; i < App->texture->loadedTextures.size(); i++) {
+				if (ImGui::ImageButton((void*)(intptr_t)App->texture->loadedTextures[i].id, ImVec2(128, 128))) {
+					App->modelLoader->UpdateTexture(App->texture->loadedTextures[i]);
+				}
+			}
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Model")) {
+			ImGui::Text("Mesh Total: %d", App->modelLoader->meshes.size());
+			ImGui::Text("Vertex Total: %d", App->modelLoader->totalVertex);
+			ImGui::Text("Primitive Total: %d", App->modelLoader->totalPrimitives);
+			ImGui::Text("Material Total: %d", App->modelLoader->totalMaterials);
+			ImGui::TreePop();
+		}
+		
 		ImGui::End();
 	}
 	if (showAbout) {
 		ImGui::Begin("About", &showAbout);
+		ImGui::Text("Engine: EM ENGINE");
+		ImGui::Text("Desciption: Super Cool Engine develop with love <3");
 		ImGui::Text("Author: Marco Rodriguez");
 		ImGui::End();
 	}
