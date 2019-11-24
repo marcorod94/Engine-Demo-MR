@@ -7,8 +7,8 @@
 
 class ModuleProgram : public Module {
 public:
-	ModuleProgram();
-	~ModuleProgram();
+	ModuleProgram() {}
+	~ModuleProgram() {}
 
 	bool Init();
 	update_status Update();

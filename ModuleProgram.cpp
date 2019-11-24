@@ -4,13 +4,6 @@
 #include <fstream>
 #include <sstream>
 
-ModuleProgram::ModuleProgram() {
-}
-
-
-ModuleProgram::~ModuleProgram() {
-}
-
 bool ModuleProgram::Init() {
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);

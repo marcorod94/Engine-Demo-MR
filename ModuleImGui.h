@@ -8,8 +8,8 @@
 
 class ModuleImGui : public Module {
 public:
-	ModuleImGui();
-	~ModuleImGui();
+	ModuleImGui() {}
+	~ModuleImGui() {}
 
 	bool Init();
 	update_status Update();
@@ -29,5 +29,10 @@ private:
 	bool showConsole = false;
 	bool showModule = false;
 	bool showAbout = false;
+	bool showProperties = false;
+
+	void ShowModulesWindow();
+	void ShowInformationWindow(ImGuiIO&);
+	void ShowTextures(std::vector<Texture>&);
 }; 
 #endif 

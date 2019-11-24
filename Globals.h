@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Globals_h
+#define Globals_h
+
 #include <windows.h>
 #include <stdio.h>
 #include <vector>
@@ -33,6 +35,8 @@ struct Vertex {
 struct Texture {
 	unsigned int id;
 	std::string  type;
+	int width;
+	int height;
 	std::string path;
 };
 
@@ -47,3 +51,4 @@ struct Mesh {
 #define VSYNC true
 #define SCREEN_SIZE 2
 #define TITLE "EM ENGINE"
+#endif

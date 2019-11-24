@@ -1,41 +1,44 @@
 #include "Application.h"
-#include "ModuleModelLoader.h"
-#include "ModuleImGui.h"
+#include "ModuleModel.h"
 #include "ModuleTexture.h"
+#include "ModuleCamera.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include  <io.h>
 
-ModuleModelLoader::ModuleModelLoader() {}
-
-ModuleModelLoader::~ModuleModelLoader() {}
-
-bool ModuleModelLoader::Init() {
+bool ModuleModel::Init() {
 	return true;
 }
 
-bool ModuleModelLoader::CleanUp() {
+bool ModuleModel::CleanUp() {
 	return true;
 }
 
-void ModuleModelLoader::LoadModel(std::string& path) {
+void ModuleModel::LoadModel(std::string& path) {
 	meshes.clear();
 	totalPrimitives = 0;
 	totalVertex = 0;
 	totalMaterials = 0;
+	box.SetNegativeInfinity();
+	Assimp::DefaultLogger::create("", Assimp::Logger::VERBOSE);
+	const unsigned int severity = Assimp::Logger::Debugging | Assimp::Logger::Info | Assimp::Logger::Err | Assimp::Logger::Warn;
 	Assimp::Importer importer;
+	Assimp::DefaultLogger::get()->attachStream(new AssimpLog, severity);
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		App->imgui->AddLog("ERROR::ASSIMP:: %s", importer.GetErrorString());
 		return;
 	}
-	directory = path.substr(0, path.find_last_of('/') + 1);
+	directory = path.substr(0, path.find_last_of('\\') + 1);
 	processNode(scene->mRootNode, scene);
+	App->camera->Focus();
+	Assimp::DefaultLogger::kill();
 
 }
 
-void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene) {	
+void ModuleModel::processNode(aiNode *node, const aiScene *scene) {
+	node->mTransformation.Decompose(scaling, rotation, position);
 	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.push_back(processMesh(mesh, scene));
@@ -46,7 +49,7 @@ void ModuleModelLoader::processNode(aiNode *node, const aiScene *scene) {
 	}
 }
 
-Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene) {
+Mesh ModuleModel::processMesh(aiMesh *mesh, const aiScene *scene) {
 	totalPrimitives += mesh->mNumFaces;
 	totalVertex += mesh->mNumVertices;
 	totalMaterials = scene->mNumMaterials;
@@ -59,6 +62,24 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene) {
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
+		if (vector.x > box.maxPoint.x) {
+			box.maxPoint.x = vector.x;
+		}
+		if (vector.x < box.minPoint.x) {
+			box.minPoint.x = vector.x;
+		}
+		if (vector.y > box.maxPoint.y) {
+			box.maxPoint.y = vector.y;
+		}
+		if (vector.y < box.minPoint.y) {
+			box.minPoint.y = vector.y;
+		}
+		if (vector.z > box.maxPoint.z) {
+			box.maxPoint.z = vector.z;
+		}
+		if (vector.z < box.minPoint.z) {
+			box.minPoint.z = vector.z;
+		}
 		vertex.Position = vector;
 		// normals
 		vector.x = mesh->mNormals[i].x;
@@ -110,7 +131,7 @@ Mesh ModuleModelLoader::processMesh(aiMesh *mesh, const aiScene *scene) {
 	return meshAux;
 }
 
-std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const char* typeName) {
+std::vector<Texture> ModuleModel::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const char* typeName) {
 	std::vector<Texture> textures;
 	App->imgui->AddLog("\nLoading textures of type : %s", typeName);
 	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -142,17 +163,16 @@ std::vector<Texture> ModuleModelLoader::loadMaterialTextures(aiMaterial *mat, ai
 }
 
 
-int  ModuleModelLoader::existsFile(const char* path) {
+int  ModuleModel::existsFile(const char* path) const{
 	if ((_access(path, 0)) == -1 ) {
 		App->imgui->AddLog("Couldn't find: %s", path);
 		return 1;
-	} else {
-		return 0;
-	}
+	} 
+	return 0;
 }
 
 
-void ModuleModelLoader::UpdateTexture(Texture& texture) {
+void ModuleModel::UpdateTexture(Texture& texture) {
 	for (unsigned int i = 0; i < meshes.size(); i++) {
 		meshes[i].textures.clear();
 		meshes[i].textures.push_back(texture);

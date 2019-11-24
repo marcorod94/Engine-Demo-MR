@@ -1,19 +1,17 @@
-#pragma once
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleInput.h"
-#include "ModuleTriangle.h"
+#include "ModuleScene.h"
 #include "ModuleProgram.h"
 #include "ModuleImGui.h"
 #include "ModuleTexture.h"
 #include "ModuleCamera.h"
-#include "ModuleModelLoader.h"
+#include "ModuleModel.h"
 
 using namespace std;
 
-Application::Application()
-{
+Application::Application() {
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(renderer = new ModuleRender());
@@ -21,21 +19,19 @@ Application::Application()
 	modules.push_back(program = new ModuleProgram());
 	modules.push_back(texture = new ModuleTexture());
 	modules.push_back(camera = new ModuleCamera());
-	modules.push_back(modelLoader = new ModuleModelLoader());
-	modules.push_back(triangle = new ModuleTriangle());
+	modules.push_back(model = new ModuleModel());
+	modules.push_back(scene = new ModuleScene());
 	modules.push_back(imgui = new ModuleImGui());
 }
 
-Application::~Application()
-{
+Application::~Application() {
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
     {
         delete *it;
     }
 }
 
-bool Application::Init()
-{
+bool Application::Init() {
 	bool ret = true;
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
@@ -44,8 +40,7 @@ bool Application::Init()
 	return ret;
 }
 
-update_status Application::Update()
-{
+update_status Application::Update() {
 	update_status ret = UPDATE_CONTINUE;
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
@@ -60,8 +55,7 @@ update_status Application::Update()
 	return ret;
 }
 
-bool Application::CleanUp()
-{
+bool Application::CleanUp() {
 	bool ret = true;
 
 	for(list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)

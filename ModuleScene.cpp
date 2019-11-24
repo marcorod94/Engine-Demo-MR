@@ -1,45 +1,37 @@
 ﻿#include "Application.h"
-#include "ModuleTriangle.h"
+#include "ModuleScene.h"
 #include "GL/glew.h"
 #include "MathGeoLib.h"
 #include "ModuleProgram.h"
 #include "ModuleTexture.h"
 #include "ModuleCamera.h"
-#include "ModuleModelLoader.h"
+#include "ModuleModel.h"
 #include <string>
 
-ModuleTriangle::ModuleTriangle() {
-
-}
-
-ModuleTriangle::~ModuleTriangle() {
-
-}
-
-bool ModuleTriangle::Init() {
+bool ModuleScene::Init() {
 	
-	App->modelLoader->LoadModel(std::string("Models/BakerHouse.fbx"));
-	for (unsigned int i = 0; i < App->modelLoader->meshes.size(); i++) {
-		SetupMesh(App->modelLoader->meshes[i]);
+	App->model->LoadModel(std::string("Models/BakerHouse.fbx"));
+	for (unsigned int i = 0; i < App->model->meshes.size(); i++) {
+		SetupMesh(App->model->meshes[i]);
 	}
 	
 	App->program->LoadShaders("Shaders/default.vs", "Shaders/default.fs");
 	return true;
 }
 
-update_status ModuleTriangle::PreUpdate()
+update_status ModuleScene::PreUpdate()
 {
 	return UPDATE_CONTINUE;
 }
 
-update_status ModuleTriangle::Update() {
+update_status ModuleScene::Update() {
 	glUseProgram(App->program->program);
 	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "model"), 1, GL_TRUE, &(App->camera->model[0][0]));
 	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "view"), 1, GL_TRUE, &(App->camera->view[0][0]));
 	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "proj"), 1, GL_TRUE, &(App->camera->proj[0][0]));
 	
-	for (unsigned int i = 0; i < App->modelLoader->meshes.size(); i++) {
-		DrawMesh(App->modelLoader->meshes[i]);
+	for (unsigned int i = 0; i < App->model->meshes.size(); i++) {
+		DrawMesh(App->model->meshes[i]);
 	}
 
 	ShowAxis();
@@ -48,14 +40,14 @@ update_status ModuleTriangle::Update() {
 	return UPDATE_CONTINUE;
 }
 
-bool ModuleTriangle::CleanUp() {
+bool ModuleScene::CleanUp() {
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	return true;
 }
 
-void ModuleTriangle::ShowGrid() {
+void ModuleScene::ShowGrid() const {
 	glLineWidth(1.0F);
 	float d = 200.0F;
 	glBegin(GL_LINES);
@@ -69,7 +61,7 @@ void ModuleTriangle::ShowGrid() {
 	glEnd();
 }
 
-void ModuleTriangle::ShowAxis() {
+void ModuleScene::ShowAxis() const {
 	glLineWidth(2.0F);
 	glBegin(GL_LINES);
 	// red X
@@ -93,7 +85,7 @@ void ModuleTriangle::ShowAxis() {
 	glLineWidth(1.0F);
 }
 
-void ModuleTriangle::SetupMesh(Mesh& mesh) {
+void ModuleScene::SetupMesh(Mesh& mesh) {
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glGenBuffers(1, &ebo);
@@ -123,7 +115,7 @@ void ModuleTriangle::SetupMesh(Mesh& mesh) {
 	glBindVertexArray(0);
 }
 
-void ModuleTriangle::DrawMesh(Mesh& mesh) {
+void ModuleScene::DrawMesh(Mesh& mesh) {
     unsigned int diffuseNr  = 1;
     unsigned int specularNr = 1;
     unsigned int normalNr   = 1;

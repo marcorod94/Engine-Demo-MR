@@ -3,15 +3,10 @@
 #include "ModuleInput.h"
 #include "ModuleImGui.h"
 #include "ModuleTexture.h"
-#include "ModuleModelLoader.h"
-#include "ModuleTriangle.h"
+#include "ModuleModel.h"
+#include "ModuleScene.h"
 #include "SDL.h"
 #include <string>
-
-ModuleInput::ModuleInput() {}
-
-// Destructor
-ModuleInput::~ModuleInput() {}
 
 // Called before render is available
 bool ModuleInput::Init()
@@ -33,6 +28,7 @@ bool ModuleInput::Init()
 update_status ModuleInput::PreUpdate()
 {
 	static SDL_Event event;
+	memset(windowEvents, false, WE_COUNT * sizeof(bool));
 
 	keyboard = SDL_GetKeyboardState(NULL);
 
@@ -42,17 +38,40 @@ update_status ModuleInput::PreUpdate()
 	while (SDL_PollEvent(&event) != 0)
 	{
 		switch (event.type) {
+			case SDL_QUIT:
+				windowEvents[WE_QUIT] = true;
+				break;
+
+			case SDL_WINDOWEVENT:
+				switch (event.window.event)
+				{
+					//case SDL_WINDOWEVENT_LEAVE:
+				case SDL_WINDOWEVENT_HIDDEN:
+				case SDL_WINDOWEVENT_MINIMIZED:
+				case SDL_WINDOWEVENT_FOCUS_LOST:
+					windowEvents[WE_HIDE] = true;
+					break;
+
+					//case SDL_WINDOWEVENT_ENTER:
+				case SDL_WINDOWEVENT_SHOWN:
+				case SDL_WINDOWEVENT_FOCUS_GAINED:
+				case SDL_WINDOWEVENT_MAXIMIZED:
+				case SDL_WINDOWEVENT_RESTORED:
+					windowEvents[WE_SHOW] = true;
+					break;
+				}
+				break;
 
 			case SDL_DROPFILE:
 				path = event.drop.file;
 				extension = path.substr(path.find_last_of(".") + 1);
 				if (extension.compare("png") == 0 || extension.compare("bmp") == 0 || extension.compare("jpg") == 0) {
-					App->texture->LoadTexture(path);
+					App->model->UpdateTexture(App->texture->LoadTexture(path));
 				}
 				if (extension.compare("fbx") == 0 || extension.compare("FBX") == 0) {
-					App->modelLoader->LoadModel(path);
-					for (unsigned int i = 0; i < App->modelLoader->meshes.size(); i++) {
-						App->triangle->SetupMesh(App->modelLoader->meshes[i]);
+					App->model->LoadModel(path);
+					for (unsigned int i = 0; i < App->model->meshes.size(); i++) {
+						App->scene->SetupMesh(App->model->meshes[i]);
 					}
 				}
 				break;
@@ -68,6 +87,10 @@ update_status ModuleInput::PreUpdate()
 				break;
 
 		}
+	}
+	if (GetWindowEvent(EventWindow::WE_QUIT) == true || GetKey(SDL_SCANCODE_ESCAPE)) {
+		return UPDATE_STOP;
+
 	}
 
 	return UPDATE_CONTINUE;

@@ -1,13 +1,10 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleCamera.h"
+#include "ModuleWindow.h"
+#include "ModuleModel.h"
 #include "SDL_scancode.h"
 #include "SDL_mouse.h"
-
-
-ModuleCamera::ModuleCamera() {}
-
-ModuleCamera::~ModuleCamera() {}
 
 bool ModuleCamera::Init() {
 	frustum.type = FrustumType::PerspectiveFrustum;
@@ -17,18 +14,18 @@ bool ModuleCamera::Init() {
 	frustum.nearPlaneDistance = 0.3F;
 	frustum.farPlaneDistance = 250.0F;
 	frustum.verticalFov = math::pi / 4.0F;
-	frustum.horizontalFov = 2.0F * atanf(tanf(frustum.verticalFov * 0.5F) * 2.F);
-	pitch = -RadToDeg(asin(frustum.front.y));
-	yaw = -RadToDeg(acos(frustum.front.x / cos(DegToRad(pitch))));
+	UpdateAspectRatio();
+	CalculateRotationAngles(frustum.front);
 	return true;
 }
 
 update_status  ModuleCamera::PreUpdate() {
+	UpdateAspectRatio();
 	proj = frustum.ProjectionMatrix();
 	model =
 		float4x4::FromTRS(helper1,
 			float3x3::RotateY(frustum.verticalFov), helper2);
-	view = LookAt(frustum.pos, frustum.pos + frustum.front, frustum.up);
+	view = LookAt(frustum.pos, frustum.pos + frustum.front - cameraTarget, frustum.up);
 	return UPDATE_CONTINUE;
 }
 
@@ -38,20 +35,18 @@ update_status  ModuleCamera::Update() {
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT)) {
 		movementSpeed = cameraSpeed * 2;
 	}
-	if (App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT)) {
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) && (App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT))) {
 		orbit = true;
+		MouseMove();
 	}
 	if (App->input->GetKey(SDL_SCANCODE_F)) {
-		frustum.pos = float3(0.0F, 0.0F, 0.0F);
-		view = LookAt(frustum.pos, frustum.pos + frustum.front, frustum.up);
-	}
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
-		MouseMove();
+		Focus();
 	}
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
 		MouseScrolling();
 	}
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT)) {
+		MouseMove();
 		if (App->input->GetKey(SDL_SCANCODE_W)) {
 			frustum.pos += movementSpeed * frustum.front;
 		}
@@ -68,7 +63,7 @@ update_status  ModuleCamera::Update() {
 	return UPDATE_CONTINUE;
 }
 
-float4x4 ModuleCamera::LookAt(float3 eye, float3 target, float3 up) {
+float4x4 ModuleCamera::LookAt(float3& eye, float3& target, float3& up) const {
 	float3 f(target - eye); f.Normalize();
 	float3 s(f.Cross(up)); s.Normalize();
 	float3 u(s.Cross(f));
@@ -84,24 +79,33 @@ void ModuleCamera::MouseMove()
 {
 	float2 offset = App->input->GetMouseMotion();
 
-	float sensitivity = 0.1F; // change this value to your liking
+	float sensitivity = 0.1F;
 	offset.x *= sensitivity;
 	offset.y *= sensitivity;
 
 	yaw += offset.x;
 	pitch += offset.y;
 
-	// make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (pitch > 89.0F)
-		pitch = 89.0F;
-	if (pitch < -89.0F)
-		pitch = -89.0F;
+	
+	if (orbit == false) {
+		if (pitch > 89.0F)
+			pitch = 89.0F;
+		if (pitch < -89.0F)
+			pitch = -89.0F; 
 
-	float3 front;
-	front.x = cos(DegToRad(yaw)) * cos(DegToRad(pitch));
-	front.y = sin(DegToRad(pitch));
-	front.z = sin(DegToRad(yaw)) * cos(DegToRad(pitch));
-	frustum.front = front.Normalized();
+	}
+
+	float3 direction;
+	direction.x = cos(DegToRad(yaw)) * cos(DegToRad(pitch));
+	direction.y = sin(DegToRad(pitch));
+	direction.z = sin(DegToRad(yaw)) * cos(DegToRad(pitch));
+	if (orbit) {
+		frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * direction.Normalized();
+		cameraTarget = frustum.pos + frustum.front;
+	} else {
+		cameraTarget = float3::zero;
+		frustum.front = direction.Normalized();
+	}
 }
 
 
@@ -114,4 +118,20 @@ void ModuleCamera::MouseScrolling()
 	if (offset.y < 0) {
 		frustum.pos -= cameraSpeed * frustum.front;
 	}
+}
+
+void ModuleCamera::UpdateAspectRatio() {
+	frustum.horizontalFov = 2.0F * atanf(tanf(frustum.verticalFov * 0.5F) * App->window->screenWidth / App->window->screenHeight);
+}
+
+void ModuleCamera::CalculateRotationAngles(float3& vector) {
+	pitch = -RadToDeg(asin(vector.y));
+	yaw = -RadToDeg(acos(vector.x / cos(DegToRad(pitch))));
+}
+
+void ModuleCamera::Focus() {
+	cameraTarget = float3::zero;
+	frustum.front = -float3::unitZ;
+	CalculateRotationAngles(frustum.front);
+	frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * frustum.front;
 }

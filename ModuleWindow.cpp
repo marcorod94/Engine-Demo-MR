@@ -74,7 +74,7 @@ bool ModuleWindow::CleanUp()
 	SDL_Quit();
 	return true;
 }
-void ModuleWindow::UpdateResizable() {
+void ModuleWindow::UpdateResizable() const {
 	if (resizable) {
 		SDL_SetWindowResizable(window, SDL_TRUE);
 	} else {
@@ -83,7 +83,7 @@ void ModuleWindow::UpdateResizable() {
 
 }
 
-void ModuleWindow::UpdateFullScreen() {
+void ModuleWindow::UpdateFullScreen() const {
 	if (fullScreen) {
 		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	} else {
@@ -92,7 +92,7 @@ void ModuleWindow::UpdateFullScreen() {
 
 }
 
-void ModuleWindow::UpdateScreenSize() {
+void ModuleWindow::UpdateScreenSize() const {
 	SDL_SetWindowSize(window, screenWidth, screenHeight);
 }
 

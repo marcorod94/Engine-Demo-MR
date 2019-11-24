@@ -1,5 +1,5 @@
-#ifndef __ModuleWindow_H__
-#define __ModuleWindow_H__
+#ifndef ModuleWindow_h
+#define ModuleWindow_h
 
 #include "Module.h"
 #include "SDL.h"
@@ -20,9 +20,9 @@ public:
 
 	// Called before quitting
 	bool CleanUp();
-	void UpdateResizable();
-	void UpdateFullScreen();
-	void UpdateScreenSize();
+	void UpdateResizable() const;
+	void UpdateFullScreen() const;
+	void UpdateScreenSize() const;
 
 public:
 	//The window we'll be rendering to
@@ -34,7 +34,7 @@ public:
 	bool fullScreen = false;
 	bool resizable = false;
 private:
-	float aspectRatio = 2;
+	float aspectRatio = 1.8f;
 };
 
-#endif // __ModuleWindow_H__
+#endif

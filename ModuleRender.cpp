@@ -6,15 +6,6 @@
 #include "SDL.h"
 #include "GL/glew.h"
 
-ModuleRender::ModuleRender()
-{
-}
-
-// Destructor
-ModuleRender::~ModuleRender()
-{
-}
-
 // Called before render is available
 bool ModuleRender::Init()
 {
@@ -28,33 +19,32 @@ bool ModuleRender::Init()
 
 	glContext = SDL_GL_CreateContext(App->window->window);
 
-	GLenum err = glewInit(); // … check for errors 
+	GLenum err = glewInit();
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	glClearDepth(1.0f);
+	glClearDepth(1.0F);
 
-	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glClearColor(0.F, 0.F, 0.F, 1.F);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 	glEnable(GL_DEPTH_TEST);
 	glFrontFace(GL_CCW);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
+
 	return true;
 }
 
 update_status ModuleRender::PreUpdate()
 {
-	SDL_RenderSetLogicalSize(SDL_GetRenderer(App->window->window), App->window->minScreenWidth, App->window->minScreenHeight);
-
-	glViewport(0, 0, App->window->minScreenWidth, App->window->minScreenHeight);
+	SDL_GetWindowSize(App->window->window, &App->window->screenWidth, &App->window->screenHeight);
+	glViewport(0, 0, App->window->screenWidth, App->window->screenHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	return UPDATE_CONTINUE;
 }
 
 // Called every draw update
 update_status ModuleRender::Update()
-{
-	
+{	
 	return UPDATE_CONTINUE;
 }
 
@@ -74,8 +64,3 @@ bool ModuleRender::CleanUp()
 
 	return true;
 }
-
-void ModuleRender::WindowResized(unsigned width, unsigned height)
-{
-}
-

@@ -1,39 +1,33 @@
-#pragma once
+#ifndef Module_h
+#define Module_h
 
 #include "Globals.h"
 
 class Application;
 
-class Module
-{
+class Module {
 public:
 
-	Module()
-	{
-	}
+	Module() {}
 
-	virtual bool Init() 
-	{
+	virtual bool Init() {
 		return true; 
 	}
 
-	virtual update_status PreUpdate()
-	{
+	virtual update_status PreUpdate() {
 		return UPDATE_CONTINUE;
 	}
 
-	virtual update_status Update()
-	{
+	virtual update_status Update() {
 		return UPDATE_CONTINUE;
 	}
 
-	virtual update_status PostUpdate()
-	{
+	virtual update_status PostUpdate() {
 		return UPDATE_CONTINUE;
 	}
 
-	virtual bool CleanUp() 
-	{ 
+	virtual bool CleanUp() { 
 		return true; 
 	}
 };
+#endif

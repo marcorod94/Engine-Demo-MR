@@ -6,14 +6,6 @@
 #include "IL/ilu.h"
 #include "IL/ilut.h"
 
-
-ModuleTexture::ModuleTexture() {}
-
-
-ModuleTexture::~ModuleTexture()
-{
-}
-
 bool ModuleTexture::Init() {
 	ilInit();
 	iluInit();
@@ -40,8 +32,11 @@ Texture ModuleTexture::LoadTexture(std::string& path) {
 	ilLoadImage(path.c_str());
 	iluGetImageInfo(&imageInfo);
 	texture.id = ilutGLBindTexImage();
+	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
+	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);
 	texture.type = "texture_diffuse";
 	texture.path = path;
 	loadedTextures.push_back(texture);
+	App->imgui->AddLog("Texture succssesfully loaded: %s", path.c_str());
 	return texture;
 }

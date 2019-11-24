@@ -13,8 +13,8 @@ class ModuleTexture : public Module
 {
 public:
 	std::vector<Texture> loadedTextures;
-	ModuleTexture();
-	~ModuleTexture();
+	ModuleTexture() {}
+	~ModuleTexture() {}
 
 	bool Init();
 	bool CleanUp();

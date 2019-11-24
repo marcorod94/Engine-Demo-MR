@@ -1,13 +1,13 @@
-#ifndef ModuleTriangle_h
-#define ModuleTriangle_h
+#ifndef ModuleScene_h
+#define ModuleScene_h
 #include "Module.h"
 #include "Globals.h"
 #include "GL/glew.h"
 
-class ModuleTriangle : public Module {
+class ModuleScene : public Module {
 public:
-	ModuleTriangle();
-	~ModuleTriangle();
+	ModuleScene() {}
+	~ModuleScene() {}
 
 	bool Init();
 	update_status PreUpdate();
@@ -15,8 +15,8 @@ public:
 	void SetupMesh(Mesh&);
 	bool CleanUp();
 private:
-	void ShowGrid();
-	void ShowAxis();
+	void ShowGrid() const;
+	void ShowAxis() const;
 	void DrawMesh(Mesh&);
 private:
 	GLuint vbo, ebo, vao;
