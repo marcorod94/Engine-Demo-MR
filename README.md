@@ -11,7 +11,7 @@ A demo of an engine for game development develop from scratch, it has a camera s
 
 ### Screen Shots
 
-![](https://github.com/marcorod94/Engine-Demo-MR/Screenshots/home.png)
+![](https://github.com/marcorod94/Engine-Demo-MR/blob/master/Screenshots/home.png)
 
 ## Author (Marco Rodriguez)
 Software Engineer from Ecuador, currently studying a masters on Game Development at UPC Barcelona, Spain.
