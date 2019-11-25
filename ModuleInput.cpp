@@ -29,9 +29,7 @@ update_status ModuleInput::PreUpdate()
 {
 	static SDL_Event event;
 	memset(windowEvents, false, WE_COUNT * sizeof(bool));
-
 	keyboard = SDL_GetKeyboardState(NULL);
-
 	std::string path;
 	std::string extension;
 	
@@ -85,6 +83,10 @@ update_status ModuleInput::PreUpdate()
 				mouse_scroll.x = event.wheel.x;
 				mouse_scroll.y = event.wheel.y;
 				break;
+			case SDL_KEYDOWN:
+				currentKey = SDL_GetKeyName(event.key.keysym.sym);
+				break;
+
 
 		}
 	}
@@ -103,19 +105,8 @@ update_status ModuleInput::Update() {
 }
 
 // Called before quitting
-bool ModuleInput::CleanUp()
-{
+bool ModuleInput::CleanUp() {
 	App->imgui->AddLog("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
-}
-
-const float2& ModuleInput::GetMouseMotion() const
-{
-	return mouse_motion;
-}
-
-const float2& ModuleInput::GetMouseScroll() const
-{
-	return mouse_scroll;
 }

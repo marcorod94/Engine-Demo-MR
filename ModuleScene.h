@@ -6,6 +6,8 @@
 
 class ModuleScene : public Module {
 public:
+	bool showGrid = true;
+	bool showAxis = true;
 	ModuleScene() {}
 	~ModuleScene() {}
 
@@ -15,8 +17,8 @@ public:
 	void SetupMesh(Mesh&);
 	bool CleanUp();
 private:
-	void ShowGrid() const;
-	void ShowAxis() const;
+	void DrawGrid() const;
+	void DrawAxis() const;
 	void DrawMesh(Mesh&);
 private:
 	GLuint vbo, ebo, vao;

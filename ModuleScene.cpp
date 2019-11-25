@@ -33,10 +33,12 @@ update_status ModuleScene::Update() {
 	for (unsigned int i = 0; i < App->model->meshes.size(); i++) {
 		DrawMesh(App->model->meshes[i]);
 	}
-
-	ShowAxis();
-	ShowGrid();
-
+	if (showAxis) {
+		DrawAxis();
+	}
+	if (showGrid) {
+		DrawGrid();
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -47,7 +49,7 @@ bool ModuleScene::CleanUp() {
 	return true;
 }
 
-void ModuleScene::ShowGrid() const {
+void ModuleScene::DrawGrid() const {
 	glLineWidth(1.0F);
 	float d = 200.0F;
 	glBegin(GL_LINES);
@@ -61,7 +63,7 @@ void ModuleScene::ShowGrid() const {
 	glEnd();
 }
 
-void ModuleScene::ShowAxis() const {
+void ModuleScene::DrawAxis() const {
 	glLineWidth(2.0F);
 	glBegin(GL_LINES);
 	// red X

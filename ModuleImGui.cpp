@@ -5,6 +5,8 @@
 #include "ModuleCamera.h"
 #include "ModuleTexture.h"
 #include "ModuleModel.h"
+#include "ModuleScene.h"
+#include "ModuleInput.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
@@ -121,7 +123,7 @@ void ModuleImGui::AddLog(const char* fmt, ...) {
 }
 
 
-void  ModuleImGui::ShowModulesWindow() {
+const void  ModuleImGui::ShowModulesWindow() {
 	ImGui::Begin("Module Configuration", &showModule);
 	if (ImGui::TreeNode("Window")) {
 		if (ImGui::SliderInt("Width", &(App->window->screenWidth), App->window->minScreenWidth, App->window->maxScreenWidth)) {
@@ -138,6 +140,15 @@ void  ModuleImGui::ShowModulesWindow() {
 		}
 		ImGui::TreePop();
 	}
+	if (ImGui::TreeNode("Render")) {
+		ImGui::Checkbox("Show Grid", &(App->scene->showGrid));
+		ImGui::Checkbox("Show Axis", &(App->scene->showAxis));
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("Input")) {
+		ImGui::Text("Last key Pressed: %s", App->input->currentKey.c_str());
+		ImGui::TreePop();
+	}
 	if (ImGui::TreeNode("Camera")) {
 		ImGui::SliderFloat("Camera Speed", &(App->camera->cameraSpeed), 0.01F, 2.0F);
 		ImGui::TreePop();
@@ -149,7 +160,7 @@ void  ModuleImGui::ShowModulesWindow() {
 	ImGui::End();
 }
 
-void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
+const void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
 	ImGui::Begin("System Information", &showInfo);
 	if (ImGui::TreeNode("Frame rate")) {
 		fps_log.push_back(io.Framerate);
@@ -180,7 +191,7 @@ void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
 	ImGui::End();
 }
 
-void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
+const void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
 	for (unsigned int i = 0; i < textures.size(); i++) {
 		ImGui::Text("Path: %s", textures[i].path.c_str());
 		ImGui::Text("Type: %s", textures[i].type.c_str());
@@ -191,3 +202,4 @@ void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
 		}
 	}
 }
+

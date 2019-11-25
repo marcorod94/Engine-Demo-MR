@@ -31,8 +31,8 @@ private:
 	bool showAbout = false;
 	bool showProperties = false;
 
-	void ShowModulesWindow();
-	void ShowInformationWindow(ImGuiIO&);
-	void ShowTextures(std::vector<Texture>&);
+	const void ShowModulesWindow();
+	const void ShowInformationWindow(ImGuiIO&);
+	const void ShowTextures(std::vector<Texture>&);
 }; 
 #endif 
