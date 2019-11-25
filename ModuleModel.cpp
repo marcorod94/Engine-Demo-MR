@@ -32,6 +32,9 @@ void ModuleModel::LoadModel(std::string& path) {
 	}
 	directory = path.substr(0, path.find_last_of('\\') + 1);
 	processNode(scene->mRootNode, scene);
+	rotation.x = RadToDeg(rotation.x);
+	rotation.y = RadToDeg(rotation.y);
+	rotation.z = RadToDeg(rotation.z);
 	App->camera->Focus();
 	Assimp::DefaultLogger::kill();
 
