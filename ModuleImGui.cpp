@@ -19,6 +19,17 @@ bool ModuleImGui::Init() {
 	ImGui::StyleColorsDark();
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->glContext);
 	ImGui_ImplOpenGL3_Init();
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontDefault();
+	static const ImWchar iconsRanges[] = { 0xf000, 0xf8d9, 0 };
+	static const ImWchar iconsBrandRange[] = { 0xf081, 0xf8e8, 0 };
+	ImFontConfig icons_config;
+	icons_config.MergeMode = true;
+	icons_config.PixelSnapH = true;
+	io.Fonts->AddFontFromFileTTF("Fonts/fa-solid-900.ttf", 16.0F, &icons_config, iconsRanges);
+	io.Fonts->AddFontFromFileTTF("Fonts/fa-regular-400.ttf", 16.0F, &icons_config, iconsRanges);
+	io.Fonts->AddFontFromFileTTF("Fonts/fa-brands-400.ttf", 16.0F, &icons_config, iconsBrandRange);
+
 	return true;
 }
 
@@ -28,14 +39,14 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 	ImGui::BeginMainMenuBar();
-	if (ImGui::BeginMenu("Menu")) {
+	if (ImGui::BeginMenu(u8"\uf0c9 Menu")) {
 		showModule = ImGui::MenuItem("Module Configuration");
 		showProperties = ImGui::MenuItem("Properties");
 		showInfo = ImGui::MenuItem("System Information");
 		showConsole = ImGui::MenuItem("Console Window");
 		ImGui::EndMenu();
 	}
-	if (ImGui::BeginMenu("Help")) {
+	if (ImGui::BeginMenu(u8"\uf059 Help")) {
 		showAbout = ImGui::MenuItem("About");
 		if (ImGui::MenuItem("Visit Page")) {
 			ShellExecute(0, 0, "https://github.com/marcorod94/Engine-Demo-MR", 0, 0, SW_SHOW);
