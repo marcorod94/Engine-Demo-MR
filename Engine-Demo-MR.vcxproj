@@ -47,14 +47,14 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>./Libraries/assimp/include;./Libraries/DevIL/include;./Libraries/imgui;./Libraries/MathGeoLib/include;./Libraries/glew-2.1.0/include;./Libraries/SDL/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./src/module;./src/main;./Libraries/assimp/include;./Libraries/DevIL/include;./Libraries/imgui;./Libraries/MathGeoLib/include;./Libraries/glew-2.1.0/include;./Libraries/SDL/include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>./Libraries/assimp/lib/x86;./Libraries/DevIL/lib/x86/Release;./Libraries/SDL/lib/x86;./Libraries/glew-2.1.0/lib/Release/Win32</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc140-mt.lib;DevIL.lib;ILU.lib;ILUT.lib;glew32.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;assimp-vc140-mt.lib;DevIL.lib;ILU.lib;ILUT.lib;glew32.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -78,29 +78,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="Globals.h" />
-    <ClInclude Include="Libraries\imgui\imconfig.h" />
-    <ClInclude Include="Libraries\imgui\imgui.h" />
-    <ClInclude Include="Libraries\imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="Libraries\imgui\imgui_impl_sdl.h" />
-    <ClInclude Include="Libraries\imgui\imgui_internal.h" />
-    <ClInclude Include="Libraries\imgui\imstb_rectpack.h" />
-    <ClInclude Include="Libraries\imgui\imstb_textedit.h" />
-    <ClInclude Include="Libraries\imgui\imstb_truetype.h" />
-    <ClInclude Include="Module.h" />
-    <ClInclude Include="ModuleCamera.h" />
-    <ClInclude Include="ModuleImGui.h" />
-    <ClInclude Include="ModuleInput.h" />
-    <ClInclude Include="ModuleModel.h" />
-    <ClInclude Include="ModuleProgram.h" />
-    <ClInclude Include="ModuleRender.h" />
-    <ClInclude Include="ModuleTexture.h" />
-    <ClInclude Include="ModuleScene.h" />
-    <ClInclude Include="ModuleWindow.h" />
+    <ClInclude Include="src\main\Application.h" />
+    <ClInclude Include="src\main\Globals.h" />
+    <ClInclude Include="src\module\Module.h" />
+    <ClInclude Include="src\module\ModuleCamera.h" />
+    <ClInclude Include="src\module\ModuleImGui.h" />
+    <ClInclude Include="src\module\ModuleInput.h" />
+    <ClInclude Include="src\module\ModuleModel.h" />
+    <ClInclude Include="src\module\ModuleProgram.h" />
+    <ClInclude Include="src\module\ModuleRender.h" />
+    <ClInclude Include="src\module\ModuleScene.h" />
+    <ClInclude Include="src\module\ModuleTexture.h" />
+    <ClInclude Include="src\module\ModuleWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
     <ClCompile Include="Libraries\imgui\imgui.cpp" />
     <ClCompile Include="Libraries\imgui\imgui_demo.cpp" />
     <ClCompile Include="Libraries\imgui\imgui_draw.cpp" />
@@ -139,17 +130,18 @@
     <ClCompile Include="Libraries\MathGeoLib\include\Math\SSEMath.cpp" />
     <ClCompile Include="Libraries\MathGeoLib\include\Math\TransformOps.cpp" />
     <ClCompile Include="Libraries\MathGeoLib\include\Time\Clock.cpp" />
-    <ClCompile Include="log.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="ModuleCamera.cpp" />
-    <ClCompile Include="ModuleImGui.cpp" />
-    <ClCompile Include="ModuleInput.cpp" />
-    <ClCompile Include="ModuleModel.cpp" />
-    <ClCompile Include="ModuleProgram.cpp" />
-    <ClCompile Include="ModuleRender.cpp" />
-    <ClCompile Include="ModuleTexture.cpp" />
-    <ClCompile Include="ModuleScene.cpp" />
-    <ClCompile Include="ModuleWindow.cpp" />
+    <ClCompile Include="src\main\Application.cpp" />
+    <ClCompile Include="src\main\log.cpp" />
+    <ClCompile Include="src\main\Main.cpp" />
+    <ClCompile Include="src\module\ModuleCamera.cpp" />
+    <ClCompile Include="src\module\ModuleImGui.cpp" />
+    <ClCompile Include="src\module\ModuleInput.cpp" />
+    <ClCompile Include="src\module\ModuleModel.cpp" />
+    <ClCompile Include="src\module\ModuleProgram.cpp" />
+    <ClCompile Include="src\module\ModuleRender.cpp" />
+    <ClCompile Include="src\module\ModuleScene.cpp" />
+    <ClCompile Include="src\module\ModuleTexture.cpp" />
+    <ClCompile Include="src\module\ModuleWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_CPP.inl" />
