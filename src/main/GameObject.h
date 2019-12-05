@@ -2,7 +2,9 @@
 #define GameObject_h
 #include <string>
 #include <vector>
-#include "component/Component.h"
+#include "main/Globals.h"
+enum class ComponentType;
+class Component;
 class GameObject {
 public:
 	std::string name;
@@ -12,7 +14,7 @@ public:
 	GameObject() {}
 	~GameObject() {}
 	update_status Update();
-	Component* createComponent(ComponentType);
+	const Component* CreateComponent(const ComponentType);
+	const Component* FindComponent(const ComponentType);
 };
-
 #endif
