@@ -1,7 +1,7 @@
 #ifndef ModuleRender_h
 #define ModuleRender_h
 #include "Module.h"
-#include "Globals.h"
+#include "main/Globals.h"
 #include "SDL.h"
 
 

@@ -1,4 +1,4 @@
-#include "Application.h"
+#include "main/Application.h"
 #include "ModuleProgram.h"
 #include "GL/glew.h"
 #include <fstream>

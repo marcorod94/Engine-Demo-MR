@@ -1,13 +1,13 @@
 #include "Application.h"
-#include "ModuleWindow.h"
-#include "ModuleRender.h"
-#include "ModuleInput.h"
-#include "ModuleScene.h"
-#include "ModuleProgram.h"
-#include "ModuleImGui.h"
-#include "ModuleTexture.h"
-#include "ModuleCamera.h"
-#include "ModuleModel.h"
+#include "module/ModuleWindow.h"
+#include "module/ModuleRender.h"
+#include "module/ModuleInput.h"
+#include "module/ModuleScene.h"
+#include "module/ModuleProgram.h"
+#include "module/ModuleImGui.h"
+#include "module/ModuleTexture.h"
+#include "module/ModuleCamera.h"
+#include "module/ModuleModel.h"
 
 using namespace std;
 

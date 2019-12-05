@@ -1,7 +1,7 @@
 #ifndef ModuleModel_h
 #define ModuleModel_h
 
-#include "Globals.h"
+#include "main/Globals.h"
 #include "Module.h"
 #include "ModuleImGui.h"
 #include <assimp/scene.h>

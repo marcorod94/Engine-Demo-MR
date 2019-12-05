@@ -2,7 +2,7 @@
 #define ModuleInput_h
 
 #include "Module.h"
-#include "Globals.h"
+#include "main/Globals.h"
 #include "MathGeoLib.h"
 #include "SDL.h"
 

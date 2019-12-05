@@ -1,4 +1,4 @@
-﻿#include "Application.h"
+﻿#include "main/Application.h"
 #include "ModuleScene.h"
 #include "GL/glew.h"
 #include "MathGeoLib.h"
@@ -146,4 +146,9 @@ void ModuleScene::DrawMesh(Mesh& mesh) {
     glBindVertexArray(0);
 
     glActiveTexture(GL_TEXTURE0);
+}
+
+
+GameObject* ModuleScene::CreateGameObject() {
+	return nullptr;
 }

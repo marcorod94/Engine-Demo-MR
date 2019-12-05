@@ -2,7 +2,7 @@
 #define ModuleImGui_h
 
 #include "Module.h"
-#include "Globals.h"
+#include "main/Globals.h"
 #include "imgui.h"
 #include <vector>
 

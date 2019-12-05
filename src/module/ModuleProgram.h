@@ -2,7 +2,7 @@
 #define ModuleProgram_h
 
 #include "Module.h"
-#include "Globals.h"
+#include "main/Globals.h"
 #include "GL/glew.h"
 
 class ModuleProgram : public Module {

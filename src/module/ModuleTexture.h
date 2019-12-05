@@ -2,7 +2,7 @@
 #define ModuleTexture_h
 
 #include "Module.h"
-#include "Globals.h"
+#include "main/Globals.h"
 #include "IL/il.h"
 #include "IL/ilu.h"
 

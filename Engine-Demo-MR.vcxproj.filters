@@ -151,6 +151,18 @@
     <ClCompile Include="src\main\log.cpp">
       <Filter>src\main</Filter>
     </ClCompile>
+    <ClCompile Include="src\main\GameObject.cpp">
+      <Filter>src\main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\Mesh.cpp">
+      <Filter>src\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\Transform.cpp">
+      <Filter>src\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\Material.cpp">
+      <Filter>src\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\module\ModuleRender.h">
@@ -189,6 +201,21 @@
     <ClInclude Include="src\main\Globals.h">
       <Filter>src\main</Filter>
     </ClInclude>
+    <ClInclude Include="src\component\Component.h">
+      <Filter>src\components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\main\GameObject.h">
+      <Filter>src\main</Filter>
+    </ClInclude>
+    <ClInclude Include="src\component\Mesh.h">
+      <Filter>src\components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\component\Transform.h">
+      <Filter>src\components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\component\Material.h">
+      <Filter>src\components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -208,6 +235,9 @@
     </Filter>
     <Filter Include="src\modules">
       <UniqueIdentifier>{2d0ab63f-59e9-47db-9729-0a622b74cec8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\components">
+      <UniqueIdentifier>{0371d8c3-46fe-4bb2-90eb-45e61865b055}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

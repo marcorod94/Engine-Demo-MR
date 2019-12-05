@@ -47,7 +47,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>./src/module;./src/main;./Libraries/assimp/include;./Libraries/DevIL/include;./Libraries/imgui;./Libraries/MathGeoLib/include;./Libraries/glew-2.1.0/include;./Libraries/SDL/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./src;./Libraries/assimp/include;./Libraries/DevIL/include;./Libraries/imgui;./Libraries/MathGeoLib/include;./Libraries/glew-2.1.0/include;./Libraries/SDL/include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -78,7 +78,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\component\Component.h" />
+    <ClInclude Include="src\component\Material.h" />
+    <ClInclude Include="src\component\Transform.h" />
+    <ClInclude Include="src\component\Mesh.h" />
     <ClInclude Include="src\main\Application.h" />
+    <ClInclude Include="src\main\GameObject.h" />
     <ClInclude Include="src\main\Globals.h" />
     <ClInclude Include="src\module\Module.h" />
     <ClInclude Include="src\module\ModuleCamera.h" />
@@ -130,7 +135,11 @@
     <ClCompile Include="Libraries\MathGeoLib\include\Math\SSEMath.cpp" />
     <ClCompile Include="Libraries\MathGeoLib\include\Math\TransformOps.cpp" />
     <ClCompile Include="Libraries\MathGeoLib\include\Time\Clock.cpp" />
+    <ClCompile Include="src\component\Material.cpp" />
+    <ClCompile Include="src\component\Transform.cpp" />
+    <ClCompile Include="src\component\Mesh.cpp" />
     <ClCompile Include="src\main\Application.cpp" />
+    <ClCompile Include="src\main\GameObject.cpp" />
     <ClCompile Include="src\main\log.cpp" />
     <ClCompile Include="src\main\Main.cpp" />
     <ClCompile Include="src\module\ModuleCamera.cpp" />
