@@ -17,7 +17,6 @@ bool ModuleWindow::Init()
 {
 	App->imgui->AddLog("Init SDL window & surface");
 	bool ret = true;
-
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		App->imgui->AddLog("SDL_VIDEO could not initialize! SDL_Error: %s", SDL_GetError());
@@ -31,18 +30,23 @@ bool ModuleWindow::Init()
 		SDL_GetCurrentDisplayMode(0, &DM);
 		maxScreenWidth = DM.w;
 		maxScreenHeight = DM.h;
-		minScreenWidth = screenWidth = DM.w / aspectRatio;
+		minScreenWidth = screenWidth = DM.w / aspectRatio; 
 		minScreenHeight = screenHeight = DM.h / aspectRatio;
 
-		if(fullScreen == true)
+		
+		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, flags);
+		if (FULLSCREEN == true)
 		{
-			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+			flags = SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_OPENGL;
+			SDL_SetWindowFullscreen(window, flags);
 		}
-		if (resizable) {
+		else if (FULLSCREEN == false) {
+			flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+			SDL_SetWindowFullscreen(window, flags);
+		}
+		if (RESIZABLE) {
 			flags |= SDL_WINDOW_RESIZABLE;
 		}
-		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, flags);
-
 		if(window == NULL)
 		{
 			App->imgui->AddLog("Window could not be created! SDL_Error: %s", SDL_GetError());
@@ -53,6 +57,7 @@ bool ModuleWindow::Init()
 			//Get window surface
 			
 			screen_surface = SDL_GetWindowSurface(window);
+			SDL_UpdateWindowSurface(window);
 		}
 	}
 
@@ -85,7 +90,7 @@ void ModuleWindow::UpdateResizable() const {
 
 void ModuleWindow::UpdateFullScreen() const {
 	if (fullScreen) {
-		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 	} else {
 		SDL_SetWindowFullscreen(window, 0);
 	}

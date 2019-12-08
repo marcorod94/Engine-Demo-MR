@@ -50,5 +50,9 @@ struct Mesh {
 // Configuration -----------
 #define VSYNC true
 #define SCREEN_SIZE 2
+#define SCREEN_WIDTH 1024
+#define SCREEN_HEIGHT 768
+#define FULLSCREEN true
+#define RESIZABLE true
 #define TITLE "EM ENGINE"
 #endif

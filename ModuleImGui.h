@@ -15,6 +15,9 @@ public:
 	update_status Update();
 	bool CleanUp();
 	void AddLog(const char*, ...);
+
+	void DrawConsoleWindow();
+	void DrawInspectorWindow();
 private: 
 	bool show_demo_window = true;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -26,7 +29,8 @@ private:
 
 	bool showMain = true;
 	bool showInfo = false;
-	bool showConsole = false;
+	bool showConsole = true;
+	
 	bool showModule = false;
 	bool showAbout = false;
 	bool showProperties = false;
