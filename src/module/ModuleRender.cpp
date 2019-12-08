@@ -84,8 +84,8 @@ bool ModuleRender::CleanUp()
 	return true;
 }
 
-Meshc* ModuleRender::CreateMesh() {
-	return new Meshc();
+Mesh* ModuleRender::CreateMesh() {
+	return new Mesh();
 }
 
 void ModuleRender::DrawGrid() const {
@@ -128,13 +128,13 @@ void ModuleRender::DrawAxis() const {
 
 void  ModuleRender::DrawGameObject(GameObject* parent) {
 	DrawMaterial((Material*)parent->FindComponent(ComponentType::Material));
-	DrawMesh((Meshc*)parent->FindComponent(ComponentType::Mesh));
+	DrawMesh((Mesh*)parent->FindComponent(ComponentType::Mesh));
 	for (unsigned i = 0; i < parent->children.size(); i++) {
 		DrawGameObject(parent->children[i]);
 	}
 }
 
-void  ModuleRender::DrawMesh(Meshc* mesh) {
+void  ModuleRender::DrawMesh(Mesh* mesh) {
 	if (mesh) {
 		glBindVertexArray(mesh->vao);
 		glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);

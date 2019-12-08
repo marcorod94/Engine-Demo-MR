@@ -2,7 +2,7 @@
 #include "GL/glew.h"
 #include "imgui.h"
 
-void Meshc::Setup() {
+void Mesh::Setup() {
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glGenBuffers(1, &ebo);
@@ -32,7 +32,7 @@ void Meshc::Setup() {
 	glBindVertexArray(0);
 }
 
-void Meshc::DrawView() {
+void Mesh::DrawView() {
 	if (ImGui::TreeNode("Geometry ")) {
 		ImGui::Text("Vertex Total: %d", totalVertex);
 		ImGui::Text("Primitive Total: %d", totalPrimitives);

@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 class GameObject;
-class Meshc;
+class Mesh;
 class Material;
 class ModuleModel: public Module {
 public:

@@ -54,7 +54,7 @@ void ModuleModel::processNode(const aiNode *node, const aiScene *scene, GameObje
 
 
 void ModuleModel::processMesh(const aiMesh* mesh, GameObject* parent) {
-	Meshc* meshAux = App->renderer->CreateMesh();
+	Mesh* meshAux = App->renderer->CreateMesh();
 	meshAux->totalPrimitives = mesh->mNumFaces;
 	meshAux->totalVertex = mesh->mNumVertices;
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)

@@ -1,7 +1,7 @@
-#ifndef Meshc_h
-#define Meshc_h
+#ifndef Mesh_h
+#define Mesh_h
 #include "Component.h"
-class Meshc : public Component {
+class Mesh : public Component {
 public:
 	unsigned int vbo, ebo, vao;
 	std::vector<Vertex> vertices;
@@ -10,7 +10,7 @@ public:
 	int totalPrimitives = 0;
 	int totalVertex = 0;
 	int totalMaterials = 0;
-	Meshc() { type = ComponentType::Mesh; }
+	Mesh() { type = ComponentType::Mesh; }
 	void Setup();
 	void DrawView();
 };

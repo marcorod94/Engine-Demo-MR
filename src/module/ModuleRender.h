@@ -4,7 +4,7 @@
 #include "main/Globals.h"
 #include "SDL.h"
 
-class Meshc;
+class Mesh;
 class Material;
 class GameObject;
 class ModuleRender : public Module {
@@ -21,12 +21,12 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 	bool CleanUp();
-	Meshc* CreateMesh();
+	Mesh* CreateMesh();
 private:
 	void DrawGrid() const;
 	void DrawAxis() const;
 	void DrawGameObject(GameObject*);
-	void DrawMesh(Meshc*);
+	void DrawMesh(Mesh*);
 	void DrawMaterial(Material*);
 };
 #endif
