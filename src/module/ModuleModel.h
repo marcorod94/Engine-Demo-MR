@@ -10,31 +10,26 @@
 #include <assimp/DefaultLogger.hpp>
 #include <vector>
 #include <string>
+class GameObject;
+class Meshc;
+class Material;
 class ModuleModel: public Module {
 public:
-	std::vector<Mesh> meshes;
-	std::vector<Texture> modelTextures;
-	aiVector3D scaling;
-	aiVector3D position;
-	aiVector3D rotation;
-	float radius = 0.0F;
+		
 	AABB box;
-	int totalPrimitives = 0;
-	int totalVertex = 0;
-	int totalMaterials = 0;
-
 	ModuleModel() {}
 	~ModuleModel() {}
 	bool Init();
 	bool CleanUp();
-	void LoadModel(std::string&);
+	const void LoadModel(std::string&);
 	void UpdateTexture(Texture&);
 
 private:
 	std::string directory;
-	void processNode(aiNode*, const aiScene*);
-	Mesh processMesh(aiMesh*, const aiScene*);
-	std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, const char* );
+	void processNode(const aiNode*, const aiScene*, GameObject*);
+	void processMesh(const aiMesh*, GameObject*);
+	void processMaterials(const aiMaterial*, GameObject*);
+	void loadMaterialTextures(const aiMaterial*, aiTextureType, const char*, Material*);
 	int existsFile(const char*) const;
 };
 

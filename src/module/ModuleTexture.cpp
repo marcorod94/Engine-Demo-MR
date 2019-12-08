@@ -40,3 +40,8 @@ Texture ModuleTexture::LoadTexture(std::string& path) {
 	App->imgui->AddLog("Texture succssesfully loaded: %s", path.c_str());
 	return texture;
 }
+
+
+Material* ModuleTexture::CreateMaterial() {
+	return new Material();
+}

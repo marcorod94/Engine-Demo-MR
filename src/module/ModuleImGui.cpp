@@ -12,6 +12,7 @@
 #include "imgui_impl_opengl3.h"
 #include "GL/glew.h"
 #include "assimp/version.h"
+#include "main/GameObject.h"
 
 bool ModuleImGui::Init() {
 	IMGUI_CHECKVERSION();
@@ -38,12 +39,22 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
+	if (showHierarchy) {
+		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
+		if (ImGui::TreeNode(App->scene->root->name.c_str())) {
+			int root = 0;
+			DrawHierarchy(App->scene->root->children, root);
+			ImGui::TreePop();
+		}
+		ImGui::End();
+	}
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu(u8"\uf0c9 Menu")) {
 		showModule = ImGui::MenuItem("Module Configuration");
 		showProperties = ImGui::MenuItem("Properties");
 		showInfo = ImGui::MenuItem("System Information");
 		showConsole = ImGui::MenuItem("Console Window");
+		showHierarchy = ImGui::MenuItem("Hierarchy");
 		ImGui::EndMenu();
 	}
 	if (ImGui::BeginMenu(u8"\uf059 Help")) {
@@ -71,35 +82,6 @@ update_status ModuleImGui::Update() {
 	}
 	if (showModule) {
 		ShowModulesWindow();
-	}
-	if (showProperties) {
-		ImGui::Begin("Properties", &showProperties);
-		if (ImGui::TreeNode("Model")) {
-
-			if (ImGui::TreeNode("Transformation")) {
-				ImGui::Text("Position:\tX:%.f\tY:%.f\tZ:%.f ", App->model->position.x, App->model->position.y, App->model->position.z);
-				ImGui::Text("Rotation:\tX:%.f\tY:%.f\tZ:%.f", App->model->rotation.x, App->model->rotation.y, App->model->rotation.z);
-				ImGui::Text("Scale:\tX:%.f\tY:%.f\tZ:%.f", App->model->scaling.x, App->model->scaling.y, App->model->scaling.z);
-				ImGui::TreePop();
-			}
-			if (ImGui::TreeNode("Geometry")) {
-				ImGui::Text("Mesh Total: %d", App->model->meshes.size());
-				ImGui::Text("Vertex Total: %d", App->model->totalVertex);
-				ImGui::Text("Primitive Total: %d", App->model->totalPrimitives);
-				ImGui::Text("Material Total: %d", App->model->totalMaterials);
-				ImGui::TreePop();
-			}
-			if (ImGui::TreeNode("Textures")) {
-				for (unsigned int i = 0; i < App->model->meshes.size(); i++) {
-					ImGui::Text("Mesh %d:", i + 1);
-					ShowTextures(App->model->meshes[i].textures);
-				}
-				ImGui::TreePop();
-			}
-			ImGui::TreePop();
-		}
-		ImGui::End();
-		
 	}
 	if (showAbout) {
 		ImGui::Begin("About", &showAbout);
@@ -152,8 +134,8 @@ const void  ModuleImGui::ShowModulesWindow() {
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Render")) {
-		ImGui::Checkbox("Show Grid", &(App->scene->showGrid));
-		ImGui::Checkbox("Show Axis", &(App->scene->showAxis));
+		ImGui::Checkbox("Show Grid", &(App->renderer->showGrid));
+		ImGui::Checkbox("Show Axis", &(App->renderer->showAxis));
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Input")) {
@@ -214,3 +196,42 @@ const void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
 	}
 }
 
+const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, int& index) {
+	for (unsigned i = 0; i < objects.size(); ++i)
+	{
+		++index;
+		unsigned flags = ImGuiTreeNodeFlags_None;
+		if (objects[i]->children.size() == 0) {
+			flags = ImGuiTreeNodeFlags_Leaf;
+		}
+		flags |= index == selected ? ImGuiTreeNodeFlags_Selected : 0;
+		if (ImGui::TreeNodeEx(objects[i]->name.c_str(), flags)) {
+			if (selected == index) {
+				objects[i]->ShowProperties();
+			}
+			if (ImGui::IsItemClicked()) {
+				selected = index;
+			}
+			if (ImGui::BeginDragDropTarget()) {
+				if (ImGui::AcceptDragDropPayload("ITEM")) {
+					// TODO check for firts item error
+					LOG("New: %d", sourceGO);
+					sourceGO->parent->DeleteChild(sourceGO);
+					sourceGO->parent = objects[i];
+					objects[i]->children.push_back(sourceGO);
+					sourceGO = nullptr;
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			if (ImGui::BeginDragDropSource()) {
+				LOG("Source: %d", objects[i]);
+				sourceGO = objects[i];
+				ImGui::SetDragDropPayload("ITEM", nullptr, 0);
+				ImGui::EndDragDropSource();
+			}
+			DrawHierarchy(objects[i]->children, index);
+			ImGui::TreePop();
+		}
+	}
+}

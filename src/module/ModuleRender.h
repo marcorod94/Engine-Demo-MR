@@ -4,9 +4,15 @@
 #include "main/Globals.h"
 #include "SDL.h"
 
-
+class Meshc;
+class Material;
+class GameObject;
 class ModuleRender : public Module {
 public:
+	SDL_GLContext glContext;
+	bool showGrid = true;
+	bool showAxis = true;
+
 	ModuleRender() {}
 	~ModuleRender() {}
 
@@ -15,8 +21,12 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 	bool CleanUp();
-
-public:
-	SDL_GLContext glContext;
+	Meshc* CreateMesh();
+private:
+	void DrawGrid() const;
+	void DrawAxis() const;
+	void DrawGameObject(GameObject*);
+	void DrawMesh(Meshc*);
+	void DrawMaterial(Material*);
 };
 #endif

@@ -11,8 +11,6 @@ public:
 	~ModuleProgram() {}
 
 	bool Init();
-	update_status Update();
-	bool CleanUp();
 	void LoadShaders(const char*, const char*);
 public:
 	GLuint vertexShader = 0;

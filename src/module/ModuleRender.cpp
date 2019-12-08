@@ -3,6 +3,12 @@
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
 #include "ModuleImGui.h"
+#include "ModuleProgram.h"
+#include "ModuleScene.h"
+#include "ModuleCamera.h"
+#include "main/GameObject.h"
+#include "component/Mesh.h"
+#include "component/Material.h"
 #include "SDL.h"
 #include "GL/glew.h"
 
@@ -44,7 +50,20 @@ update_status ModuleRender::PreUpdate()
 
 // Called every draw update
 update_status ModuleRender::Update()
-{	
+{
+	glUseProgram(App->program->program);
+	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "model"), 1, GL_TRUE, &(App->camera->model[0][0]));
+	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "view"), 1, GL_TRUE, &(App->camera->view[0][0]));
+	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "proj"), 1, GL_TRUE, &(App->camera->proj[0][0]));
+	if (App->scene->root) {
+		DrawGameObject(App->scene->root);
+	}
+	if (showAxis) {
+		DrawAxis();
+	}
+	if (showGrid) {
+		DrawGrid();
+	}
 	return UPDATE_CONTINUE;
 }
 
@@ -63,4 +82,89 @@ bool ModuleRender::CleanUp()
 	SDL_GL_DeleteContext(glContext);
 
 	return true;
+}
+
+Meshc* ModuleRender::CreateMesh() {
+	return new Meshc();
+}
+
+void ModuleRender::DrawGrid() const {
+	glLineWidth(1.0F);
+	float d = 200.0F;
+	glBegin(GL_LINES);
+	for (float i = -d; i <= d; i += 1.0F)
+	{
+		glVertex3f(i, 0.0F, -d);
+		glVertex3f(i, 0.0F, d);
+		glVertex3f(-d, 0.0F, i);
+		glVertex3f(d, 0.0F, i);
+	}
+	glEnd();
+}
+
+void ModuleRender::DrawAxis() const {
+	glLineWidth(2.0F);
+	glBegin(GL_LINES);
+	// red X
+	glColor4f(1.0F, 0.0F, 0.0F, 1.0F);
+	glVertex3f(0.0F, 0.0F, 0.0F); glVertex3f(1.0F, 0.0F, 0.0F);
+	glVertex3f(1.0F, 0.1F, 0.0F); glVertex3f(1.1F, -0.1F, 0.0F);
+	glVertex3f(1.1F, 0.1F, 0.0F); glVertex3f(1.0F, -0.1F, 0.0F);
+	// green Y
+	glColor4f(0.0F, 1.0F, 0.0F, 1.0F);
+	glVertex3f(0.0F, 0.0F, 0.0F); glVertex3f(0.0F, 1.0F, 0.0F);
+	glVertex3f(-0.05F, 1.25F, 0.0F); glVertex3f(0.0F, 1.15F, 0.0F);
+	glVertex3f(0.05F, 1.25F, 0.0F); glVertex3f(0.0F, 1.15F, 0.0F);
+	glVertex3f(0.0F, 1.15F, 0.0F); glVertex3f(0.0F, 1.05F, 0.0F);
+
+	glColor4f(0.0F, 0.0F, 1.0F, 1.0F);
+	glVertex3f(0.0F, 0.0F, 0.0F); glVertex3f(0.0F, 0.0F, 1.0F);
+	glVertex3f(-0.05F, 0.1F, 1.05F); glVertex3f(0.05F, 0.1F, 1.05F);
+	glVertex3f(0.05F, 0.1F, 1.05F); glVertex3f(-0.05F, -0.1F, 1.05F);
+	glVertex3f(-0.05F, -0.1F, 1.05F); glVertex3f(0.05F, -0.1F, 1.05F);
+	glEnd();
+	glLineWidth(1.0F);
+}
+
+void  ModuleRender::DrawGameObject(GameObject* parent) {
+	DrawMaterial((Material*)parent->FindComponent(ComponentType::Material));
+	DrawMesh((Meshc*)parent->FindComponent(ComponentType::Mesh));
+	for (unsigned i = 0; i < parent->children.size(); i++) {
+		DrawGameObject(parent->children[i]);
+	}
+}
+
+void  ModuleRender::DrawMesh(Meshc* mesh) {
+	if (mesh) {
+		glBindVertexArray(mesh->vao);
+		glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+		glActiveTexture(GL_TEXTURE0);
+	}
+}
+
+void  ModuleRender::DrawMaterial(Material* material) {
+	if (material) {
+		unsigned int diffuseNr = 1;
+		unsigned int specularNr = 1;
+		unsigned int normalNr = 1;
+		unsigned int heightNr = 1;
+		for (unsigned int i = 0; i < material->textures.size(); i++) {
+			glActiveTexture(GL_TEXTURE0 + i);
+			std::string number;
+			std::string name = material->textures[i].type;
+			if (name == "texture_diffuse")
+				number = std::to_string(++diffuseNr);
+			else if (name == "texture_specular")
+				number = std::to_string(++specularNr);
+			else if (name == "texture_normal")
+				number = std::to_string(++normalNr);
+			else if (name == "texture_height")
+				number = std::to_string(++heightNr);
+
+			glUniform1i(glGetUniformLocation(App->program->program, (name + number).c_str()), i);
+			// and finally bind the texture
+			glBindTexture(GL_TEXTURE_2D, material->textures[i].id);
+		}
+	}
 }

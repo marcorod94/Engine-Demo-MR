@@ -36,7 +36,7 @@ bool ModuleWindow::Init()
 
 		if(fullScreen == true)
 		{
-			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+			flags |= SDL_WINDOW_MAXIMIZED;
 		}
 		if (resizable) {
 			flags |= SDL_WINDOW_RESIZABLE;
@@ -85,7 +85,7 @@ void ModuleWindow::UpdateResizable() const {
 
 void ModuleWindow::UpdateFullScreen() const {
 	if (fullScreen) {
-		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_MAXIMIZED);
 	} else {
 		SDL_SetWindowFullscreen(window, 0);
 	}

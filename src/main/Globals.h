@@ -18,6 +18,8 @@ enum update_status
 	UPDATE_ERROR
 };
 
+enum class ComponentType { Transform, Mesh, Material };
+
 struct Vertex {
 	// position
 	float3 Position;
@@ -31,19 +33,12 @@ struct Vertex {
 	float3 Bitangent;
 };
 
-
 struct Texture {
 	unsigned int id;
 	std::string  type;
 	int width;
 	int height;
 	std::string path;
-};
-
-struct Mesh {
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
 };
 
 

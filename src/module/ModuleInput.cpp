@@ -68,9 +68,6 @@ update_status ModuleInput::PreUpdate()
 				}
 				if (extension.compare("fbx") == 0 || extension.compare("FBX") == 0) {
 					App->model->LoadModel(path);
-					for (unsigned int i = 0; i < App->model->meshes.size(); i++) {
-						App->scene->SetupMesh(App->model->meshes[i]);
-					}
 				}
 				break;
 			

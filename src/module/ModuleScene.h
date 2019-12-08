@@ -8,23 +8,14 @@
 class ModuleScene : public Module {
 public:
 	GameObject* root;
-	bool showGrid = true;
-	bool showAxis = true;
 	ModuleScene() {}
 	~ModuleScene() {}
 
 	bool Init();
 	update_status PreUpdate();
 	update_status Update();
-	GameObject* CreateGameObject();
-	void SetupMesh(Mesh&);
+	GameObject* CreateGameObject(const std::string&) const;
 	bool CleanUp();
-private:
-	void DrawGrid() const;
-	void DrawAxis() const;
-	void DrawMesh(Mesh&);
-private:
-	GLuint vbo, ebo, vao;
 };
 #endif
 

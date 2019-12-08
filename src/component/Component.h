@@ -2,10 +2,9 @@
 #define Component_h
 #include "main/Globals.h"
 #include "main/GameObject.h"
-
-enum class ComponentType { Transform, Mesh, Material };
 class Component {
 public :
+	int uuid;
 	ComponentType type;
 	bool active;
 	GameObject* owner;

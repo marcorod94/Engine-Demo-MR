@@ -8,19 +8,7 @@ bool ModuleProgram::Init() {
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	program = glCreateProgram();
-	return true;
-}
-
-update_status ModuleProgram::Update() {
-	return UPDATE_CONTINUE;
-}
-
-bool ModuleProgram::CleanUp() {
-	glDetachShader(program, vertexShader);
-	glDetachShader(program, fragmentShader);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	LoadShaders("Shaders/default.vs", "Shaders/default.fs");
 	return true;
 }
 
