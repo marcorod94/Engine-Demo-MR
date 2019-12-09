@@ -100,7 +100,7 @@ void ModuleCamera::MouseMove()
 	direction.y = sin(DegToRad(pitch));
 	direction.z = sin(DegToRad(yaw)) * cos(DegToRad(pitch));
 	if (orbit) {
-		frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * direction.Normalized();
+		/*frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * direction.Normalized();*/
 		cameraTarget = frustum.pos + frustum.front;
 	} else {
 		cameraTarget = float3::zero;
@@ -133,5 +133,5 @@ void ModuleCamera::Focus() {
 	cameraTarget = float3::zero;
 	frustum.front = -float3::unitZ;
 	CalculateRotationAngles(frustum.front);
-	frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * frustum.front;
+	/*frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * frustum.front;*/
 }

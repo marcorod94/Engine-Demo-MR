@@ -4,7 +4,7 @@
 #include "Module.h"
 #include "main/Globals.h"
 #include "GL/glew.h"
-enum class Program
+enum class ProgramType
 {
 	Default = 0,
 	Flat,
@@ -15,7 +15,7 @@ enum class Program
 };
 class ModuleProgram : public Module {
 public:
-	unsigned programs[int(Program::Count)];
+	unsigned programs[int(ProgramType::Count)];
 	ModuleProgram() {}
 	~ModuleProgram() {}
 

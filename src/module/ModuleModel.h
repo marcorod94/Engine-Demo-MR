@@ -17,8 +17,6 @@ class Mesh;
 class Material;
 class ModuleModel: public Module {
 public:
-		
-	AABB box;
 	ModuleModel() {}
 	~ModuleModel() {}
 	bool Init();
@@ -34,7 +32,7 @@ private:
 	void processMaterials(const aiMaterial*, GameObject*);
 	void loadMaterialTextures(const aiMaterial*, aiTextureType, const char*, Material*);
 	int existsFile(const char*) const;
-	void GenerateMesh(const char*, const float3&, const Quat&, par_shapes_mesh*, GameObject*);
+	void GenerateMesh(const char*, const float3&, const Quat&, par_shapes_mesh_s*, GameObject*);
 
 };
 

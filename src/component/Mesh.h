@@ -10,7 +10,9 @@ public:
 	int totalPrimitives = 0;
 	int totalVertex = 0;
 	int totalMaterials = 0;
-	Mesh(GameObject* owner): Component(nullptr, ComponentType::Mesh) {}
+	Mesh(GameObject* owner): Component(nullptr, ComponentType::Mesh) {
+		box.SetNegativeInfinity();
+	}
 	void Setup();
 	void DrawView();
 };

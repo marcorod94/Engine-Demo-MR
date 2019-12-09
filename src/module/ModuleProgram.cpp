@@ -5,17 +5,17 @@
 #include <sstream>
 
 bool ModuleProgram::Init() {
-	programs[int(Program::Default)] = CreateProgram("Shaders/default.vs", "Shaders/default.fs");
-	/*programs[int(Program::Flat)] = LoadShaders("Shaders/flat.vs", "Shaders/flat.fs");
-	programs[int(Program::Gouraud)] = LoadShaders("Shaders/gouraud.vs", "Shaders/gouraud.fs");
-	programs[int(Program::Phong)] = LoadShaders("Shaders/phong.vs", "Shaders/phong.fs");
-	programs[int(Program::Blinn)] = LoadShaders("Shaders/blinn.vs", "Shaders/blinn.fs");*/
+	programs[int(ProgramType::Default)] = CreateProgram("Shaders/default_1.vs", "Shaders/default_1.fs");
+	programs[int(ProgramType::Flat)] = CreateProgram("Shaders/flat.vs", "Shaders/flat.fs");
+	programs[int(ProgramType::Gouraud)] = CreateProgram("Shaders/gouraud.vs", "Shaders/gouraud.fs");
+	programs[int(ProgramType::Phong)] = CreateProgram("Shaders/phong.vs", "Shaders/phong.fs");
+	programs[int(ProgramType::Blinn)] = CreateProgram("Shaders/blinn.vs", "Shaders/blinn.fs");
 	return true;
 }
 
 bool ModuleProgram::CleanUp()
 {
-	for (unsigned i = 0; i < int(Program::Count); ++i)
+	for (unsigned i = 0; i < int(ProgramType::Count); ++i)
 	{
 		glDeleteProgram(programs[i]);
 	}

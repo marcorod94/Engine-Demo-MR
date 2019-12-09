@@ -12,6 +12,8 @@ public:
 	Quat rotation = Quat::identity;
 	float4x4 localTransform = float4x4::identity;
 	float4x4 worldTransform = float4x4::identity;
+
+
 	Transform(GameObject* owner): Component(owner, ComponentType::Transform) {}
 	void DrawView();
 	void CalculateWorldTransform(const float4x4&);
