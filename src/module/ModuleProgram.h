@@ -4,17 +4,25 @@
 #include "Module.h"
 #include "main/Globals.h"
 #include "GL/glew.h"
-
+enum class Program
+{
+	Default = 0,
+	Flat,
+	Gouraud,
+	Phong,
+	Blinn,
+	Count
+};
 class ModuleProgram : public Module {
 public:
+	unsigned programs[int(Program::Count)];
 	ModuleProgram() {}
 	~ModuleProgram() {}
 
 	bool Init();
-	void LoadShaders(const char*, const char*);
-public:
-	GLuint vertexShader = 0;
-	GLuint fragmentShader = 0;
-	GLuint program = 0;
+	bool CleanUp();
+	unsigned CreateProgram(const char*, const char*);
+	std::string* LoadFile(const char*);
+	bool Compile(unsigned, std::string*);
 };
 #endif

@@ -5,85 +5,90 @@
 #include <sstream>
 
 bool ModuleProgram::Init() {
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	program = glCreateProgram();
-	LoadShaders("Shaders/default.vs", "Shaders/default.fs");
+	programs[int(Program::Default)] = CreateProgram("Shaders/default.vs", "Shaders/default.fs");
+	/*programs[int(Program::Flat)] = LoadShaders("Shaders/flat.vs", "Shaders/flat.fs");
+	programs[int(Program::Gouraud)] = LoadShaders("Shaders/gouraud.vs", "Shaders/gouraud.fs");
+	programs[int(Program::Phong)] = LoadShaders("Shaders/phong.vs", "Shaders/phong.fs");
+	programs[int(Program::Blinn)] = LoadShaders("Shaders/blinn.vs", "Shaders/blinn.fs");*/
 	return true;
 }
 
-
-void ModuleProgram::LoadShaders(const char* vertex_path, const char* fragment_path) {
-	std::string vertexCode;
-	std::string fragmentCode;
-	std::ifstream vShaderFile;
-	std::ifstream fShaderFile;
-	// ensure ifstream objects can throw exceptions:
-	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try
+bool ModuleProgram::CleanUp()
+{
+	for (unsigned i = 0; i < int(Program::Count); ++i)
 	{
-		// open files
-		vShaderFile.open(vertex_path);
-		fShaderFile.open(fragment_path);
-		std::stringstream vShaderStream, fShaderStream;
-		// read file's buffer contents into streams
-		vShaderStream << vShaderFile.rdbuf();
-		fShaderStream << fShaderFile.rdbuf();
-		// close file handlers
-		vShaderFile.close();
-		fShaderFile.close();
-		// convert stream into string
-		vertexCode = vShaderStream.str();
-		fragmentCode = fShaderStream.str();
+		glDeleteProgram(programs[i]);
 	}
-	catch (std::ifstream::failure e)
-	{
-		LOG("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ");
+
+	return true;
+}
+
+unsigned ModuleProgram::CreateProgram(const char* vshader, const char* fshader)
+{
+	unsigned programId = 0;
+	unsigned vertexId = glCreateShader(GL_VERTEX_SHADER);
+	unsigned fragmentId = glCreateShader(GL_FRAGMENT_SHADER);
+
+	bool ok = Compile(vertexId, LoadFile(vshader)) && Compile(fragmentId, LoadFile(fshader));
+
+	
+	if (ok) {
+		programId = glCreateProgram();
+		GLint result = GL_FALSE;
+		int infoLogLength;
+
+		//// Link the program
+		glAttachShader(programId, vertexId);
+		glAttachShader(programId, fragmentId);
+		glLinkProgram(programId);
+
+		// Check the program
+		glGetProgramiv(programId, GL_LINK_STATUS, &result);
+		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
+		if (infoLogLength > 0) {
+			LOG("Error Loading program");
+		}
+		glDetachShader(programId, vertexId);
+		glDetachShader(programId, fragmentId);
 	}
-	const char* vShaderCode = vertexCode.c_str();
-	const char* fShaderCode = fragmentCode.c_str();
 
+	glDeleteShader(vertexId);
+	glDeleteShader(fragmentId);
 
-	GLint Result = GL_FALSE;
+	return programId;
+}
+
+bool ModuleProgram::Compile(unsigned id, std::string* data) {
+
+	GLint result = GL_FALSE;
 	int InfoLogLength;
-
-	// Compile Vertex Shader
-	glShaderSource(vertexShader, 1, &vShaderCode, NULL);
-	glCompileShader(vertexShader);
+	const char* code = data->c_str();
+	glShaderSource(id, 1, &code, NULL);
+	glCompileShader(id);
 
 	// Check Vertex Shader
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &Result);
-	glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &InfoLogLength);
+	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+	glGetShaderiv(id, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	if (InfoLogLength > 0) {
-		LOG("Error Loading vertex shader");
+		LOG("Error Loading Shader");
+		return false;
 	}
+	return true;
+}
 
-	// Compile Fragment Shader
-	glShaderSource(fragmentShader, 1, &fShaderCode, NULL);
-	glCompileShader(fragmentShader);
-
-	// Check Fragment Shader
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &Result);
-	glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		LOG("Error Loading fragment shader");
+std::string* ModuleProgram::LoadFile(const char* path) {
+	std::string fileCode;
+	std::ifstream file;
+	// ensure ifstream objects can throw exceptions:
+	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try {
+		file.open(path);
+		std::stringstream stream;
+		stream << file.rdbuf();
+		file.close();
+		return new std::string(stream.str());
+	} catch (const std::ifstream::failure& e) {
+		LOG("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ %s", e.what());
 	}
-
-	//// Link the program
-	glAttachShader(program, vertexShader);
-	glAttachShader(program, fragmentShader);
-	glLinkProgram(program);
-
-	// Check the program
-	glGetProgramiv(program, GL_LINK_STATUS, &Result);
-	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		LOG("Error Loading program");
-	}
-	glDetachShader(program, vertexShader);
-	glDetachShader(program, fragmentShader);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	return nullptr;
 }

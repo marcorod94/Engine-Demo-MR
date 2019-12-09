@@ -10,6 +10,8 @@
 #include <assimp/DefaultLogger.hpp>
 #include <vector>
 #include <string>
+
+struct par_shapes_mesh_s;
 class GameObject;
 class Mesh;
 class Material;
@@ -21,6 +23,7 @@ public:
 	~ModuleModel() {}
 	bool Init();
 	bool CleanUp();
+	bool LoadSphere(const char*, const math::float3&, const math::Quat&, float, unsigned, unsigned, const math::float4&, GameObject*);
 	const void LoadModel(std::string&);
 	void UpdateTexture(Texture&);
 
@@ -31,6 +34,8 @@ private:
 	void processMaterials(const aiMaterial*, GameObject*);
 	void loadMaterialTextures(const aiMaterial*, aiTextureType, const char*, Material*);
 	int existsFile(const char*) const;
+	void GenerateMesh(const char*, const float3&, const Quat&, par_shapes_mesh*, GameObject*);
+
 };
 
 class AssimpLog : public Assimp::LogStream

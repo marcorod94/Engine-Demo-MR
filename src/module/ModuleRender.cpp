@@ -51,10 +51,11 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
-	glUseProgram(App->program->program);
-	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "model"), 1, GL_TRUE, &(App->camera->model[0][0]));
-	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "view"), 1, GL_TRUE, &(App->camera->view[0][0]));
-	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "proj"), 1, GL_TRUE, &(App->camera->proj[0][0]));
+	unsigned program = App->program->programs[int(Program::Default)];
+	glUseProgram(program);
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &(App->camera->model[0][0]));
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &(App->camera->view[0][0]));
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &(App->camera->proj[0][0]));
 	if (App->scene->root) {
 		DrawGameObject(App->scene->root);
 	}
@@ -85,7 +86,7 @@ bool ModuleRender::CleanUp()
 }
 
 Mesh* ModuleRender::CreateMesh() {
-	return new Mesh();
+	return new Mesh(nullptr);
 }
 
 void ModuleRender::DrawGrid() const {
@@ -162,7 +163,7 @@ void  ModuleRender::DrawMaterial(Material* material) {
 			else if (name == "texture_height")
 				number = std::to_string(++heightNr);
 
-			glUniform1i(glGetUniformLocation(App->program->program, (name + number).c_str()), i);
+			glUniform1i(glGetUniformLocation(App->program->programs[int(Program::Default)], (name + number).c_str()), i);
 			// and finally bind the texture
 			glBindTexture(GL_TEXTURE_2D, material->textures[i].id);
 		}

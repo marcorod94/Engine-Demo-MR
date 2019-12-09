@@ -10,7 +10,7 @@ update_status GameObject::Update() {
 
 void GameObject::CreateComponent(ComponentType type) {
 	if (type == ComponentType::Transform) {
-		components.push_back(new Transform());
+		components.push_back(new Transform(this));
 	}
 	
 }

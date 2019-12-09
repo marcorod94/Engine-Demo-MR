@@ -4,7 +4,8 @@
 class Material : public Component {
 public:
 	std::vector<Texture> textures;
-	Material() { type = ComponentType::Material; }
+	unsigned program;
+	Material(GameObject* owner): Component(owner, ComponentType::Material) {}
 	void DrawView();
 };
 #endif
