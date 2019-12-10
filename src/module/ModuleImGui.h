@@ -6,6 +6,7 @@
 #include "imgui.h"
 #include <vector>
 class GameObject;
+enum class ShapeType;
 class ModuleImGui : public Module {
 public:
 	ModuleImGui() {}
@@ -24,6 +25,7 @@ private:
 	char title[25];
 	std::vector<float> fps_log{0.0F};
 	std::vector<float> ms_log{0.0F};
+	unsigned shape = 0;
 
 	GameObject* sourceGO = nullptr;
 	bool showMain = true;
@@ -38,5 +40,7 @@ private:
 	const void ShowInformationWindow(ImGuiIO&);
 	const void ShowTextures(std::vector<Texture>&);
 	const void DrawHierarchy(const std::vector<GameObject*>&, int&);
+	const void DrawShaderProperties();
+	void LoadShapes(ShapeType s);
 }; 
 #endif 

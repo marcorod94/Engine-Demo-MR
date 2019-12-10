@@ -16,6 +16,8 @@
 #define PAR_SHAPES_IMPLEMENTATION
 #include "par_shapes.h"
 bool ModuleModel::Init() {
+	light.pos = math::float3(-2.0f, 0.0f, 6.0f);
+	ambient = 0.3f;
 	return true;
 }
 
@@ -166,20 +168,29 @@ int  ModuleModel::existsFile(const char* path) const{
 	return 0;
 }
 
-bool ModuleModel::LoadSphere(const char* name, const math::float3& pos, const math::Quat& rot, float size,
-	unsigned slices, unsigned stacks, const math::float4& color, GameObject* parent)
-{
-	par_shapes_mesh* mesh = par_shapes_create_parametric_sphere(int(slices), int(stacks));
-
+void ModuleModel::LoadShapes(GameObject* parent, const char* name, const float3& pos, const Quat& rot, MeshShape& shape, ProgramType programType, const float4& color) {
+	par_shapes_mesh* mesh = nullptr;
+	switch (shape.type) {
+		case ShapeType::Sphere:
+			mesh = LoadSphere(shape.size, shape.slices, shape.stacks);
+			break;
+		case ShapeType::Cylinder:
+			mesh = LoadCylinder(shape.size, shape.radius, shape.slices, shape.stacks);
+			break;
+		case ShapeType::Cube:
+			mesh = LoadCube(shape.size);
+			break;
+		case ShapeType::Torus:
+			mesh = LoadTorus(shape.radius, shape.size, shape.slices, shape.stacks);
+			break;
+	}
 	if (mesh) {
-		GameObject* model = App->scene->CreateGameObject(name);
-		par_shapes_scale(mesh, size, size, size);
-
-		GenerateMesh(name, pos, rot, mesh, model);
+		GameObject* model = App->scene->CreateGameObject(name, pos, rot);
+		GenerateMesh(model, mesh);
 		par_shapes_free_mesh(mesh);
 
 		Material* material = App->texture->CreateMaterial();
-		material->program = int(ProgramType::Default);
+		material->program = int(programType);
 		material->color = color;
 		material->kSpecular = 0.9f;
 		material->shininess = 64.0f;
@@ -190,18 +201,85 @@ bool ModuleModel::LoadSphere(const char* name, const math::float3& pos, const ma
 		model->components.push_back(material);
 		model->parent = parent;
 		parent->children.push_back(model);
-		return true;
 	}
 
-	return false;
 }
 
-void ModuleModel::GenerateMesh(const char* name, const math::float3& pos, const math::Quat& rot, par_shapes_mesh_s* shape, GameObject* owner)
+par_shapes_mesh* ModuleModel::LoadSphere(float size, unsigned slices, unsigned stacks) {
+	par_shapes_mesh* mesh = par_shapes_create_parametric_sphere(int(slices), int(stacks));
+	par_shapes_scale(mesh, size, size, size);
+	return mesh;
+}
+
+par_shapes_mesh* ModuleModel::LoadCylinder(float height, float radius, unsigned slices, unsigned stacks) {
+	par_shapes_mesh* mesh = par_shapes_create_cylinder(int(slices), int(stacks));
+	par_shapes_rotate(mesh, -float(PAR_PI*0.5), (float*)&math::float3::unitX);
+	par_shapes_translate(mesh, 0.0f, -0.5f, 0.0f);
+
+	par_shapes_mesh* top = par_shapes_create_disk(radius, int(slices), (const float*)&math::float3::zero, (const float*)&math::float3::unitZ);
+	par_shapes_rotate(top, -float(PAR_PI*0.5), (float*)&math::float3::unitX);
+	par_shapes_translate(top, 0.0f, height*0.5f, 0.0f);
+
+	par_shapes_mesh* bottom = par_shapes_create_disk(radius, int(slices), (const float*)&math::float3::zero, (const float*)&math::float3::unitZ);
+	par_shapes_rotate(bottom, float(PAR_PI*0.5), (float*)&math::float3::unitX);
+	par_shapes_translate(bottom, 0.0f, height*-0.5f, 0.0f);
+
+	par_shapes_scale(mesh, radius, height, radius);
+	par_shapes_merge_and_free(mesh, top);
+	par_shapes_merge_and_free(mesh, bottom);
+
+	return mesh;
+}
+
+par_shapes_mesh* ModuleModel::LoadTorus(float inner_r, float outer_r, unsigned slices, unsigned stacks)
+{
+	par_shapes_mesh* mesh = par_shapes_create_torus(int(slices), int(stacks), inner_r);
+	par_shapes_scale(mesh, outer_r, outer_r, outer_r);
+	return mesh;
+}
+
+par_shapes_mesh* ModuleModel::LoadCube(float size)
+{
+	par_shapes_mesh* mesh = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* top = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* bottom = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* back = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* left = par_shapes_create_plane(1, 1);
+	par_shapes_mesh* right = par_shapes_create_plane(1, 1);
+
+	par_shapes_translate(mesh, -0.5f, -0.5f, 0.5f);
+
+	par_shapes_rotate(top, -float(PAR_PI*0.5), (float*)&math::float3::unitX);
+	par_shapes_translate(top, -0.5f, 0.5f, 0.5f);
+
+	par_shapes_rotate(bottom, float(PAR_PI*0.5), (float*)&math::float3::unitX);
+	par_shapes_translate(bottom, -0.5f, -0.5f, -0.5f);
+
+	par_shapes_rotate(back, float(PAR_PI), (float*)&math::float3::unitX);
+	par_shapes_translate(back, -0.5f, 0.5f, -0.5f);
+
+	par_shapes_rotate(left, float(-PAR_PI * 0.5), (float*)&math::float3::unitY);
+	par_shapes_translate(left, -0.5f, -0.5f, -0.5f);
+
+	par_shapes_rotate(right, float(PAR_PI*0.5), (float*)&math::float3::unitY);
+	par_shapes_translate(right, 0.5f, -0.5f, 0.5f);
+
+	par_shapes_merge_and_free(mesh, top);
+	par_shapes_merge_and_free(mesh, bottom);
+	par_shapes_merge_and_free(mesh, back);
+	par_shapes_merge_and_free(mesh, left);
+	par_shapes_merge_and_free(mesh, right);
+
+	par_shapes_scale(mesh, size, size, size);
+
+	return mesh;
+}
+
+
+void ModuleModel::GenerateMesh(GameObject* owner, par_shapes_mesh_s* shape)
 {
 	Mesh* meshDest = App->renderer->CreateMesh();
 	Transform* transform = (Transform*) (owner->FindComponent(ComponentType::Transform));
-	/*meshDest->name = name;
-	meshDest->transform = math::float4x4(rot, pos);*/
 
 	// Positions
 	for (unsigned i = 0; i< unsigned(shape->npoints); ++i) {
@@ -214,7 +292,7 @@ void ModuleModel::GenerateMesh(const char* name, const math::float3& pos, const 
 		meshDest->box.minPoint.y = min(meshDest->box.minPoint.y, vector.y);
 		meshDest->box.maxPoint.z = max(meshDest->box.maxPoint.z, vector.z);
 		meshDest->box.minPoint.z = min(meshDest->box.minPoint.z, vector.z);
-		vertex.Position = vector;
+		vertex.Position = transform->localTransform.TransformPos(vector);
 		if (shape->normals) {
 			vector = float3(shape->normals[i * 3], shape->normals[i * 3 + 1], shape->normals[i * 3 + 2]);
 			vertex.Normal = vector;

@@ -37,3 +37,7 @@ void GameObject::ShowProperties() {
 	}
 	ImGui::End();
 }
+
+void GameObject::CreateTransform(const float3& pos, const Quat& rot) {
+	components.push_back(new Transform(this, pos, rot));
+}

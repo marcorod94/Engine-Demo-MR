@@ -6,6 +6,7 @@
 #include "ModuleProgram.h"
 #include "ModuleScene.h"
 #include "ModuleCamera.h"
+#include "ModuleModel.h"
 #include "main/GameObject.h"
 #include "component/Mesh.h"
 #include "component/Material.h"
@@ -148,8 +149,8 @@ void  ModuleRender::DrawMaterial(Material* material) {
 	if (material) {
 		unsigned program = App->program->programs[material->program];
 		glUseProgram(program);
-		/*glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->models->light.pos);
-		glUniform1f(glGetUniformLocation(program, "ambient"), App->models->ambient);*/
+		glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->model->light.pos);
+		glUniform1f(glGetUniformLocation(program, "ambient"), App->model->ambient);
 		glUniform1f(glGetUniformLocation(program, "shininess"), material->shininess);
 		glUniform1f(glGetUniformLocation(program, "k_ambient"), material->kAmbient);
 		glUniform1f(glGetUniformLocation(program, "k_diffuse"), material->kDiffuse);
