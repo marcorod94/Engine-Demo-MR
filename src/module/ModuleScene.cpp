@@ -13,7 +13,7 @@
 bool ModuleScene::Init() {
 
 	root = CreateGameObject("Root Scene");
-	//App->model->LoadModel(std::string("Models/BakerHouse.fbx"));
+	App->model->LoadModel(std::string("Models/Player.fbx"));
 	MeshShape shape;
 	shape.type = ShapeType::Torus;
 	shape.size = 0.5F;

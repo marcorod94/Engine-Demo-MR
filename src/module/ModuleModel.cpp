@@ -123,29 +123,31 @@ void ModuleModel::processMaterials(const aiMaterial* mat, GameObject* owner) {
 	// 2. specular maps
 	loadMaterialTextures(mat, aiTextureType_SPECULAR, "texture_specular", material);
 	// 3. normal maps
-	loadMaterialTextures(mat, aiTextureType_HEIGHT, "texture_normal", material);
+	loadMaterialTextures(mat, aiTextureType_AMBIENT, "texture_normal", material);
 	// 4. height maps
-	loadMaterialTextures(mat, aiTextureType_AMBIENT, "texture_height", material);
+	loadMaterialTextures(mat, aiTextureType_EMISSIVE, "texture_height", material);
 	material->owner = owner;
 	material->program = int(ProgramType::Default);
 	owner->components.push_back(material);
 }
 
-void ModuleModel::loadMaterialTextures(const aiMaterial *mat, aiTextureType type, const char* typeName,  Material* material) {
+void ModuleModel::loadMaterialTextures(const aiMaterial* mat, aiTextureType type, const char* typeName,  Material* material) {
 	App->imgui->AddLog("\nLoading textures of type : %s", typeName);
-	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-	{
+	for (unsigned i = 0; i < mat->GetTextureCount(type); ++i) {
 		aiString str;
-		mat->GetTexture(type, i, &str);
+		aiTextureMapping mapping;
+		unsigned uvindex = 0;
+		mat->GetTexture(type, i, &str, &mapping, &uvindex);
 		std::string path = str.C_Str();
+		std::string textureName = path.substr(path.find_last_of('\\') + 1, path.size());
 		App->imgui->AddLog("Trying to load texture: %s", path.c_str());
 		if (existsFile(path.c_str()) == 1) {
 			path = directory;
-			path = path.append(str.C_Str());
+			path = path.append(textureName);
 			App->imgui->AddLog("Trying to load texture: %s", path.c_str());
 			if (existsFile(path.c_str()) == 1) {
 				path = TEXTURE_PATH;
-				path = path.append(str.C_Str());
+				path = path.append(textureName);
 				App->imgui->AddLog("Trying to load texture: %s", path.c_str());
 				if (existsFile(path.c_str()) == 1) {
 					path = TEXTURE_PATH;
@@ -156,6 +158,10 @@ void ModuleModel::loadMaterialTextures(const aiMaterial *mat, aiTextureType type
 		}
 		Texture texture = App->texture->LoadTexture(path);
 		texture.type = typeName;
+		material->shininess = 64.0f;
+		material->kSpecular = 0.6f;
+		material->kDiffuse = 0.5f;
+		material->kAmbient = 1.0f;
 		material->textures.push_back(texture);
 	}
 }
@@ -192,7 +198,6 @@ void ModuleModel::LoadShapes(GameObject* parent, const char* name, const float3&
 		Material* material = App->texture->CreateMaterial();
 		material->program = int(programType);
 		material->color = color;
-		material->kSpecular = 0.9f;
 		material->shininess = 64.0f;
 		material->kSpecular = 0.6f;
 		material->kDiffuse = 0.5f;
