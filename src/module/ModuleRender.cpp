@@ -7,6 +7,7 @@
 #include "ModuleScene.h"
 #include "ModuleCamera.h"
 #include "ModuleModel.h"
+#include "ModuleDebugDraw.h"
 #include "main/GameObject.h"
 #include "component/Mesh.h"
 #include "component/Material.h"
@@ -37,7 +38,7 @@ bool ModuleRender::Init()
 	glFrontFace(GL_CCW);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
-
+	glGenFramebuffers(1, &fbo);
 	return true;
 }
 
@@ -57,6 +58,9 @@ update_status ModuleRender::Update()
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &(App->camera->model[0][0]));
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &(App->camera->view[0][0]));
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &(App->camera->proj[0][0]));
+	
+	App->debugDraw->Draw(fbo);
+	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	if (App->scene->root) {
 		DrawGameObject(App->scene->root);
 	}
@@ -66,6 +70,7 @@ update_status ModuleRender::Update()
 	if (showGrid) {
 		DrawGrid();
 	}
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return UPDATE_CONTINUE;
 }
 

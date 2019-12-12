@@ -23,6 +23,8 @@ public:
 	bool CleanUp();
 	Mesh* CreateMesh();
 private:
+	unsigned fbo = 0;
+
 	void DrawGrid() const;
 	void DrawAxis() const;
 	void DrawGameObject(GameObject*);

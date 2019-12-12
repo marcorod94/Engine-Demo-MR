@@ -285,8 +285,8 @@ void ModuleImGui::LoadShapes(ShapeType s) {
 	shape.slices = 30;
 	shape.stacks = 30;
 	App->model->LoadShapes(root, "shape0", float3(2.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape1", float3(5.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape2", float3(8.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape3", float3(11.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape4", float3(14.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape1", float3(5.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Flat, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape2", float3(8.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Gouraud, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape3", float3(11.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Phong, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape4", float3(14.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Blinn, float4(1.0F, 1.0F, 1.0F, 1.0F));
 }
