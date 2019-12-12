@@ -21,7 +21,7 @@ public:
 	float4x4 proj, view, model;
 	float3 helper1 = float3(0.0F, -1.0F, -4.0F);
 	float3 helper2 = float3(1.0F, 1.0F, 1.0F);
-	float cameraSpeed = 0.05f;
+	float cameraSpeed = 2.0f;
 private:
 	float movementSpeed = cameraSpeed;
 	float3 cameraTarget = float3::zero;

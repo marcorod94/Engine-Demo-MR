@@ -34,10 +34,10 @@ struct Vertex {
 };
 
 struct Texture {
-	unsigned int id;
+	unsigned id;
 	std::string  type;
-	int width;
-	int height;
+	unsigned width;
+	unsigned height;
 	std::string path;
 };
 

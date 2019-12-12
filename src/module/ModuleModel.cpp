@@ -17,7 +17,7 @@
 #include "par_shapes.h"
 bool ModuleModel::Init() {
 	light.pos = math::float3(-2.0f, 0.0f, 6.0f);
-	ambient = 0.3f;
+	ambient = 0.3F;
 	return true;
 }
 
@@ -36,25 +36,30 @@ const void ModuleModel::LoadModel(std::string& path) {
 		return;
 	}
 	directory = path.substr(0, path.find_last_of('\\') + 1);
-	processNode(scene->mRootNode, scene, App->scene->root);
+	LOG("Name: %s", (path.substr(path.find_last_of('\\') + 1, path.find_last_of('.') + 1)).c_str());
+	GameObject* model = App->scene->CreateGameObject(path.substr(path.find_last_of('\\') + 1, path.find_last_of('.') + 1));
+	model->parent = App->scene->root;
+	processNode(scene->mRootNode, scene, model);
+	App->scene->root->children.push_back(model);
 	App->camera->Focus();
 	Assimp::DefaultLogger::kill();
 }
 
 void ModuleModel::processNode(const aiNode *node, const aiScene *scene, GameObject* parent) {
-	GameObject* model = App->scene->CreateGameObject(node->mName.C_Str());
-	model->parent = parent;
-	((Transform*)model->FindComponent(ComponentType::Transform))->SetTransform(node->mTransformation);
+	
 	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
+		GameObject* model = App->scene->CreateGameObject(node->mName.C_Str());
+		model->parent = parent;
+		((Transform*)model->FindComponent(ComponentType::Transform))->SetTransform(node->mTransformation);
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		processMesh(mesh, model);
 		processMaterials(scene->mMaterials[mesh->mMaterialIndex], model);
+		parent->children.push_back(model);
 	}
 	
 	for (unsigned int i = 0; i < node->mNumChildren; i++) {
-		processNode(node->mChildren[i], scene, model);
+		processNode(node->mChildren[i], scene, parent);
 	}
-	parent->children.push_back(model);
 }
 
 
@@ -156,13 +161,11 @@ void ModuleModel::loadMaterialTextures(const aiMaterial* mat, aiTextureType type
 				}
 			}
 		}
-		Texture texture = App->texture->LoadTexture(path);
-		texture.type = typeName;
+		
 		material->shininess = 64.0f;
 		material->kSpecular = 0.6f;
 		material->kDiffuse = 0.5f;
 		material->kAmbient = 1.0f;
-		material->textures.push_back(texture);
 	}
 }
 
@@ -197,7 +200,7 @@ void ModuleModel::LoadShapes(GameObject* parent, const char* name, const float3&
 
 		Material* material = App->texture->CreateMaterial();
 		material->program = int(programType);
-		material->color = color;
+		material->diffuseColor = color;
 		material->shininess = 64.0f;
 		material->kSpecular = 0.6f;
 		material->kDiffuse = 0.5f;
