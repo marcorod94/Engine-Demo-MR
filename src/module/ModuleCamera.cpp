@@ -3,6 +3,7 @@
 #include "ModuleCamera.h"
 #include "ModuleWindow.h"
 #include "ModuleModel.h"
+#include "component/Camera.h"
 #include "SDL_scancode.h"
 #include "SDL_mouse.h"
 
@@ -29,9 +30,7 @@ bool ModuleCamera::Init() {
 
 Camera* ModuleCamera::CreateComponentCamera()
 {
-	Camera * newCam = new Camera(nullptr);
-	cameras.push_back(newCam);
-	return newCam;
+	return new Camera(nullptr);
 }//dont forget to create a remove component also
 
 update_status  ModuleCamera::PreUpdate() {
@@ -163,8 +162,5 @@ void ModuleCamera::ZoomOut()
 
 bool ModuleCamera::CleanUp()
 {
-	delete defaultCameraGO;
-	cameras.clear();
-
 	return true;
 }

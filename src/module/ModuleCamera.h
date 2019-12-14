@@ -3,14 +3,15 @@
 
 #include "Module.h"
 #include "MathGeoLib.h"
-#include "component/Camera.h"
 #include "GL/glew.h"
-
+class Camera;
 class ModuleCamera : public Module {
 public:
 	ModuleCamera() {}
 	~ModuleCamera() {}
+
 	bool Init();
+	
 	update_status PreUpdate();
 	update_status Update();
 	float4x4 LookAt(float3&, float3&, float3&) const;
@@ -26,7 +27,6 @@ public:
 	void CenterCamera();
 
 	Camera* CreateComponentCamera();
-	Camera *sceneCamera = nullptr;
 public:
 	Frustum frustum;
 	float4x4 proj, view, model;
@@ -34,8 +34,6 @@ public:
 	float3 helper2 = float3(1.0F, 1.0F, 1.0F);
 	float cameraSpeed = 0.05f;
 private:
-	std::vector<Camera*> cameras;
-	GameObject *defaultCameraGO = nullptr;
 
 	float movementSpeed = cameraSpeed;
 	float3 cameraTarget = float3::zero;
@@ -43,8 +41,6 @@ private:
 	float yaw = 0.0f;
 	float pitch = -90.0f;
 	void CalculateRotationAngles(float3&);
-
-	Camera*  camera = nullptr;
 	
 };
 #endif

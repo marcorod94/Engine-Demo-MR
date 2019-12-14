@@ -3,8 +3,6 @@
 
 #include "MathGeoLib.h"
 #include "Component.h"
-#include "main/GameObject.h"
-#include "MathGeoLib.h"
 
 const int IS_IN = 0;
 const int IS_OUT = 1;
@@ -45,6 +43,7 @@ public:
 	
 	float4x4 proj, view, model;
 	float cameraSpeed = 0.05f;
+	unsigned fbo = 0;
 
 private:
 	float movementSpeed = cameraSpeed;
@@ -56,8 +55,8 @@ private:
 
 	Frustum frustum;
 	float aspect = 1.f;
-	float height;
-	float width;
+	float height = 200;
+	float width = 400;
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	float3 camPos;
 
@@ -83,10 +82,10 @@ private:
 	float3 fbl;//far bottom left
 	float3 fbr;//far bottom right
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	unsigned fbo = 0;
+	
 	unsigned fb_depth = 0;
 	unsigned fb_tex = 0;
 	unsigned fb_width = 0;
 	unsigned fb_height = 0;
-}
+};
 #endif

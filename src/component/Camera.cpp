@@ -1,12 +1,10 @@
 #include "Camera.h"
-#include "main/Application.h"
 #include "main/GameObject.h"
 #include "component/Component.h"
-#include "Module/ModuleRender.h"
-#include "Module/ModuleCamera.h"
 #include <math.h>
 #include "Geometry/Plane.h"
 #include "imgui.h"
+#include "GL/glew.h"
 
 Camera::Camera(GameObject* owner): Component(owner, ComponentType::Camera)
 {
@@ -23,6 +21,31 @@ Camera::Camera(GameObject* owner): Component(owner, ComponentType::Camera)
 	camPos = float3{ 0.0f,0.0f, 100.0f };
 	proj = frustum.ProjectionMatrix();
 	view = frustum.ViewMatrix();
+	glGenFramebuffers(1, &fbo);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glGenTextures(1, &fb_tex);
+	glBindTexture(GL_TEXTURE_2D, fb_tex);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glGenRenderbuffers(1, &fb_depth);
+	glBindRenderbuffer(GL_RENDERBUFFER, fb_depth);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fb_depth);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb_tex, 0);
+
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 Camera::~Camera()
 {
@@ -94,30 +117,16 @@ void Camera::Draw()
 	ImGui::SetNextWindowPos(ImVec2(256.0f, 0.0f), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(640.0f, 420.0f), ImGuiCond_FirstUseEver);
 
-	if (ImGui::Begin("Viewport"))
-	{
-		width = ImGui::GetWindowContentRegionWidth();
-		height = ImGui::GetContentRegionAvail().y;
+	ImGui::Begin("Viewport");
 
-		App->camera->UpdateAspectRatio();
-		/*if (camPos.x != frustum.pos.x || camPos.y != frustum.pos.y || camPos.z != frustum.pos.z)
-		{
-			camPos = frustum.pos;
-		}*/
-		GenerateFBOTexture(unsigned(width), unsigned(height));
+	ImGui::GetWindowDrawList()->AddImage(
+		(void*)fb_tex,
+		ImVec2(ImGui::GetCursorScreenPos()),
+		ImVec2(ImGui::GetCursorScreenPos().x + fb_width,
+			ImGui::GetCursorScreenPos().y + fb_height),
+		ImVec2(0, 1), ImVec2(1, 0));
 
-		//App->renderer->DisplayFrameBuffer(this, fbo, fb_width, fb_height);
-
-		ImGui::GetWindowDrawList()->AddImage(
-			(void*)fb_tex,
-			ImVec2(ImGui::GetCursorScreenPos()),
-			ImVec2(ImGui::GetCursorScreenPos().x + fb_width,
-				ImGui::GetCursorScreenPos().y + fb_height),
-			ImVec2(0, 1), ImVec2(1, 0));
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		
-	}
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 }
 

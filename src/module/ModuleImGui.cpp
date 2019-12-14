@@ -13,6 +13,7 @@
 #include "GL/glew.h"
 #include "assimp/version.h"
 #include "main/GameObject.h"
+#include "component/Camera.h"
 
 bool ModuleImGui::Init() {
 	IMGUI_CHECKVERSION();
@@ -39,6 +40,10 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
+	if (App->scene->root) {
+		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
+		cam->Draw();
+	}
 	if (showHierarchy) {
 		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
 		if (ImGui::TreeNode(App->scene->root->name.c_str())) {
