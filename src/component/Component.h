@@ -3,12 +3,12 @@
 #include "main/Globals.h"
 #include "main/GameObject.h"
 class Component {
-public :
+public:
 	int uuid;
 	ComponentType type;
 	bool active;
 	GameObject* owner;
-	Component() {}
+	Component(GameObject * owner, ComponentType componentType) : owner(owner), type(componentType) {}
 	~Component() {}
 	virtual void Enable() { active = true; }
 	virtual update_status Update() { return UPDATE_CONTINUE; }

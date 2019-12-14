@@ -9,7 +9,7 @@ public:
 	float3 rotation = float3::zero;
 	float4x4 localTransform = float4x4::identity;
 	float4x4 worldTransform = float4x4::identity;
-	Transform() { type = ComponentType::Transform; }
+	Transform(GameObject* owner) : Component(owner, ComponentType::Transform) {}
 	void DrawView();
 	void CalculateWorldTransform(const float4x4&);
 };

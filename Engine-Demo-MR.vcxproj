@@ -78,6 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\component\Camera.h" />
     <ClInclude Include="src\component\Component.h" />
     <ClInclude Include="src\component\Material.h" />
     <ClInclude Include="src\component\Transform.h" />
@@ -135,6 +136,7 @@
     <ClCompile Include="Libraries\MathGeoLib\include\Math\SSEMath.cpp" />
     <ClCompile Include="Libraries\MathGeoLib\include\Math\TransformOps.cpp" />
     <ClCompile Include="Libraries\MathGeoLib\include\Time\Clock.cpp" />
+    <ClCompile Include="src\component\Camera.cpp" />
     <ClCompile Include="src\component\Material.cpp" />
     <ClCompile Include="src\component\Transform.cpp" />
     <ClCompile Include="src\component\Mesh.cpp" />

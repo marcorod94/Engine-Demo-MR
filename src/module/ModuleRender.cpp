@@ -12,6 +12,7 @@
 #include "SDL.h"
 #include "GL/glew.h"
 
+class Camera;
 // Called before render is available
 bool ModuleRender::Init()
 {
@@ -56,7 +57,8 @@ update_status ModuleRender::Update()
 	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "view"), 1, GL_TRUE, &(App->camera->view[0][0]));
 	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "proj"), 1, GL_TRUE, &(App->camera->proj[0][0]));
 	if (App->scene->root) {
-		DrawGameObject(App->scene->root);
+		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
+		DrawGameObject(App->scene->root, cam);
 	}
 	if (showAxis) {
 		DrawAxis();
@@ -85,7 +87,7 @@ bool ModuleRender::CleanUp()
 }
 
 Mesh* ModuleRender::CreateMesh() {
-	return new Mesh();
+	return new Mesh(nullptr);
 }
 
 void ModuleRender::DrawGrid() const {
@@ -126,12 +128,17 @@ void ModuleRender::DrawAxis() const {
 	glLineWidth(1.0F);
 }
 
-void  ModuleRender::DrawGameObject(GameObject* parent) {
+void  ModuleRender::DrawGameObject(GameObject* parent, Camera* cam) {
 	DrawMaterial((Material*)parent->FindComponent(ComponentType::Material));
 	DrawMesh((Mesh*)parent->FindComponent(ComponentType::Mesh));
 	for (unsigned i = 0; i < parent->children.size(); i++) {
-		DrawGameObject(parent->children[i]);
+		DrawGameObject(parent->children[i], cam);
 	}
+}
+
+void ModuleRender::DisplayFrameBuffer(Camera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height)
+{
+
 }
 
 void  ModuleRender::DrawMesh(Mesh* mesh) {
