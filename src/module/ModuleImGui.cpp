@@ -7,6 +7,7 @@
 #include "ModuleModel.h"
 #include "ModuleScene.h"
 #include "ModuleInput.h"
+#include "ModuleProgram.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
@@ -40,6 +41,7 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
+	DrawShaderProperties();
 	if (App->scene->root) {
 		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
 		cam->Draw();
@@ -74,7 +76,7 @@ update_status ModuleImGui::Update() {
 	}
 	ImGui::EndMainMenuBar();
 	
-	if (showConsole) {
+    if (showConsole) {
 		DrawConsoleWindow();
 	}
 	if (showInfo) {
@@ -87,7 +89,7 @@ update_status ModuleImGui::Update() {
 		ImGui::Begin("About", &showAbout);
 		ImGui::Text("Engine: EM ENGINE");
 		ImGui::Text("Desciption: Super Cool Engine develop with love <3");
-		ImGui::Text("Author: Marco Rodriguez");
+		ImGui::Text("Author: Artemis Georgakopoulou,  Marco Rodriguez");
 		ImGui::End();
 	}
 	
@@ -234,6 +236,59 @@ const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, i
 			ImGui::TreePop();
 		}
 	}
+}
+
+
+const void ModuleImGui::DrawShaderProperties() {
+	ImGui::Begin("Parameters");
+	char* shape_names[int(ShapeType::Count)] = { "Sphere", "Torus", "Cube", "Cylinder"};
+	if (ImGui::CollapsingHeader("Shape and material"))
+	{
+		for (unsigned i = 0; i < int(ShapeType::Count); ++i)
+		{
+			if (ImGui::RadioButton(shape_names[i], shape == int(ShapeType(i)))) {
+				LoadShapes(ShapeType(i));
+				shape = i;
+			}
+		}
+
+		/*ImGui::ColorEdit4("object color", (float*)&material.object_color);
+		ImGui::SliderFloat("shininess", &material.shininess, 0, 128.0f);
+		ImGui::SliderFloat("K ambient", &material.k_ambient, 0.0f, 1.0f);
+		ImGui::SliderFloat("K diffuse", &material.k_diffuse, 0.0f, 1.0f);
+		ImGui::SliderFloat("K specular", &material.k_specular, 0.0f, 1.0f);*/
+	}
+
+	if (ImGui::CollapsingHeader("Light"))
+	{
+		ImGui::SliderFloat3("light position", (float*)&App->model->light.pos, -15.0f, 15.0f);
+		ImGui::SliderFloat("ambient", (float*)&App->model->ambient, 0.0f, 1.0f);
+	}
+
+	if (ImGui::CollapsingHeader("Options"))
+	{
+		/*ImGui::Checkbox("show axis", &show_axis);
+		ImGui::Checkbox("show grid", &show_grid);
+		ImGui::Checkbox("auto rotate", &auto_rotate);*/
+	}
+	ImGui::End();
+}
+
+void ModuleImGui::LoadShapes(ShapeType s) {
+	
+	GameObject* root = App->scene->root;
+	root->children.clear();
+	MeshShape shape;
+	shape.type = s;
+	shape.size = 0.5F;
+	shape.radius = 1.0F;
+	shape.slices = 30;
+	shape.stacks = 30;
+	App->model->LoadShapes(root, "shape0", float3(2.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape1", float3(5.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Flat, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape2", float3(8.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Gouraud, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape3", float3(11.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Phong, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape4", float3(14.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Blinn, float4(1.0F, 1.0F, 1.0F, 1.0F));
 }
 
 const void ModuleImGui::DrawConsoleWindow()

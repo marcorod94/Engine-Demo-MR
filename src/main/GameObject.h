@@ -16,11 +16,16 @@ public:
 	GameObject(const std::string& name): name(name) {
 		CreateComponent(ComponentType::Transform);
 	}
+	GameObject(const std::string& name, const float3& pos, const Quat& rot) : name(name) {
+		CreateTransform(pos, rot);
+	}
 	~GameObject() {}
 	update_status Update();
 	Component* CreateComponent(const ComponentType);
 	Component* FindComponent(const ComponentType);
 	void DeleteChild(const GameObject*);
 	void ShowProperties();
+private:
+	void CreateTransform(const float3&, const Quat&);
 };
 #endif
