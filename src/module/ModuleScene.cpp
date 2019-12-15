@@ -8,12 +8,16 @@
 #include "ModuleModel.h"
 #include "component/Mesh.h"
 #include "component/Material.h"
+#include "component/Camera.h"
 #include <string>
 
 bool ModuleScene::Init() {
 
 	root = CreateGameObject("Root Scene");
 	App->model->LoadModel(std::string("Models/BakerHouse.fbx"));
+	Camera* cam = App->camera->CreateComponentCamera();
+	cam->owner = root;
+	root->components.push_back(cam);
 	return true;
 }
 

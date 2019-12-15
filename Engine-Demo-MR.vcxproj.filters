@@ -163,6 +163,9 @@
     <ClCompile Include="src\component\Material.cpp">
       <Filter>src\components</Filter>
     </ClCompile>
+    <ClCompile Include="src\component\Camera.cpp">
+      <Filter>src\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\module\ModuleRender.h">
@@ -214,6 +217,9 @@
       <Filter>src\components</Filter>
     </ClInclude>
     <ClInclude Include="src\component\Material.h">
+      <Filter>src\components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\component\Camera.h">
       <Filter>src\components</Filter>
     </ClInclude>
   </ItemGroup>
