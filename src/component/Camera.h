@@ -44,20 +44,6 @@ public:
 	float4x4 proj, view, model;
 	float cameraSpeed = 0.05f;
 	unsigned fbo = 0;
-
-private:
-	float movementSpeed = cameraSpeed;
-	float3 cameraTarget = float3::zero;
-	bool orbit = false;
-	float yaw = 0.0f;
-	float pitch = -90.0f;
-	void CalculateRotationAngles(float3&);
-
-	Frustum frustum;
-	float aspect = 1.f;
-	float height = 200;
-	float width = 400;
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	float3 camPos;
 
 	float Hnear;
@@ -81,6 +67,23 @@ private:
 	float3 ftr;
 	float3 fbl;//far bottom left
 	float3 fbr;//far bottom right
+
+	float height = 600;
+	float width = 800;
+private:
+	float movementSpeed = cameraSpeed;
+	float3 cameraTarget = float3::zero;
+	bool orbit = false;
+	float yaw = 0.0f;
+	float pitch = -90.0f;
+	void CalculateRotationAngles(float3&);
+
+	Frustum frustum;
+	float aspect = 1.f;
+	
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
+
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	
 	unsigned fb_depth = 0;

@@ -11,7 +11,7 @@ Camera::Camera(GameObject* owner): Component(owner, ComponentType::Camera)
 	glGenFramebuffers(1, &fbo);
 	aspect = 1.f;
 	frustum.type = FrustumType::PerspectiveFrustum;
-	frustum.pos = float3::unitX;
+	frustum.pos = float3{ 0.0f,0.0f, -20.0f };
 	frustum.front = float3::unitZ;
 	frustum.up = float3::unitY;
 	frustum.nearPlaneDistance = 1.f;
@@ -115,9 +115,11 @@ void Camera::SetFrustum()
 void Camera::Draw()
 {
 	ImGui::SetNextWindowPos(ImVec2(256.0f, 0.0f), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(640.0f, 420.0f), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(800.0f, 600.0f), ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("Viewport");
+	width = ImGui::GetWindowContentRegionWidth();
+	height = ImGui::GetContentRegionAvail().y;
 
 	ImGui::GetWindowDrawList()->AddImage(
 		(void*)fb_tex,

@@ -1,6 +1,7 @@
 #ifndef ModuleRender_h
 #define ModuleRender_h
 #include "Module.h"
+#include "component/Camera.h"
 #include "main/Globals.h"
 #include "SDL.h"
 
@@ -28,7 +29,7 @@ public:
 	bool CleanUp();
 	Mesh* CreateMesh();
 private:
-	void DrawGrid() const;
+	void DrawGrid(Camera* cam) const;
 	void DrawAxis() const;
 	void DrawGameObject(GameObject*, Camera*);
 	void DrawMesh(Mesh*);
