@@ -47,7 +47,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>./src;./Libraries/assimp/include;./Libraries/DevIL/include;./Libraries/imgui;./Libraries/MathGeoLib/include;./Libraries/glew-2.1.0/include;./Libraries/SDL/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./src;./Libraries/util;./Libraries/assimp/include;./Libraries/DevIL/include;./Libraries/imgui;./Libraries/MathGeoLib/include;./Libraries/glew-2.1.0/include;./Libraries/SDL/include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -88,6 +88,7 @@
     <ClInclude Include="src\main\Globals.h" />
     <ClInclude Include="src\module\Module.h" />
     <ClInclude Include="src\module\ModuleCamera.h" />
+    <ClInclude Include="src\module\ModuleDebugDraw.h" />
     <ClInclude Include="src\module\ModuleImGui.h" />
     <ClInclude Include="src\module\ModuleInput.h" />
     <ClInclude Include="src\module\ModuleModel.h" />
@@ -96,6 +97,7 @@
     <ClInclude Include="src\module\ModuleScene.h" />
     <ClInclude Include="src\module\ModuleTexture.h" />
     <ClInclude Include="src\module\ModuleWindow.h" />
+    <ClInclude Include="src\util\DDRenderInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libraries\imgui\imgui.cpp" />
@@ -145,6 +147,7 @@
     <ClCompile Include="src\main\log.cpp" />
     <ClCompile Include="src\main\Main.cpp" />
     <ClCompile Include="src\module\ModuleCamera.cpp" />
+    <ClCompile Include="src\module\ModuleDebugDraw.cpp" />
     <ClCompile Include="src\module\ModuleImGui.cpp" />
     <ClCompile Include="src\module\ModuleInput.cpp" />
     <ClCompile Include="src\module\ModuleModel.cpp" />
