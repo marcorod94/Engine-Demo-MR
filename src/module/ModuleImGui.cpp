@@ -7,6 +7,7 @@
 #include "ModuleModel.h"
 #include "ModuleScene.h"
 #include "ModuleInput.h"
+#include "ModuleProgram.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
