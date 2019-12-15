@@ -8,12 +8,13 @@
 #include "ModuleModel.h"
 #include "component/Mesh.h"
 #include "component/Material.h"
+#include "component/Camera.h"
 #include <string>
 
 bool ModuleScene::Init() {
 
 	root = CreateGameObject("Root Scene");
-	//App->model->LoadModel(std::string("Models/BakerHouse.fbx"));
+	App->model->LoadModel(std::string("Models/BakerHouse.fbx"));
 	MeshShape shape;
 	shape.type = ShapeType::Torus;
 	shape.size = 0.5F;
@@ -21,7 +22,9 @@ bool ModuleScene::Init() {
 	shape.slices = 20;
 	shape.stacks = 20;
 	App->model->LoadShapes(root, "sphere0", float3(1.0f, 1.0f, 1.0f), Quat::identity, shape, ProgramType::Default, float4(0.5f, 0.0f, 0.5f, 1.0f));
-
+	Camera* cam = App->camera->CreateComponentCamera();
+	cam->owner = root;
+	root->components.push_back(cam);
 	return true;
 }
 

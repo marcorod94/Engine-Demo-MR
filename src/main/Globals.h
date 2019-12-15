@@ -18,7 +18,7 @@ enum update_status
 	UPDATE_ERROR
 };
 
-enum class ComponentType { Transform, Mesh, Material };
+enum class ComponentType { Transform, Mesh, Material, Camera };
 
 struct Vertex {
 	// position
@@ -45,5 +45,9 @@ struct Texture {
 // Configuration -----------
 #define VSYNC true
 #define SCREEN_SIZE 2
+#define SCREEN_WIDTH 1024
+#define SCREEN_HEIGHT 720
+#define FULLSCREEN true
+#define RESIZABLE true
 #define TITLE "EM ENGINE"
 #endif

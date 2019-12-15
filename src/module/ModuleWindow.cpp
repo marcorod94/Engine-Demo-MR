@@ -26,7 +26,7 @@ bool ModuleWindow::Init()
 	else
 	{
 		//Create window
-		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL;
+		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED;
 		SDL_DisplayMode DM;
 		SDL_GetCurrentDisplayMode(0, &DM);
 		maxScreenWidth = DM.w;
@@ -34,15 +34,14 @@ bool ModuleWindow::Init()
 		minScreenWidth = screenWidth = (int) (DM.w / aspectRatio);
 		minScreenHeight = screenHeight = (int) (DM.h / aspectRatio);
 
-		if(fullScreen == true)
+		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, flags);
+		if (FULLSCREEN == true)
 		{
-			flags |= SDL_WINDOW_MAXIMIZED;
+			flags |= SDL_WINDOW_FULLSCREEN;
 		}
-		if (resizable) {
+		if (RESIZABLE) {
 			flags |= SDL_WINDOW_RESIZABLE;
 		}
-		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, flags);
-
 		if(window == NULL)
 		{
 			App->imgui->AddLog("Window could not be created! SDL_Error: %s", SDL_GetError());

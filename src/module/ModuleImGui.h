@@ -16,6 +16,9 @@ public:
 	update_status Update();
 	bool CleanUp();
 	void AddLog(const char*, ...);
+
+	const void DrawConsoleWindow();
+	const void DrawInspectorWindow();
 private: 
 	bool show_demo_window = true;
 	unsigned selected = 0;

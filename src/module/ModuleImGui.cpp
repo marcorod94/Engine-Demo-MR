@@ -14,6 +14,7 @@
 #include "GL/glew.h"
 #include "assimp/version.h"
 #include "main/GameObject.h"
+#include "component/Camera.h"
 
 bool ModuleImGui::Init() {
 	IMGUI_CHECKVERSION();
@@ -41,6 +42,10 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 	DrawShaderProperties();
+	if (App->scene->root) {
+		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
+		cam->Draw();
+	}
 	if (showHierarchy) {
 		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
 		if (ImGui::TreeNode(App->scene->root->name.c_str())) {
@@ -71,13 +76,8 @@ update_status ModuleImGui::Update() {
 	}
 	ImGui::EndMainMenuBar();
 	
-	if (showConsole) {
-		ImGui::Begin("Console", &showConsole);
-		ImGui::TextUnformatted(buffer.begin());
-		if (scrollToBottom)
-			ImGui::SetScrollHere(1.0F);
-		scrollToBottom = false;
-		ImGui::End();
+    if (showConsole) {
+		DrawConsoleWindow();
 	}
 	if (showInfo) {
 		ShowInformationWindow(io);
@@ -89,7 +89,7 @@ update_status ModuleImGui::Update() {
 		ImGui::Begin("About", &showAbout);
 		ImGui::Text("Engine: EM ENGINE");
 		ImGui::Text("Desciption: Super Cool Engine develop with love <3");
-		ImGui::Text("Author: Marco Rodriguez");
+		ImGui::Text("Author: Artemis Georgakopoulou,  Marco Rodriguez");
 		ImGui::End();
 	}
 	
@@ -290,3 +290,31 @@ void ModuleImGui::LoadShapes(ShapeType s) {
 	App->model->LoadShapes(root, "shape3", float3(11.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Phong, float4(1.0F, 1.0F, 1.0F, 1.0F));
 	App->model->LoadShapes(root, "shape4", float3(14.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Blinn, float4(1.0F, 1.0F, 1.0F, 1.0F));
 }
+
+const void ModuleImGui::DrawConsoleWindow()
+{
+	int consoleW = 1120;
+	int consoleH = 270;
+	ImGui::Begin("Console", &showConsole);
+	ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
+	ImGui::SetWindowPos(ImVec2(0, App->window->screenHeight - consoleH));
+	ImVec2 size = ImGui::GetWindowSize();//to be able to resize it
+	if (size.x != consoleW && size.y != consoleH)
+	{
+		consoleW = size.x;
+		consoleH = size.y;
+		ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
+	}
+
+	ImGui::TextUnformatted(buffer.begin());
+	if (scrollToBottom)
+		ImGui::SetScrollHere(1.0F);
+	scrollToBottom = false;
+	ImGui::End();
+}
+
+const void ModuleImGui::DrawInspectorWindow()
+{
+
+}
+

@@ -30,7 +30,9 @@ public:
 
 	//The surface contained by the window
 	SDL_Surface* screen_surface = NULL;
-	int maxScreenWidth, maxScreenHeight, minScreenWidth, minScreenHeight, screenWidth, screenHeight;
+	int maxScreenWidth, maxScreenHeight, minScreenWidth, minScreenHeight;
+	int screenWidth = SCREEN_WIDTH;
+	int screenHeight = SCREEN_HEIGHT;
 	bool fullScreen = false;
 	bool resizable = false;
 private:
