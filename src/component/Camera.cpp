@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include "main/GameObject.h"
 #include "component/Component.h"
-#include <math.h>
+#include "MathGeoLib.h"
 #include "Geometry/Plane.h"
 #include "imgui.h"
 #include "GL/glew.h"

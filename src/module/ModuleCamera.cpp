@@ -2,6 +2,7 @@
 #include "ModuleInput.h"
 #include "ModuleCamera.h"
 #include "ModuleWindow.h"
+#include "MathGeoLib.h"
 #include "ModuleModel.h"
 #include "component/Camera.h"
 #include "SDL_scancode.h"
@@ -133,9 +134,27 @@ void ModuleCamera::MouseScrolling()
 		frustum.pos -= cameraSpeed * frustum.front;
 	}
 }
+void ModuleCamera::SetFOV(float fov)
+{
+	frustum.verticalFov = fov;
+	UpdateAspectRatio();
+	proj = frustum.ProjectionMatrix();
+}
 
 void ModuleCamera::UpdateAspectRatio() {
 	frustum.horizontalFov = 2.0F * atanf(tanf(frustum.verticalFov * 0.5F) * App->window->screenWidth / App->window->screenHeight);
+}
+
+void ModuleCamera::SetNearDistance(const float nearDist)
+{
+	frustum.nearPlaneDistance = nearDist;
+	proj = frustum.ProjectionMatrix();
+}
+
+void ModuleCamera::SetFarDistance(const float farDist)
+{
+	frustum.farPlaneDistance = farDist;
+	proj = frustum.ProjectionMatrix();
 }
 
 void ModuleCamera::CalculateRotationAngles(float3& vector) {

@@ -11,20 +11,27 @@ public:
 	~ModuleCamera() {}
 
 	bool Init();
-	
 	update_status PreUpdate();
 	update_status Update();
+	bool CleanUp();
+
 	float4x4 LookAt(float3&, float3&, float3&) const;
+	void SetFOV(const float fov);
+	void UpdateAspectRatio();
+	void SetNearDistance(const float distance);
+	void SetFarDistance(const float distance);
+	void SetTransform(const math::float3& f, const math::float3& r, const math::float3& u, const math::float3& pos);
+	void SetPosition(const math::float3& pos);
+	void SetRotation(const math::Quat& quat);
+	void SetPerspective(float fovY, float aspect, float near, float far);
+	void SetOrtho(float left, float right, float bottom, float top, float near, float far);
+	void CenterCamera();
+
 	void MouseMove();
 	void MouseScrolling();
 	void ZoomIn();
 	void ZoomOut();
-	void UpdateAspectRatio();
 	void Focus();
-	bool CleanUp();
-
-	void Draw();
-	void CenterCamera();
 
 	Camera* CreateComponentCamera();
 public:
@@ -33,14 +40,13 @@ public:
 	float3 helper1 = float3(0.0F, -1.0F, -4.0F);
 	float3 helper2 = float3(1.0F, 1.0F, 1.0F);
 	float cameraSpeed = 0.05f;
-private:
 
+private:
 	float movementSpeed = cameraSpeed;
 	float3 cameraTarget = float3::zero;
 	bool orbit = false;
 	float yaw = 0.0f;
 	float pitch = -90.0f;
 	void CalculateRotationAngles(float3&);
-	
 };
 #endif
