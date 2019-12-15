@@ -10,7 +10,7 @@ public:
 	int totalPrimitives = 0;
 	int totalVertex = 0;
 	int totalMaterials = 0;
-	Mesh() { type = ComponentType::Mesh; }
+	Mesh(GameObject* owner) : Component(owner, ComponentType::Mesh) {}
 	void Setup();
 	void DrawView();
 };

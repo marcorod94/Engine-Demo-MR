@@ -43,5 +43,5 @@ Texture ModuleTexture::LoadTexture(std::string& path) {
 
 
 Material* ModuleTexture::CreateMaterial() {
-	return new Material();
+	return new Material(nullptr);
 }

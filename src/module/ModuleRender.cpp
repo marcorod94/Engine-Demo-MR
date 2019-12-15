@@ -9,9 +9,11 @@
 #include "main/GameObject.h"
 #include "component/Mesh.h"
 #include "component/Material.h"
+#include "component/Camera.h"
 #include "SDL.h"
 #include "GL/glew.h"
 
+class Camera;
 // Called before render is available
 bool ModuleRender::Init()
 {
@@ -50,20 +52,35 @@ update_status ModuleRender::PreUpdate()
 
 // Called every draw update
 update_status ModuleRender::Update()
-{
-	glUseProgram(App->program->program);
-	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "model"), 1, GL_TRUE, &(App->camera->model[0][0]));
-	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "view"), 1, GL_TRUE, &(App->camera->view[0][0]));
-	glUniformMatrix4fv(glGetUniformLocation(App->program->program, "proj"), 1, GL_TRUE, &(App->camera->proj[0][0]));
+{	
 	if (App->scene->root) {
-		DrawGameObject(App->scene->root);
+		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
+		cam->GenerateFBOTexture(cam->width, cam->height);
+		glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
+		glViewport(0, 0, cam->width, cam->height);
+		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(App->program->program);
+		glUniformMatrix4fv(glGetUniformLocation(App->program->program, "model"), 1, GL_TRUE, &(App->camera->model[0][0]));
+		glUniformMatrix4fv(glGetUniformLocation(App->program->program, "view"), 1, GL_TRUE, &(cam->view[0][0]));
+		glUniformMatrix4fv(glGetUniformLocation(App->program->program, "proj"), 1, GL_TRUE, &(cam->proj[0][0]));
+		DrawGameObject(App->scene->root, cam);
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		if (showAxis) {
+			glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
+			DrawAxis();
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+		if (showGrid) {
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			//DrawGrid(cam);
+			glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
+			DrawGrid(cam);
+		}
+		//cam->DrawView();
 	}
-	if (showAxis) {
-		DrawAxis();
-	}
-	if (showGrid) {
-		DrawGrid();
-	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -85,13 +102,39 @@ bool ModuleRender::CleanUp()
 }
 
 Mesh* ModuleRender::CreateMesh() {
-	return new Mesh();
+	return new Mesh(nullptr);
 }
 
-void ModuleRender::DrawGrid() const {
+void ModuleRender::DrawGrid(Camera* cam) const {
 	glLineWidth(1.0F);
 	float d = 200.0F;
 	glBegin(GL_LINES);
+	//Near
+	//glVertex3f(cam->ntl.x, cam->ntl.y, cam->ntl.z);
+	//glVertex3f(cam->ntr.x, cam->ntr.y, cam->ntr.z);
+
+	//glVertex3f(cam->nbl.x, cam->nbl.y, cam->nbl.z);
+	//glVertex3f(cam->ntr.x, cam->ntr.y, cam->ntr.z);
+
+	//glVertex3f(cam->nbl.x, cam->nbl.y, cam->nbl.z);
+	//glVertex3f(cam->nbr.x, cam->nbr.y, cam->nbr.z);
+
+	//glVertex3f(cam->ntl.x, cam->ntl.y, cam->ntl.z);
+	//glVertex3f(cam->nbr.x, cam->nbr.y, cam->nbr.z);
+
+	////Far
+	//glVertex3f(cam->ftl.x, cam->ftl.y, cam->ftl.z);
+	//glVertex3f(cam->ftr.x, cam->ftr.y, cam->ftr.z);
+
+	//glVertex3f(cam->fbl.x, cam->fbl.y, cam->fbl.z);
+	//glVertex3f(cam->ftr.x, cam->ftr.y, cam->ftr.z);
+
+	//glVertex3f(cam->fbl.x, cam->fbl.y, cam->fbl.z);
+	//glVertex3f(cam->fbr.x, cam->fbr.y, cam->fbr.z);
+
+	//glVertex3f(cam->ftl.x, cam->ftl.y, cam->ftl.z);
+	//glVertex3f(cam->fbr.x, cam->fbr.y, cam->fbr.z);
+
 	for (float i = -d; i <= d; i += 1.0F)
 	{
 		glVertex3f(i, 0.0F, -d);
@@ -126,12 +169,17 @@ void ModuleRender::DrawAxis() const {
 	glLineWidth(1.0F);
 }
 
-void  ModuleRender::DrawGameObject(GameObject* parent) {
+void  ModuleRender::DrawGameObject(GameObject* parent, Camera* cam) {
 	DrawMaterial((Material*)parent->FindComponent(ComponentType::Material));
 	DrawMesh((Mesh*)parent->FindComponent(ComponentType::Mesh));
 	for (unsigned i = 0; i < parent->children.size(); i++) {
-		DrawGameObject(parent->children[i]);
+		DrawGameObject(parent->children[i], cam);
 	}
+}
+
+void ModuleRender::DisplayFrameBuffer(Camera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height)
+{
+
 }
 
 void  ModuleRender::DrawMesh(Mesh* mesh) {
