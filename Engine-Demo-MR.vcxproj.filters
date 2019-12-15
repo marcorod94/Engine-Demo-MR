@@ -165,6 +165,8 @@
     </ClCompile>
     <ClCompile Include="src\module\ModuleDebugDraw.cpp">
       <Filter>src\modules</Filter>
+    <ClCompile Include="src\component\Camera.cpp">
+      <Filter>src\components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +226,8 @@
     </ClInclude>
     <ClInclude Include="src\util\DDRenderInterface.h">
       <Filter>src\util</Filter>
+    <ClInclude Include="src\component\Camera.h">
+      <Filter>src\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

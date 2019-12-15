@@ -21,7 +21,7 @@ public:
 	}
 	~GameObject() {}
 	update_status Update();
-	void CreateComponent(const ComponentType);
+	Component* CreateComponent(const ComponentType);
 	Component* FindComponent(const ComponentType);
 	void DeleteChild(const GameObject*);
 	void ShowProperties();

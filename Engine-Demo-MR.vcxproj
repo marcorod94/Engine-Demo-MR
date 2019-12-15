@@ -14,7 +14,7 @@
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
     <ProjectName>Engine-Demo-MR</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -78,6 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\component\Camera.h" />
     <ClInclude Include="src\component\Component.h" />
     <ClInclude Include="src\component\Material.h" />
     <ClInclude Include="src\component\Transform.h" />
@@ -137,6 +138,7 @@
     <ClCompile Include="Libraries\MathGeoLib\include\Math\SSEMath.cpp" />
     <ClCompile Include="Libraries\MathGeoLib\include\Math\TransformOps.cpp" />
     <ClCompile Include="Libraries\MathGeoLib\include\Time\Clock.cpp" />
+    <ClCompile Include="src\component\Camera.cpp" />
     <ClCompile Include="src\component\Material.cpp" />
     <ClCompile Include="src\component\Transform.cpp" />
     <ClCompile Include="src\component\Mesh.cpp" />
