@@ -5,7 +5,8 @@ void Transform::DrawView() {
 	if (ImGui::TreeNode("Transform test")) {
 		ImGui::Text("Position:\tX:%.f\tY:%.f\tZ:%.f ", position.x, position.y, position.z);
 		ImGui::Text("Rotation:\tX:%.f\tY:%.f\tZ:%.f", rotation.x, rotation.y, rotation.z);
-		ImGui::Text("Scale:\tX:%.f\tY:%.f\tZ:%.f", scale.x, scale.y, scale.z);
+		ImGui::Text("Scale:\tX:%.f\tY:%.f\tZ:%.f", scaling.x, scaling.y, scaling.z);
+		ImGui::SliderFloat("Scale:", &scale, 1.0f, 200.0f);
 		ImGui::TreePop();
 	}
 }
@@ -26,6 +27,12 @@ void Transform::SetTransform(const aiMatrix4x4& trans) {
 	if (owner->parent) {
 		worldTransform = ((Transform*)owner->parent->FindComponent(ComponentType::Transform))->localTransform * localTransform;
 	}
-	//localTransform.Decompose(position, rotation, scale);
-	worldTransform.Decompose(position, rotation, scale);
+	localTransform.Decompose(position, rotation, scaling);
+	scale = scaling.x;
+	//worldTransform.Decompose(position, rotation, scale);
+}
+
+void Transform::CalculateTransform() {
+	scaling.x = scaling.y = scaling.z = scale;
+	localTransform = localTransform.FromTRS(position, rotation, scaling);
 }

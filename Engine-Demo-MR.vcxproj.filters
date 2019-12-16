@@ -5,80 +5,52 @@
       <Filter>src\main</Filter>
     </ClCompile>
     <ClCompile Include="src\component\Camera.cpp">
-      <Filter>src\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\Material.cpp">
-      <Filter>src\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\Mesh.cpp">
-      <Filter>src\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\Transform.cpp">
-      <Filter>src\components</Filter>
+      <Filter>src\component</Filter>
     </ClCompile>
     <ClCompile Include="src\main\GameObject.cpp">
       <Filter>src\main</Filter>
     </ClCompile>
-    <ClCompile Include="src\main\log.cpp">
+    <ClCompile Include="src\main\Main.cpp">
       <Filter>src\main</Filter>
     </ClCompile>
-    <ClCompile Include="src\main\Main.cpp">
+    <ClCompile Include="src\component\Material.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\Mesh.cpp">
+      <Filter>src\component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main\log.cpp">
       <Filter>src\main</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleCamera.cpp">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleDebugDraw.cpp">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleImGui.cpp">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleInput.cpp">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleModel.cpp">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleProgram.cpp">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleRender.cpp">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleScene.cpp">
-    <ClCompile Include="src\main\Main.cpp">
-      <Filter>src\main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main\Application.cpp">
-      <Filter>src\main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main\log.cpp">
-      <Filter>src\main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main\GameObject.cpp">
-      <Filter>src\main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\Mesh.cpp">
-      <Filter>src\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\Transform.cpp">
-      <Filter>src\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\Material.cpp">
-      <Filter>src\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\Camera.cpp">
-      <Filter>src\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\module\ModuleDebugDraw.cpp">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleTexture.cpp">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleWindow.cpp">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClCompile>
     <ClCompile Include="Libraries\imgui\imgui.cpp">
       <Filter>lib\imgui</Filter>
@@ -97,6 +69,9 @@
     </ClCompile>
     <ClCompile Include="Libraries\imgui\imgui_widgets.cpp">
       <Filter>lib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\Transform.cpp">
+      <Filter>src\component</Filter>
     </ClCompile>
     <ClCompile Include="Libraries\MathGeoLib\include\Geometry\AABB.cpp">
       <Filter>lib\MathGeoLib</Filter>
@@ -200,19 +175,7 @@
       <Filter>src\main</Filter>
     </ClInclude>
     <ClInclude Include="src\component\Camera.h">
-      <Filter>src\components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\component\Component.h">
-      <Filter>src\components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\component\Material.h">
-      <Filter>src\components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\component\Mesh.h">
-      <Filter>src\components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\component\Transform.h">
-      <Filter>src\components</Filter>
+      <Filter>src\component</Filter>
     </ClInclude>
     <ClInclude Include="src\main\GameObject.h">
       <Filter>src\main</Filter>
@@ -220,65 +183,79 @@
     <ClInclude Include="src\main\Globals.h">
       <Filter>src\main</Filter>
     </ClInclude>
+    <ClInclude Include="src\component\Material.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="src\component\Mesh.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
     <ClInclude Include="src\module\Module.h">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClInclude>
     <ClInclude Include="src\module\ModuleCamera.h">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClInclude>
     <ClInclude Include="src\module\ModuleDebugDraw.h">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClInclude>
     <ClInclude Include="src\module\ModuleImGui.h">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClInclude>
     <ClInclude Include="src\module\ModuleInput.h">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClInclude>
     <ClInclude Include="src\module\ModuleModel.h">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClInclude>
     <ClInclude Include="src\module\ModuleProgram.h">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClInclude>
     <ClInclude Include="src\module\ModuleRender.h">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClInclude>
     <ClInclude Include="src\module\ModuleScene.h">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClInclude>
     <ClInclude Include="src\module\ModuleTexture.h">
-      <Filter>src\modules</Filter>
+      <Filter>src\module</Filter>
     </ClInclude>
     <ClInclude Include="src\module\ModuleWindow.h">
-      <Filter>src\modules</Filter>
-    <ClInclude Include="src\util\DDRenderInterface.h">
+      <Filter>src\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\component\Transform.h">
+      <Filter>src\component</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\DebugDraw.h">
       <Filter>src\util</Filter>
-    <ClInclude Include="src\component\Camera.h">
-      <Filter>src\components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\component\Component.h">
+      <Filter>src\component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="lib">
-      <UniqueIdentifier>{8ad10d3b-afa6-4854-85fd-e7101ea898bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="lib\imgui">
-      <UniqueIdentifier>{4512ea85-e8fa-4ec4-811f-02a2e9c6e094}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="lib\MathGeoLib">
-      <UniqueIdentifier>{94e36e66-0450-49e6-94ce-5a27596a3ab8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src">
-      <UniqueIdentifier>{1648f949-fbb6-46b9-b1fd-0e8f7a50e9bf}</UniqueIdentifier>
+      <UniqueIdentifier>{0e338329-4256-410d-85ef-2bf818b39402}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\components">
-      <UniqueIdentifier>{dd0a12be-3927-49e0-9139-f98b24fb7a0c}</UniqueIdentifier>
+    <Filter Include="src\component">
+      <UniqueIdentifier>{d14995e9-fd41-48e6-997f-4fe049116c0a}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\main">
-      <UniqueIdentifier>{95c78ab6-746b-4a14-96ba-d6ca5bcbd533}</UniqueIdentifier>
+      <UniqueIdentifier>{11c9c510-a668-49d3-b950-48f16cc77d7b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\modules">
-      <UniqueIdentifier>{a6382f97-f89c-4b4b-939e-35b0cd79674a}</UniqueIdentifier>
+    <Filter Include="src\module">
+      <UniqueIdentifier>{ec423b1e-6e27-44b0-b53b-4c39aa11a084}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{b6708fce-65a8-41e0-b12a-acd7a0ebeda1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\imgui">
+      <UniqueIdentifier>{b39cc3dd-1cac-4089-9b32-bcb50efa34a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\MathGeoLib">
+      <UniqueIdentifier>{bce94379-21b6-46dc-8d14-3b8218c607f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\util">
+      <UniqueIdentifier>{4839044b-ba61-476a-b3da-444a760bfc53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

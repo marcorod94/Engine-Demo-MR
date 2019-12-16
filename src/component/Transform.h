@@ -6,7 +6,8 @@
 
 class Transform : public Component {
 public:
-	float3 scale = float3::zero;
+	float scale = 100.0f;
+	float3 scaling = float3::zero;
 	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
 	float4x4 localTransform = float4x4::identity;
@@ -19,5 +20,6 @@ public:
 	void DrawView();
 	void CalculateWorldTransform(const float4x4&);
 	void SetTransform(const aiMatrix4x4&);
+	void CalculateTransform();
 };
 #endif

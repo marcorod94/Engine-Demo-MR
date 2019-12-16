@@ -10,6 +10,7 @@ class Camera;
 class Mesh;
 class Material;
 class GameObject;
+class Transform;
 class ModuleRender : public Module {
 public:
 	SDL_GLContext glContext;
@@ -29,10 +30,7 @@ public:
 	bool CleanUp();
 	Mesh* CreateMesh();
 private:
-	void DrawGrid(Camera* cam) const;
-	void DrawAxis() const;
 	void DrawGameObject(GameObject*, Camera*);
-	void DrawMesh(Mesh*);
-	void DrawMaterial(Material*);
+	void DrawMesh(Camera*, Transform*, Mesh*, Material*);
 };
 #endif
