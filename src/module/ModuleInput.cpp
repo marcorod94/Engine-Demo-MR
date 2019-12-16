@@ -5,7 +5,6 @@
 #include "ModuleTexture.h"
 #include "ModuleModel.h"
 #include "ModuleScene.h"
-#include "ModuleCamera.h"
 #include "SDL.h"
 #include <string>
 
@@ -64,8 +63,8 @@ update_status ModuleInput::PreUpdate()
 			case SDL_DROPFILE:
 				path = event.drop.file;
 				extension = path.substr(path.find_last_of(".") + 1);
-				if (extension.compare("png") == 0 || extension.compare("bmp") == 0 || extension.compare("jpg") == 0) {
-					App->model->UpdateTexture(App->texture->LoadTexture(path));
+				if (extension.compare("png") == 0 || extension.compare("bmp") == 0 || extension.compare("jpg") == 0 || extension.compare("tif") == 0) {
+					App->texture->LoadTexture(path);
 				}
 				if (extension.compare("fbx") == 0 || extension.compare("FBX") == 0) {
 					App->model->LoadModel(path);
@@ -80,16 +79,6 @@ update_status ModuleInput::PreUpdate()
 			case SDL_MOUSEWHEEL :
 				mouse_scroll.x = (float) event.wheel.x;
 				mouse_scroll.y = (float) event.wheel.y;
-				if (event.wheel.y > 0)
-				{
-					App->camera->ZoomIn();
-					//App->imgui->AddLogInput("Input: Mouse Scroll Up\n");
-				}
-				else if (event.wheel.y < 0)
-				{
-					App->camera->ZoomOut();
-					//App->imgui->AddLogInput("Input: Mouse Scroll Down\n");
-				}
 				break;
 			case SDL_KEYDOWN:
 				currentKey = SDL_GetKeyName(event.key.keysym.sym);

@@ -47,6 +47,31 @@
       <Filter>src\modules</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleScene.cpp">
+    <ClCompile Include="src\main\Main.cpp">
+      <Filter>src\main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main\Application.cpp">
+      <Filter>src\main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main\log.cpp">
+      <Filter>src\main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main\GameObject.cpp">
+      <Filter>src\main</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\Mesh.cpp">
+      <Filter>src\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\Transform.cpp">
+      <Filter>src\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\Material.cpp">
+      <Filter>src\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\Camera.cpp">
+      <Filter>src\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\module\ModuleDebugDraw.cpp">
       <Filter>src\modules</Filter>
     </ClCompile>
     <ClCompile Include="src\module\ModuleTexture.cpp">
@@ -227,6 +252,10 @@
     </ClInclude>
     <ClInclude Include="src\module\ModuleWindow.h">
       <Filter>src\modules</Filter>
+    <ClInclude Include="src\util\DDRenderInterface.h">
+      <Filter>src\util</Filter>
+    <ClInclude Include="src\component\Camera.h">
+      <Filter>src\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

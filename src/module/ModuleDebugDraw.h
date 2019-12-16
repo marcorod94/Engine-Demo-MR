@@ -9,7 +9,6 @@ public:
 
 	bool Init();
 	bool CleanUp();
-	void Draw(unsigned fbo);
 private:
 	static DDRenderInterface* ddRenderer;
 };

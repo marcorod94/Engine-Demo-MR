@@ -61,11 +61,19 @@ update_status ModuleRender::Update()
 		glViewport(0, 0, cam->width, cam->height);
 		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+<<<<<<< HEAD
 		unsigned progam = App->program->programs[int(ProgramType::Default)];
 		glUseProgram(progam);
 		glUniformMatrix4fv(glGetUniformLocation(progam, "model"), 1, GL_TRUE, &(App->camera->model[0][0]));
 		glUniformMatrix4fv(glGetUniformLocation(progam, "view"), 1, GL_TRUE, &(cam->view[0][0]));
 		glUniformMatrix4fv(glGetUniformLocation(progam, "proj"), 1, GL_TRUE, &(cam->proj[0][0]));
+=======
+		unsigned program = App->program->programs[int(ProgramType::Default)];
+		glUseProgram(program);
+		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &(App->camera->model[0][0]));
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &(cam->view[0][0]));
+		glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &(cam->proj[0][0]));
+>>>>>>> refs/remotes/origin/develop
 		DrawGameObject(App->scene->root, cam);
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		if (showAxis) {
@@ -203,6 +211,7 @@ void  ModuleRender::DrawMaterial(Material* material) {
 		glUniform1f(glGetUniformLocation(program, "k_ambient"), material->kAmbient);
 		glUniform1f(glGetUniformLocation(program, "k_diffuse"), material->kDiffuse);
 		glUniform1f(glGetUniformLocation(program, "k_specular"), material->kSpecular);
+<<<<<<< HEAD
 		if (material->textures.size() == 0) {
 			glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 0);
 			glUniform4fv(glGetUniformLocation(program, "object_color"), 1, (const float*)&material->color);
@@ -213,27 +222,16 @@ void  ModuleRender::DrawMaterial(Material* material) {
 				glBindTexture(GL_TEXTURE_2D, material->textures[i].id);
 				glUniform1i(glGetUniformLocation(program, "diffuse_map"), 0);
 			}
+=======
+		if (material->diffuseMap == 0) {
+			glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 0);
+			glUniform4fv(glGetUniformLocation(program, "object_color"), 1, (const float*)&material->diffuseColor);
+		} else {
+			glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 1);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, material->diffuseMap);
+			glUniform1i(glGetUniformLocation(program, "diffuse_map"), 0);
+>>>>>>> refs/remotes/origin/develop
 		}
-		//unsigned int diffuseNr = 1;
-		//unsigned int specularNr = 1;
-		//unsigned int normalNr = 1;
-		//unsigned int heightNr = 1;
-		//for (unsigned int i = 0; i < material->textures.size(); i++) {
-		//	glActiveTexture(GL_TEXTURE0 + i);
-		//	std::string number;
-		//	std::string name = material->textures[i].type;
-		//	if (name == "texture_diffuse")
-		//		number = std::to_string(++diffuseNr);
-		//	else if (name == "texture_specular")
-		//		number = std::to_string(++specularNr);
-		//	else if (name == "texture_normal")
-		//		number = std::to_string(++normalNr);
-		//	else if (name == "texture_height")
-		//		number = std::to_string(++heightNr);
-
-		//	glUniform1i(glGetUniformLocation(App->program->programs[int(ProgramType::Default)], (name + number).c_str()), i);
-		//	// and finally bind the texture
-		//	glBindTexture(GL_TEXTURE_2D, material->textures[i].id);
-		//}
 	}
 }

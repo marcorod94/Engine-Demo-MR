@@ -21,11 +21,11 @@ bool ModuleTexture::CleanUp() {
 	return true;
 }
 
-Texture ModuleTexture::LoadTexture(std::string& path) {
+unsigned ModuleTexture::LoadTexture(std::string& path) {
 	for (unsigned int i = 0; i < loadedTextures.size(); i++) {
 		if (path.compare(loadedTextures[i].path) == 0) {
 			App->imgui->AddLog("Texture already loaded: %s", loadedTextures[i].path.c_str());
-			return loadedTextures[i];
+			return loadedTextures[i].id;
 		}
 	}
 	Texture texture;
@@ -34,11 +34,44 @@ Texture ModuleTexture::LoadTexture(std::string& path) {
 	texture.id = ilutGLBindTexImage();
 	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
 	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);
-	texture.type = "texture_diffuse";
 	texture.path = path;
 	loadedTextures.push_back(texture);
 	App->imgui->AddLog("Texture succssesfully loaded: %s", path.c_str());
-	return texture;
+	return texture.id;
+}
+
+void ModuleTexture::DrawTexture(unsigned& id) {
+	if (drawSelector) {
+		DrawTextureSelector(id);
+	}
+	for (unsigned int i = 0; i < loadedTextures.size(); i++) {
+		if (loadedTextures[i].id == id) {
+			DrawTexture(loadedTextures[i]);
+		}
+	}
+	if (ImGui::ImageButton((void*)(intptr_t)id, ImVec2(128, 128))) {
+		drawSelector = true;
+	}
+
+}
+
+void ModuleTexture::DrawTextureSelector(unsigned& id) {
+	ImGui::Begin("Textures");
+	for (unsigned int i = 0; i < loadedTextures.size(); i++) {
+		DrawTexture(loadedTextures[i]);
+		if (ImGui::ImageButton((void*)(intptr_t)loadedTextures[i].id, ImVec2(128, 128))) {
+			id = loadedTextures[i].id;
+			drawSelector = false;
+		}
+	}
+	ImGui::End();
+}
+
+void ModuleTexture::DrawTexture(Texture& texture) {
+	ImGui::Text("Path: %s", texture.path.c_str());
+	ImGui::Text("Type: %s", texture.type.c_str());
+	ImGui::Text("Width: %d", texture.width);
+	ImGui::Text("Heigth: %d", texture.height);
 }
 
 
