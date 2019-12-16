@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #ifndef ModuleCamera_h
 #define ModuleCamera_h
 
@@ -18,10 +17,10 @@ public:
 
 	float4x4 LookAt(float3&, float3&, float3&) const;
 	void SetFOV(const float fov);
-	void UpdateAspectRatio();
+	void UpdateAspectRatio(float w, float h);
 	void SetNearDistance(const float distance);
 	void SetFarDistance(const float distance);
-	void SetTransform(const math::float3& f, const math::float3& r, const math::float3& u, const math::float3& pos);
+	//void SetTransform(const math::float3& f, const math::float3& r, const math::float3& u, const math::float3& pos);
 	void SetPosition(const math::float3& pos);
 	void SetRotation(const math::Quat& quat);
 	void SetPerspective(float fovY, float aspect, float near, float far);
@@ -36,10 +35,10 @@ public:
 
 	Camera* CreateComponentCamera();
 public:
-	Frustum frustum;
-	float4x4 proj, view, model;
-	float3 helper1 = float3(0.0F, -1.0F, -4.0F);
-	float3 helper2 = float3(1.0F, 1.0F, 1.0F);
+	Camera* sceneCamera;
+	std::vector<Camera*> loadedCameras;
+	float3 helper1 = float3(0.0f, -1.0f, -4.0f);
+	float3 helper2 = float3(1.0f, 1.0f, 1.0f);
 	float cameraSpeed = 0.05f;
 
 private:
@@ -51,51 +50,3 @@ private:
 	void CalculateRotationAngles(float3&);
 };
 #endif
-=======
-#ifndef ModuleCamera_h
-#define ModuleCamera_h
-
-#include "Module.h"
-#include "MathGeoLib.h"
-#include "GL/glew.h"
-class Camera;
-class ModuleCamera : public Module {
-public:
-	ModuleCamera() {}
-	~ModuleCamera() {}
-
-	bool Init();
-	
-	update_status PreUpdate();
-	update_status Update();
-	float4x4 LookAt(float3&, float3&, float3&) const;
-	void MouseMove();
-	void MouseScrolling();
-	void ZoomIn();
-	void ZoomOut();
-	void UpdateAspectRatio();
-	void Focus();
-	bool CleanUp();
-
-	void Draw();
-	void CenterCamera();
-
-	Camera* CreateComponentCamera();
-public:
-	Frustum frustum;
-	float4x4 proj, view, model;
-	float3 helper1 = float3(0.0F, -1.0F, -4.0F);
-	float3 helper2 = float3(1.0F, 1.0F, 1.0F);
-	float cameraSpeed = 0.05f;
-private:
-
-	float movementSpeed = cameraSpeed;
-	float3 cameraTarget = float3::zero;
-	bool orbit = false;
-	float yaw = 0.0f;
-	float pitch = -90.0f;
-	void CalculateRotationAngles(float3&);
-	
-};
-#endif
->>>>>>> refs/remotes/origin/develop

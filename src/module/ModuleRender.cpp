@@ -63,7 +63,7 @@ update_status ModuleRender::Update()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		unsigned program = App->program->programs[int(ProgramType::Default)];
 		glUseProgram(program);
-		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &(App->camera->model[0][0]));
+		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &(cam->model[0][0]));
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &(cam->view[0][0]));
 		glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &(cam->proj[0][0]));
 		DrawGameObject(App->scene->root, cam);

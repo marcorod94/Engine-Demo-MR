@@ -16,6 +16,8 @@ public:
 	update_status Update();
 	GameObject* CreateGameObject(const std::string&) const;
 	GameObject* CreateGameObject(const std::string&, const float3&, const Quat&) const;
+
+
 	bool CleanUp();
 };
 #endif

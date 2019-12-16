@@ -22,7 +22,7 @@ bool ModuleScene::Init() {
 	shape.slices = 20;
 	shape.stacks = 20;
 	App->model->LoadShapes(root, "sphere0", float3(1.0f, 1.0f, 1.0f), Quat::identity, shape, ProgramType::Default, float4(0.5f, 0.0f, 0.5f, 1.0f));
-    Camera* cam = App->camera->CreateComponentCamera();
+	Camera* cam = App->camera->CreateComponentCamera();
 	cam->owner = root;
 	root->components.push_back(cam);
 	return true;
