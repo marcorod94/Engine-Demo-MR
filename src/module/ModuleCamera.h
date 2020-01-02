@@ -34,6 +34,7 @@ public:
 	void Focus();
 
 	Camera* CreateComponentCamera();
+	Camera* GetComponentCamera();
 public:
 	Camera* sceneCamera;
 	std::vector<Camera*> loadedCameras;

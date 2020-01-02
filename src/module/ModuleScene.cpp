@@ -22,9 +22,18 @@ bool ModuleScene::Init() {
 	shape.slices = 20;
 	shape.stacks = 20;
 	App->model->LoadShapes(root, "sphere0", float3(1.0f, 1.0f, 1.0f), Quat::identity, shape, ProgramType::Default, float4(0.5f, 0.0f, 0.5f, 1.0f));
+	//userViewport
 	Camera* cam = App->camera->CreateComponentCamera();
 	cam->owner = root;
 	root->components.push_back(cam);
+	//sceneCamera
+	mainCamera = CreateGameObject("Main Camera");
+	//Camera* Mcam = App->camera->CreateComponentCamera();
+	Camera* cam2 = new Camera(mainCamera);
+	cam2->owner = mainCamera;
+	mainCamera->components.push_back(cam2);
+	//cam2->Draw();
+	
 	return true;
 }
 
@@ -43,6 +52,7 @@ bool ModuleScene::CleanUp() {
 
 GameObject* ModuleScene::CreateGameObject(const std::string& name) const {
 	return new GameObject(name);
+
 }
 
 GameObject* ModuleScene::CreateGameObject(const std::string& name, const float3& pos, const Quat& rot) const {

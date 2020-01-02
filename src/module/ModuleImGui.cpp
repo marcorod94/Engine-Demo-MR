@@ -43,13 +43,23 @@ update_status ModuleImGui::Update() {
 	ImGui::NewFrame();
 	if (App->scene->root) {
 		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
-		cam->Draw();
+		cam->Draw("viewport");
+	}
+	if (App->scene->mainCamera)
+	{
+		Camera* cam2 = (Camera*)App->scene->mainCamera->FindComponent(ComponentType::Camera);
+		cam2->Draw(App->scene->mainCamera->name.c_str());
 	}
 	if (showHierarchy) {
 		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
 		if (ImGui::TreeNode(App->scene->root->name.c_str())) {
 			int root = 0;
 			DrawHierarchy(App->scene->root->children, root);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode(App->scene->mainCamera->name.c_str())) {
+			int mainCamera = 0;
+			DrawHierarchy(App->scene->mainCamera->children, mainCamera);
 			ImGui::TreePop();
 		}
 		ImGui::End();
@@ -198,6 +208,7 @@ const void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
 }
 
 const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, int& index) {
+	
 	for (unsigned i = 0; i < objects.size(); ++i)
 	{
 		++index;
@@ -209,6 +220,10 @@ const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, i
 		if (ImGui::TreeNodeEx(objects[i]->name.c_str(), flags)) {
 			if (selected == index) {
 				objects[i]->ShowProperties();
+				/*if (objects[i]->)
+				{
+
+				}*/
 			}
 			if (ImGui::IsItemClicked()) {
 				selected = index;
@@ -297,13 +312,13 @@ const void ModuleImGui::DrawConsoleWindow()
 	ImGui::Begin("Console", &showConsole);
 	ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
 	ImGui::SetWindowPos(ImVec2(0, App->window->screenHeight - consoleH));
-	ImVec2 size = ImGui::GetWindowSize();//to be able to resize it
-	if (size.x != consoleW && size.y != consoleH)
-	{
-		consoleW = size.x;
-		consoleH = size.y;
-		ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
-	}
+	//ImVec2 size = ImGui::GetWindowSize();//to be able to resize it
+	//if (size.x != consoleW && size.y != consoleH)
+	//{
+	//	consoleW = size.x;
+	//	consoleH = size.y;
+	//	ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
+	//}
 
 	ImGui::TextUnformatted(buffer.begin());
 	if (scrollToBottom)

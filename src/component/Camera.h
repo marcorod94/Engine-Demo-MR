@@ -3,6 +3,7 @@
 
 #include "MathGeoLib.h"
 #include "Component.h"
+#include <string>
 
 const int IS_IN = 0;
 const int IS_OUT = 1;
@@ -16,7 +17,7 @@ public:
 	void SetFrustum();
 	Frustum frustum;
 
-	void Draw();
+	void Draw(const char*);
 	void GenerateFBOTexture(unsigned w, unsigned h);
 
 	int isCollidingFrustum(const AABB& aabb) const;

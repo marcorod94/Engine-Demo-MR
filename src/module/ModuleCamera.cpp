@@ -38,6 +38,11 @@ Camera* ModuleCamera::CreateComponentCamera()
 	return sceneCamera;
 }//dont forget to create a remove component also
 
+Camera* ModuleCamera::GetComponentCamera()
+{
+	return sceneCamera;
+}//
+
 
 update_status  ModuleCamera::PreUpdate() {
 	sceneCamera->proj = sceneCamera->frustum.ProjectionMatrix();
@@ -71,22 +76,21 @@ update_status  ModuleCamera::Update() {
 				sceneCamera->frustum.pos += movementSpeed * (sceneCamera->frustum.front.Cross(sceneCamera->frustum.up)).Normalized();
 			}
 		}
-
-	}
-	movementSpeed = cameraSpeed;
-	orbit = false;
-	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT)) {
-		movementSpeed = cameraSpeed * 2;
-	}
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) && (App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT))) {
-		orbit = true;
-		MouseMove();
-	}
-	if (App->input->GetKey(SDL_SCANCODE_F)) {
-		Focus();
-	}
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
-		MouseScrolling();
+		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT)) {
+			movementSpeed = cameraSpeed * 2;
+		}
+		if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) && (App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT))) {
+			orbit = true;
+			MouseMove();
+		}
+		if (App->input->GetKey(SDL_SCANCODE_F)) {
+			Focus();
+		}
+		if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
+			MouseScrolling();
+		}
+		movementSpeed = cameraSpeed;
+		orbit = false;
 	}
 	
 	return UPDATE_CONTINUE;
@@ -195,6 +199,8 @@ void ModuleCamera::ZoomOut()
 
 bool ModuleCamera::CleanUp()
 {
+	delete sceneCamera;
+	//sceneCamera = nullptr;
 	return true;
 }
 

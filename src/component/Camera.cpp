@@ -13,6 +13,7 @@ Camera::Camera(GameObject* owner): Component(owner, ComponentType::Camera)
 {
 	glGenFramebuffers(1, &fbo);
 	aspect = 1.f;
+	//frustum = new Frustum();
 	frustum.type = FrustumType::PerspectiveFrustum;
 	frustum.pos = float3{ 0.0f,0.0f, -20.0f };
 	frustum.front = float3::unitZ;
@@ -52,8 +53,8 @@ Camera::Camera(GameObject* owner): Component(owner, ComponentType::Camera)
 }
 Camera::~Camera()
 {
-	//glDeleteFramebuffers(1, &fbo);
-	//glDeleteRenderbuffers(1, &rbo);
+	glDeleteFramebuffers(1, &fbo);
+	glDeleteFramebuffers(1, &fb_depth);
 }
 
 int Camera::isCollidingFrustum(const AABB& aabb) const
@@ -115,16 +116,21 @@ void Camera::SetFrustum()
 	nbr = nCenter - (frustum.up * (Hnear / 2)) + (frustum.WorldRight()* (Wnear / 2));
 }
 
-void Camera::Draw()
+void Camera::Draw(const char* name)
 {
+	/*if (App->camera->)
+	{
+
+	}*/
+	
 	ImGui::SetNextWindowPos(ImVec2(256.0f, 0.0f), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(800.0f, 600.0f), ImGuiCond_FirstUseEver);
 
-	ImGui::Begin("Viewport");
+	ImGui::Begin(name);
 	if (ImGui::IsWindowHovered())
 	{
 		isHovered = true;
-		App->imgui->AddLog("TRYIN TO UPDATE CAM");
+		//App->imgui->AddLog("TRYIN TO UPDATE CAM");
 	}
 	else
 	{

@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "main/Globals.h"
 #include "MathGeoLib.h"
+#include "component/Camera.h"
 #include "SDL.h"
 
 #define KEY_NUM 300
