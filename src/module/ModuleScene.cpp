@@ -24,15 +24,26 @@ bool ModuleScene::Init() {
 	App->model->LoadShapes(root, "sphere0", float3(1.0f, 1.0f, 1.0f), Quat::identity, shape, ProgramType::Default, float4(0.5f, 0.0f, 0.5f, 1.0f));
 	//userViewport
 	Camera* cam = App->camera->CreateComponentCamera();
+	//Camera* cam = new Camera(root);
 	cam->owner = root;
 	root->components.push_back(cam);
 	//sceneCamera
 	mainCamera = CreateGameObject("Main Camera");
-	//Camera* Mcam = App->camera->CreateComponentCamera();
-	Camera* cam2 = new Camera(mainCamera);
+	Camera* cam2 = App->camera->CreateComponentCamera();
+	//Camera* cam2 = new Camera(mainCamera);
 	cam2->owner = mainCamera;
 	mainCamera->components.push_back(cam2);
-	//cam2->Draw();
+
+
+	/////////////////////////////////////////////////////////////////////
+
+	/*GameObject* camera = CreateGameObject("Root Scene");
+	camera->name = "Main Camera";
+	Camera* componentCamera = App->camera->CreateComponentCamera();
+	App->camera->currentCamera = componentCamera;
+	componentCamera->owner = camera;*/
+	/*App->camera->currentCamera->SetPosition(float3(0.f, 100.f, -100.f));
+	App->camera->currentCamera->SetFarDistance(500);*/
 	
 	return true;
 }

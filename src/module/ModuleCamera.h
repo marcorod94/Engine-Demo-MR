@@ -36,13 +36,16 @@ public:
 	Camera* CreateComponentCamera();
 	Camera* GetComponentCamera();
 public:
-	Camera* sceneCamera;
+	Frustum frustum;
+	Camera* sceneCamera =  nullptr;
+	Camera* currentCamera = nullptr;
 	std::vector<Camera*> loadedCameras;
 	float3 helper1 = float3(0.0f, -1.0f, -4.0f);
 	float3 helper2 = float3(1.0f, 1.0f, 1.0f);
 	float cameraSpeed = 0.05f;
 
 private:
+	GameObject *sceneCameraGO = nullptr;
 	float movementSpeed = cameraSpeed;
 	float3 cameraTarget = float3::zero;
 	bool orbit = false;

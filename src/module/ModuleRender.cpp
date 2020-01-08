@@ -15,6 +15,7 @@
 #include "GL/glew.h"
 
 class Camera;
+
 // Called before render is available
 bool ModuleRender::Init()
 {
@@ -71,7 +72,7 @@ update_status ModuleRender::Update()
 		if (showAxis) {
 			glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
 			DrawAxis();
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 		if (showGrid) {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -81,6 +82,7 @@ update_status ModuleRender::Update()
 		}
 		//cam->DrawView();
 	}
+
 	if (App->scene->mainCamera) {
 		Camera* cam2 = (Camera*)App->scene->mainCamera->FindComponent(ComponentType::Camera);
 		cam2->GenerateFBOTexture(cam2->width, cam2->height);
@@ -88,11 +90,11 @@ update_status ModuleRender::Update()
 		glViewport(0, 0, cam2->width, cam2->height);
 		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		unsigned program = App->program->programs[int(ProgramType::Default)];
-		glUseProgram(program);
-		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &(cam2->model[0][0]));
-		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &(cam2->view[0][0]));
-		glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &(cam2->proj[0][0]));
+		unsigned program2 = App->program->programs[int(ProgramType::Default)];
+		glUseProgram(program2);
+		glUniformMatrix4fv(glGetUniformLocation(program2, "model"), 1, GL_TRUE, &(cam2->model[0][0]));
+		glUniformMatrix4fv(glGetUniformLocation(program2, "view"), 1, GL_TRUE, &(cam2->view[0][0]));
+		glUniformMatrix4fv(glGetUniformLocation(program2, "proj"), 1, GL_TRUE, &(cam2->proj[0][0]));
 		DrawGameObject(App->scene->mainCamera, cam2);
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		if (showAxis) {
@@ -108,7 +110,6 @@ update_status ModuleRender::Update()
 		}
 		//cam->DrawView();
 	}
-
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
 	return UPDATE_CONTINUE;

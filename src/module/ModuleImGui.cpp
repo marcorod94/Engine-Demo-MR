@@ -48,7 +48,7 @@ update_status ModuleImGui::Update() {
 	if (App->scene->mainCamera)
 	{
 		Camera* cam2 = (Camera*)App->scene->mainCamera->FindComponent(ComponentType::Camera);
-		cam2->Draw(App->scene->mainCamera->name.c_str());
+		cam2->Draw("MainCamera");
 	}
 	if (showHierarchy) {
 		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);

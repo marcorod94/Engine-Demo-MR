@@ -11,8 +11,9 @@ public:
 	Component() {}
 	Component(GameObject* owner, const ComponentType type): owner(owner), type(type) {}
 	virtual ~Component() {}
+	virtual void Update() {};
 	virtual void Enable() { active = true; }
-	virtual update_status Update() { return UPDATE_CONTINUE; }
+	//virtual update_status Update() { return UPDATE_CONTINUE; }
 	virtual void Disable() { active = false; }
 	virtual void DrawView() {}
 };

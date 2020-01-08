@@ -11,20 +11,31 @@ const int INTERSECT = 2;
 
 class Camera : public Component {
 public:
-	Camera(GameObject* owner);
+	Camera();
+	Camera(GameObject* theOwner);
 	~Camera();
 
 	void SetFrustum();
 	Frustum frustum;
+	/*float4x4 projectionMatrix = float4x4::zero;
+	float4x4 viewMatrix = float4x4::zero;
+	ImVec4 clearColor;
+	int selectedClearMode;*/
+	/*void SetFOV(float);
+	void SetAspectRatio(float);
+	void SetPlaneDistances(float, float);
+	void ReloadMatrices();*/
+	void Update() override;
 
 	void Draw(const char*);
 	void GenerateFBOTexture(unsigned w, unsigned h);
-
+	void GenerateMatrices();
 	int isCollidingFrustum(const AABB& aabb) const;
 	
 	float4x4 proj, view, model;
 	float cameraSpeed = 0.05f;
 	unsigned fbo = 0;
+	unsigned rbo = 0;
 	float3 camPos;
 
 	float Hnear;
@@ -55,6 +66,9 @@ public:
 private:
 	
 	float aspect = 1.f;
+	unsigned frustumVAO = 0;
+	unsigned frustumVBO = 0;
+	unsigned frustumEBO = 0;
 	
 	unsigned fb_depth = 0;
 	unsigned fb_tex = 0;

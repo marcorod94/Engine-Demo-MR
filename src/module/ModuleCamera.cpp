@@ -6,6 +6,7 @@
 #include "ModuleModel.h"
 #include "main/Application.h"
 #include "module/ModuleScene.h"
+#include "module/ModuleProgram.h"
 #include "component/Camera.h"
 #include "SDL_scancode.h"
 #include "SDL_mouse.h"
@@ -14,6 +15,15 @@
 bool ModuleCamera::Init() {
 	int windowWidth, windowHeight;
 	SDL_GetWindowSize(App->window->window, &windowWidth, &windowHeight);
+	/*sceneCamera = new Camera(App->scene->root);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, App->program->uniformsBuffer);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float4x4), &sceneCamera->proj[0][0]);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, App->program->uniformsBuffer);
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float4x4), sizeof(float4x4), &sceneCamera->view[0][0]);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);*/
 	/*defaultCameraGO = new GameObject();
 	sceneCamera = (Camera*)defaultCameraGO->CreateComponent(ComponentType::Camera);*/
 	//sceneCamera->SetFarDistance();
@@ -28,13 +38,17 @@ bool ModuleCamera::Init() {
 	//frustum.verticalFov = math::pi / 4.0F;
 	////UpdateAspectRatio();
 	//CalculateRotationAngles(frustum.front);
+	sceneCameraGO = App->scene->CreateGameObject("Root Scene");
+	//scene_cameraGO->transform.SetTranslation(float3(0.5f, 2.f, -15.f));
+	sceneCamera = CreateComponentCamera();
+	//scene_camera->SetFarDistance(500);
 	return true;
 }
 
 Camera* ModuleCamera::CreateComponentCamera()
 {
-	sceneCamera = new Camera(nullptr);
-	//loadedCameras.push_back(cam);
+	sceneCamera = new Camera();
+	loadedCameras.push_back(sceneCamera);
 	return sceneCamera;
 }//dont forget to create a remove component also
 
