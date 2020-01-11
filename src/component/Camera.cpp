@@ -58,12 +58,16 @@ Camera::Camera(GameObject* theOwner) : Component(owner, ComponentType::Camera)
 	aspect = 1.f;
 	frustum.type = FrustumType::PerspectiveFrustum;
 	frustum.pos = float3::unitX;
-	frustum.front = float3::unitZ;
+	frustum.front = float3::unitX;
 	frustum.up = float3::unitY;
 	frustum.nearPlaneDistance = 1.f;
 	frustum.farPlaneDistance = 100.0f;
 	frustum.verticalFov = math::pi / 4.0f;
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * aspect);
+	
+	yaw = RadToDeg(asin(frustum.pos.y));
+	pitch = RadToDeg(acos(frustum.pos.x/cos(RadToDeg(yaw))));
+	
 	GenerateMatrices();
 	glGenFramebuffers(1, &fbo);
 
@@ -100,20 +104,20 @@ void Camera::Update()
 int Camera::isCollidingFrustum(const AABB& aabb) const
 {
 	float3 edges[8];
-	int totalPointsIn = 0;
+	int totalPointsIn = 6;
 	aabb.GetCornerPoints(edges);
 	Plane viewportPlanes[6];
 	frustum.GetPlanes(viewportPlanes);
 
 	for (int pl = 0; pl < 6; pl++)
 	{
-		int isInPlane = 0;
+		int isInPlane = 1;
 		for (int p = 0; p < 8; p++)
 		{
 			if (viewportPlanes[pl].IsOnPositiveSide(edges[p]))
 			{
-				isInPlane = 1;
-				++totalPointsIn;
+				isInPlane = 0;
+				--totalPointsIn;
 			}
 		}
 	}

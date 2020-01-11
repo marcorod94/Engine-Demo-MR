@@ -32,6 +32,7 @@ bool ModuleScene::Init() {
 	Camera* cam2 = App->camera->CreateComponentCamera();
 	//Camera* cam2 = new Camera(mainCamera);
 	cam2->owner = mainCamera;
+	mainCamera->parent = root;
 	mainCamera->components.push_back(cam2);
 
 

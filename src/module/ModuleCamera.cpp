@@ -48,8 +48,10 @@ update_status  ModuleCamera::PreUpdate() {
 		loadedCameras[i]->proj = loadedCameras[i]->frustum.ProjectionMatrix();
 
 		loadedCameras[i]->model = float4x4::FromTRS(helper1, float3x3::RotateY(loadedCameras[i]->frustum.verticalFov), helper2);
-		loadedCameras[i]->view = LookAt(loadedCameras[i]->frustum.pos, loadedCameras[i]->frustum.pos + loadedCameras[i]->frustum.front - cameraTarget, loadedCameras[i]->frustum.up);
+		loadedCameras[i]->view = LookAt(loadedCameras[i]->frustum.pos, loadedCameras[i]->frustum.front + loadedCameras[i]->frustum.pos, loadedCameras[i]->frustum.up);
+		UpdateAspectRatio(loadedCameras[i], loadedCameras[i]->width, loadedCameras[i]->height);
 	}
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -58,7 +60,7 @@ update_status  ModuleCamera::Update() {
 	{
 		if (loadedCameras[i]->isHovered)
 		{
-			
+			orbit = false;
 			App->imgui->AddLog("CAMERA name: %s", loadedCameras[i]->owner->name.c_str());
 			if (App->input->GetKey(SDL_SCANCODE_W)) {
 
@@ -93,8 +95,8 @@ update_status  ModuleCamera::Update() {
 				MouseScrolling(loadedCameras[i]);
 			}
 			movementSpeed = cameraSpeed;
-			orbit = false;
-			//UpdateAspectRatio(loadedCameras[i], loadedCameras[i]->width, loadedCameras[i]->height);
+			
+			UpdateAspectRatio(loadedCameras[i], loadedCameras[i]->width, loadedCameras[i]->height);
 		}
 		
 	}
@@ -117,32 +119,33 @@ void ModuleCamera::MouseMove(Camera* cam)
 {
 	float2 offset = App->input->GetMouseMotion();
 
-	float sensitivity = 0.1F;
+	
 	offset.x *= sensitivity;
 	offset.y *= sensitivity;
 
-	yaw += offset.x;
-	pitch += offset.y;
+	cam->yaw += offset.x;
+	cam->pitch += offset.y;
 	
 	if (orbit == false) {
-		if (pitch > 89.0F)
-			pitch = 89.0F;
-		if (pitch < -89.0F)
-			pitch = -89.0F; 
-
+		if (cam->pitch > 80.0F)
+			cam->pitch = 80.0F;
+		if (cam->pitch < -80.0F)
+			cam->pitch = -80.0F;
+		UpdateAspectRatio(cam, cam->width, cam->height);
 	}
 
 	float3 direction;
-	direction.x = cos(DegToRad(yaw)) * cos(DegToRad(pitch));
-	direction.y = sin(DegToRad(pitch));
-	direction.z = sin(DegToRad(yaw)) * cos(DegToRad(pitch));
+	direction.x = cos(DegToRad(cam->yaw)) * cos(DegToRad(cam->pitch));
+	direction.y = sin(DegToRad(cam->pitch));
+	direction.z = sin(DegToRad(cam->yaw)) * cos(DegToRad(cam->pitch));
 	if (orbit) {
 		/*frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * direction.Normalized();*/
 		cameraTarget = cam->frustum.pos + cam->frustum.front;
 	} else {
-		cameraTarget = float3::zero;
+		//cameraTarget = float3::zero;
 		cam->frustum.front = direction.Normalized();
 	}
+	UpdateAspectRatio(cam, cam->width, cam->height);
 }
 
 
@@ -182,8 +185,8 @@ void ModuleCamera::SetFarDistance(Camera* cam, const float farDist)
 }
 
 void ModuleCamera::CalculateRotationAngles(float3& vector) {
-	pitch = -RadToDeg(asin(vector.y));
-	yaw = -RadToDeg(acos(vector.x / cos(DegToRad(pitch))));
+	/*pitch = -RadToDeg(asin(vector.y));
+	yaw = -RadToDeg(acos(vector.x / cos(DegToRad(pitch))));*/
 }
 
 void ModuleCamera::Focus(Camera* cam) {

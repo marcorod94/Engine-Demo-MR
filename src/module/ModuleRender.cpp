@@ -95,7 +95,8 @@ update_status ModuleRender::Update()
 		glViewport(0, 0, cam2->width, cam2->height);
 		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		DrawGameObject(App->scene->mainCamera, cam2);
+		
+		DrawGameObject(App->scene->root, cam2);
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		if (showAxis) {
 			glBindFramebuffer(GL_FRAMEBUFFER, cam2->fbo);
@@ -205,7 +206,13 @@ void  ModuleRender::DrawGameObject(GameObject* parent, Camera* cam) {
 	DrawMaterial((Material*)parent->FindComponent(ComponentType::Material));
 	DrawMesh((Mesh*)parent->FindComponent(ComponentType::Mesh));
 	for (unsigned i = 0; i < parent->children.size(); i++) {
-		DrawGameObject(parent->children[i], cam);
+		Mesh* mesh = (Mesh*)parent->children[i]->FindComponent(ComponentType::Mesh);
+
+		if (mesh != nullptr && cam->isCollidingFrustum(mesh->box) == IS_IN)
+		{
+			DrawGameObject(parent->children[i], cam);
+		}
+		
 	}
 }
 

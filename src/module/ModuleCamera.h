@@ -42,14 +42,13 @@ public:
 	float3 helper1 = float3(0.0f, -1.0f, -4.0f);
 	float3 helper2 = float3(1.0f, 1.0f, 1.0f);
 	float cameraSpeed = 0.05f;
-
+	float sensitivity = 0.2F;
 private:
 	GameObject *sceneCameraGO = nullptr;
 	float movementSpeed = cameraSpeed;
 	float3 cameraTarget = float3::zero;
 	bool orbit = false;
-	float yaw = 0.0f;
-	float pitch = -90.0f;
+	
 	void CalculateRotationAngles(float3&);
 };
 #endif
