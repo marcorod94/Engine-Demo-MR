@@ -3,7 +3,7 @@
 #include "main/Globals.h"
 #include "main/GameObject.h"
 class Component {
-public :
+public:
 	int uuid;
 	ComponentType type;
 	bool active;

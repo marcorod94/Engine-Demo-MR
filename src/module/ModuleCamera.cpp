@@ -3,11 +3,20 @@
 #include "ModuleCamera.h"
 #include "ModuleWindow.h"
 #include "ModuleModel.h"
+#include "component/Camera.h"
 #include "SDL_scancode.h"
 #include "SDL_mouse.h"
 
 bool ModuleCamera::Init() {
-	frustum.type = FrustumType::PerspectiveFrustum;
+	int windowWidth, windowHeight;
+	SDL_GetWindowSize(App->window->window, &windowWidth, &windowHeight);
+
+	/*defaultCameraGO = new GameObject();
+	sceneCamera = (Camera*)defaultCameraGO->CreateComponent(ComponentType::Camera);*/
+	//sceneCamera->SetFarDistance();
+
+	///////////////previous code
+	/*frustum.type = FrustumType::PerspectiveFrustum;
 	frustum.pos = float3(-1.0F, 1.0F, 1.0F);
 	frustum.front = -float3::unitZ;
 	frustum.up = float3::unitY;
@@ -15,9 +24,14 @@ bool ModuleCamera::Init() {
 	frustum.farPlaneDistance = 250.0F;
 	frustum.verticalFov = math::pi / 4.0F;
 	UpdateAspectRatio();
-	CalculateRotationAngles(frustum.front);
+	CalculateRotationAngles(frustum.front);*/
 	return true;
 }
+
+Camera* ModuleCamera::CreateComponentCamera()
+{
+	return new Camera(nullptr);
+}//dont forget to create a remove component also
 
 update_status  ModuleCamera::PreUpdate() {
 	UpdateAspectRatio();
@@ -134,4 +148,19 @@ void ModuleCamera::Focus() {
 	frustum.front = -float3::unitZ;
 	CalculateRotationAngles(frustum.front);
 	/*frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * frustum.front;*/
+}
+
+void ModuleCamera::ZoomIn()
+{
+	frustum.pos += cameraSpeed * frustum.front;
+}
+
+void ModuleCamera::ZoomOut()
+{
+	frustum.pos -= cameraSpeed * frustum.front;
+}
+
+bool ModuleCamera::CleanUp()
+{
+	return true;
 }
