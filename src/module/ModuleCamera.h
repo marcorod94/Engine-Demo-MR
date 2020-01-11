@@ -16,28 +16,27 @@ public:
 	bool CleanUp();
 
 	float4x4 LookAt(float3&, float3&, float3&) const;
-	void SetFOV(const float fov);
-	void UpdateAspectRatio(float w, float h);
-	void SetNearDistance(const float distance);
-	void SetFarDistance(const float distance);
+	void SetFOV(Camera* cam, const float fov);
+	void UpdateAspectRatio(Camera* cam, float w, float h);
+	void SetNearDistance(Camera* cam, const float distance);
+	void SetFarDistance(Camera* cam, const float distance);
 	//void SetTransform(const math::float3& f, const math::float3& r, const math::float3& u, const math::float3& pos);
-	void SetPosition(const math::float3& pos);
-	void SetRotation(const math::Quat& quat);
-	void SetPerspective(float fovY, float aspect, float near, float far);
-	void SetOrtho(float left, float right, float bottom, float top, float near, float far);
-	void CenterCamera();
+	void SetPosition(Camera* cam, const math::float3& pos);
+	void SetRotation(Camera* cam, const math::Quat& quat);
+	void SetPerspective(Camera* cam, float fovY, float aspect, float near, float far);
+	void SetOrtho(Camera* cam, float left, float right, float bottom, float top, float near, float far);
+	void CenterCamera(Camera* cam);
 
-	void MouseMove();
-	void MouseScrolling();
-	void ZoomIn();
-	void ZoomOut();
-	void Focus();
+	void MouseMove(Camera* cam);
+	void MouseScrolling(Camera* cam);
+	void ZoomIn(Camera* cam);
+	void ZoomOut(Camera* cam);
+	void Focus(Camera* cam);
 
 	Camera* CreateComponentCamera();
-	Camera* GetComponentCamera();
 public:
 	Frustum frustum;
-	Camera* sceneCamera =  nullptr;
+	Camera* sceneCameras =  nullptr;
 	Camera* currentCamera = nullptr;
 	std::vector<Camera*> loadedCameras;
 	float3 helper1 = float3(0.0f, -1.0f, -4.0f);

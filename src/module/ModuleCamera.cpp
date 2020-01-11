@@ -15,19 +15,6 @@
 bool ModuleCamera::Init() {
 	int windowWidth, windowHeight;
 	SDL_GetWindowSize(App->window->window, &windowWidth, &windowHeight);
-	/*sceneCamera = new Camera(App->scene->root);
-
-	glBindBuffer(GL_UNIFORM_BUFFER, App->program->uniformsBuffer);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(float4x4), &sceneCamera->proj[0][0]);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	glBindBuffer(GL_UNIFORM_BUFFER, App->program->uniformsBuffer);
-	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(float4x4), sizeof(float4x4), &sceneCamera->view[0][0]);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);*/
-	/*defaultCameraGO = new GameObject();
-	sceneCamera = (Camera*)defaultCameraGO->CreateComponent(ComponentType::Camera);*/
-	//sceneCamera->SetFarDistance();
-	
 	///////////////previous code
 	//frustum.type = FrustumType::PerspectiveFrustum;
 	//frustum.pos = float3(-1.0F, 1.0F, 1.0F);
@@ -38,75 +25,79 @@ bool ModuleCamera::Init() {
 	//frustum.verticalFov = math::pi / 4.0F;
 	////UpdateAspectRatio();
 	//CalculateRotationAngles(frustum.front);
-	sceneCameraGO = App->scene->CreateGameObject("Root Scene");
+	//sceneCameraGO = App->scene->CreateGameObject("Root Scene");
 	//scene_cameraGO->transform.SetTranslation(float3(0.5f, 2.f, -15.f));
-	sceneCamera = CreateComponentCamera();
+	//sceneCamera = CreateComponentCamera();
 	//scene_camera->SetFarDistance(500);
 	return true;
 }
 
 Camera* ModuleCamera::CreateComponentCamera()
 {
-	sceneCamera = new Camera();
-	loadedCameras.push_back(sceneCamera);
-	return sceneCamera;
+	Camera* cam = new Camera();
+	loadedCameras.push_back(cam);
+	return cam;
 }//dont forget to create a remove component also
 
-Camera* ModuleCamera::GetComponentCamera()
-{
-	return sceneCamera;
-}//
+
 
 
 update_status  ModuleCamera::PreUpdate() {
-	sceneCamera->proj = sceneCamera->frustum.ProjectionMatrix();
-	sceneCamera->model = float4x4::FromTRS(helper1, float3x3::RotateY(sceneCamera->frustum.verticalFov), helper2);
-	sceneCamera->view = LookAt(sceneCamera->frustum.pos, sceneCamera->frustum.pos + sceneCamera->frustum.front - cameraTarget, sceneCamera->frustum.up);
+	for (int i = 0; i < loadedCameras.size(); i++)
+	{
+		loadedCameras[i]->proj = loadedCameras[i]->frustum.ProjectionMatrix();
+
+		loadedCameras[i]->model = float4x4::FromTRS(helper1, float3x3::RotateY(loadedCameras[i]->frustum.verticalFov), helper2);
+		loadedCameras[i]->view = LookAt(loadedCameras[i]->frustum.pos, loadedCameras[i]->frustum.pos + loadedCameras[i]->frustum.front - cameraTarget, loadedCameras[i]->frustum.up);
+	}
 	return UPDATE_CONTINUE;
 }
 
 update_status  ModuleCamera::Update() {
-	/*for (int i = 0; i<loadedCameras.size(); i++)
+	for (int i = 0; i < loadedCameras.size(); i++)
 	{
-		if (App->input->GetKey(SDL_SCANCODE_W)) {
-
-			loadedCameras[i]->frustum.pos += movementSpeed * loadedCameras[i]->frustum.front;
-		}
-	}*/
-	if(sceneCamera->isHovered == true)
-	{
-		if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT)) {
-			MouseMove();
+		if (loadedCameras[i]->isHovered)
+		{
+			
+			App->imgui->AddLog("CAMERA name: %s", loadedCameras[i]->owner->name.c_str());
 			if (App->input->GetKey(SDL_SCANCODE_W)) {
-				sceneCamera->frustum.pos += movementSpeed * sceneCamera->frustum.front;
+
+				loadedCameras[i]->frustum.pos += movementSpeed * loadedCameras[i]->frustum.front;
 			}
-			if (App->input->GetKey(SDL_SCANCODE_S)) {
-				sceneCamera->frustum.pos -= movementSpeed * sceneCamera->frustum.front;
+			if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT)) {
+				MouseMove(loadedCameras[i]);
+				if (App->input->GetKey(SDL_SCANCODE_W)) {
+					loadedCameras[i]->frustum.pos += movementSpeed * loadedCameras[i]->frustum.front;
+				}
+				if (App->input->GetKey(SDL_SCANCODE_S)) {
+					loadedCameras[i]->frustum.pos -= movementSpeed * loadedCameras[i]->frustum.front;
+				}
+				if (App->input->GetKey(SDL_SCANCODE_A)) {
+					loadedCameras[i]->frustum.pos -= movementSpeed * (loadedCameras[i]->frustum.front.Cross(loadedCameras[i]->frustum.up)).Normalized();
+				}
+				if (App->input->GetKey(SDL_SCANCODE_D)) {
+					loadedCameras[i]->frustum.pos += movementSpeed * (loadedCameras[i]->frustum.front.Cross(loadedCameras[i]->frustum.up)).Normalized();
+				}
 			}
-			if (App->input->GetKey(SDL_SCANCODE_A)) {
-				sceneCamera->frustum.pos -= movementSpeed * (sceneCamera->frustum.front.Cross(sceneCamera->frustum.up)).Normalized();
+			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT)) {
+				movementSpeed = cameraSpeed * 2;
 			}
-			if (App->input->GetKey(SDL_SCANCODE_D)) {
-				sceneCamera->frustum.pos += movementSpeed * (sceneCamera->frustum.front.Cross(sceneCamera->frustum.up)).Normalized();
+			if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) && (App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT))) {
+				orbit = true;
+				MouseMove(loadedCameras[i]);
 			}
+			if (App->input->GetKey(SDL_SCANCODE_F)) {
+				Focus(loadedCameras[i]);
+			}
+			if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
+				MouseScrolling(loadedCameras[i]);
+			}
+			movementSpeed = cameraSpeed;
+			orbit = false;
+			//UpdateAspectRatio(loadedCameras[i], loadedCameras[i]->width, loadedCameras[i]->height);
 		}
-		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT)) {
-			movementSpeed = cameraSpeed * 2;
-		}
-		if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) && (App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT))) {
-			orbit = true;
-			MouseMove();
-		}
-		if (App->input->GetKey(SDL_SCANCODE_F)) {
-			Focus();
-		}
-		if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
-			MouseScrolling();
-		}
-		movementSpeed = cameraSpeed;
-		orbit = false;
+		
 	}
-	
 	return UPDATE_CONTINUE;
 }
 
@@ -122,7 +113,7 @@ float4x4 ModuleCamera::LookAt(float3& eye, float3& target, float3& up) const {
 	matrix.At(3, 0) = 0.0F; matrix.At(3, 1) = 0.0F; matrix.At(3, 2) = 0.0F; matrix.At(3, 3) = 1.0F;
 	return matrix;
 }
-void ModuleCamera::MouseMove()
+void ModuleCamera::MouseMove(Camera* cam)
 {
 	float2 offset = App->input->GetMouseMotion();
 
@@ -132,7 +123,6 @@ void ModuleCamera::MouseMove()
 
 	yaw += offset.x;
 	pitch += offset.y;
-
 	
 	if (orbit == false) {
 		if (pitch > 89.0F)
@@ -148,45 +138,47 @@ void ModuleCamera::MouseMove()
 	direction.z = sin(DegToRad(yaw)) * cos(DegToRad(pitch));
 	if (orbit) {
 		/*frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * direction.Normalized();*/
-		cameraTarget = sceneCamera->frustum.pos + sceneCamera->frustum.front;
+		cameraTarget = cam->frustum.pos + cam->frustum.front;
 	} else {
 		cameraTarget = float3::zero;
-		sceneCamera->frustum.front = direction.Normalized();
+		cam->frustum.front = direction.Normalized();
 	}
 }
 
 
-void ModuleCamera::MouseScrolling()
+void ModuleCamera::MouseScrolling(Camera* cam)
 {
 	float2 offset = App->input->GetMouseScroll();
 	if (offset.y > 0) {
-		sceneCamera->frustum.pos += cameraSpeed * sceneCamera->frustum.front;
+		cam->frustum.pos += cameraSpeed * cam->frustum.front;
 	}
 	if (offset.y < 0) {
-		sceneCamera->frustum.pos -= cameraSpeed * sceneCamera->frustum.front;
+		cam->frustum.pos -= cameraSpeed * cam->frustum.front;
 	}
 }
-void ModuleCamera::SetFOV(float fov)
+void ModuleCamera::SetFOV(Camera* cam, float fov)
 {
-	sceneCamera->frustum.verticalFov = fov;
+	cam->frustum.verticalFov = fov;
 	//UpdateAspectRatio();
-	sceneCamera->proj = sceneCamera->frustum.ProjectionMatrix();
+	cam->proj = cam->frustum.ProjectionMatrix();
+	
 }
 
-void ModuleCamera::UpdateAspectRatio(float w, float h) {
-	sceneCamera->frustum.horizontalFov = 2.0F * atanf(tanf(sceneCamera->frustum.verticalFov * 0.5F) * w / h);
-}
-
-void ModuleCamera::SetNearDistance(const float nearDist)
+void ModuleCamera::UpdateAspectRatio(Camera* cam, float w, float h) 
 {
-	sceneCamera->frustum.nearPlaneDistance = nearDist;
-	sceneCamera->proj = sceneCamera->frustum.ProjectionMatrix();
+	cam->frustum.horizontalFov = 2.0F * atanf(tanf(cam->frustum.verticalFov * 0.5F) * w / h);
 }
 
-void ModuleCamera::SetFarDistance(const float farDist)
+void ModuleCamera::SetNearDistance(Camera* cam, const float nearDist)
 {
-	sceneCamera->frustum.farPlaneDistance = farDist;
-	sceneCamera->proj = sceneCamera->frustum.ProjectionMatrix();
+	cam->frustum.nearPlaneDistance = nearDist;
+	cam->proj = cam->frustum.ProjectionMatrix();
+}
+
+void ModuleCamera::SetFarDistance(Camera* cam, const float farDist)
+{
+	cam->frustum.farPlaneDistance = farDist;
+	cam->proj = cam->frustum.ProjectionMatrix();
 }
 
 void ModuleCamera::CalculateRotationAngles(float3& vector) {
@@ -194,31 +186,34 @@ void ModuleCamera::CalculateRotationAngles(float3& vector) {
 	yaw = -RadToDeg(acos(vector.x / cos(DegToRad(pitch))));
 }
 
-void ModuleCamera::Focus() {
+void ModuleCamera::Focus(Camera* cam) {
 	/*cameraTarget = float3::zero;
 	sceneCamera->frustum.front = -float3::unitZ;
 	CalculateRotationAngles(sceneCamera->frustum.front);*/
 	//sceneCamera->frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * sceneCamera->frustum.front;
 }
 
-void ModuleCamera::ZoomIn()
+void ModuleCamera::ZoomIn(Camera* cam)
 {
-	sceneCamera->frustum.pos += cameraSpeed * sceneCamera->frustum.front;
+	cam->frustum.pos += cameraSpeed * cam->frustum.front;
 }
 
-void ModuleCamera::ZoomOut()
+void ModuleCamera::ZoomOut(Camera* cam)
 {
-	sceneCamera->frustum.pos -= cameraSpeed * sceneCamera->frustum.front;
+	cam->frustum.pos -= cameraSpeed * cam->frustum.front;
 }
 
 bool ModuleCamera::CleanUp()
 {
-	delete sceneCamera;
+	sceneCameras = nullptr;
+	for (std::vector<Camera*>::iterator it = loadedCameras.begin(); it != loadedCameras.end(); ++it)
+		sceneCameras = *it;
+	delete sceneCameras;
 	//sceneCamera = nullptr;
 	return true;
 }
 
-void ModuleCamera::SetPosition(const math::float3& pos)
+void ModuleCamera::SetPosition(Camera* cam, const math::float3& pos)
 {
 
 }
