@@ -5,7 +5,7 @@ void Transform::DrawView() {
 	if (ImGui::TreeNode("Transform")) {
 		DrawFloat3View("Position", &position, -100.00F, 100.00F);
 		DrawFloat3View("Rotation", &rotationEU, -360.00F, 360.00F);
-		DrawFloat3View("Scalling", &scaling, 0.000001, 50.00F, "%.6F");
+		DrawFloat3View("Scalling", &scaling, 0.000001, 50.00F, 0.001F, "%.6F");
 		ImGui::TreePop();
 	}
 }
@@ -40,11 +40,11 @@ void Transform::CalculateTransform() {
 }
 
 
-void Transform::DrawFloat3View(const char* label, float3* vector, float min, float max, const char* format) {
+void Transform::DrawFloat3View(const char* label, float3* vector, float min, float max, float speed, const char* format) {
 	if (ImGui::TreeNode(label)) {
-		ImGui::SliderFloat("X", &vector->x, min, max, format);
-		ImGui::SliderFloat("Y", &vector->y, min, max, format);
-		ImGui::SliderFloat("Z", &vector->z, min, max, format);
+		ImGui::DragFloat("X", &vector->x, speed, min, max, format);
+		ImGui::DragFloat("Y", &vector->y, speed, min, max, format);
+		ImGui::DragFloat("Z", &vector->z, speed, min, max, format);
 		ImGui::TreePop();
 	}
 }

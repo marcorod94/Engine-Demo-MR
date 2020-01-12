@@ -42,7 +42,6 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
-	ImGui::ShowDemoWindow();
 	if (App->scene->root) {
 		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
 		cam->Draw();

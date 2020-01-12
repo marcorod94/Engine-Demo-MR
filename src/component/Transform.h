@@ -22,7 +22,7 @@ public:
 	void SetTransform(const aiMatrix4x4&);
 	void CalculateTransform();
 private:
-	void DrawFloat3View(const char*, float3*, float, float, const char* format = "%.2F");
+	void DrawFloat3View(const char*, float3*, float, float, float speed = 1.0F, const char* format = "%.2F");
 	void CalculateWorldTransform();
 };
 #endif

@@ -8,7 +8,6 @@
 #include "ModuleCamera.h"
 #include "ModuleModel.h"
 #include "util/DebugDraw.h"
-//#include "debug_draw.hpp"
 #include "ModuleDebugDraw.h"
 #include "main/GameObject.h"
 #include "component/Mesh.h"
@@ -58,11 +57,6 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {	
-	//dd::sphere(App->models->light.pos, math::float3(1.0f, 1.0f, 1.0f), 0.05f);
-
-	//dd::xzSquareGrid(-40.0f, 40.0f, 0.0f, 1.0f, math::float3(0.65f, 0.65f, 0.65f));
-	////App->debugDraw->Draw(0);
-	//dd::flush();
 	if (App->scene->root) {
 		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
 		cam->GenerateFBOTexture(cam->width, cam->height);
