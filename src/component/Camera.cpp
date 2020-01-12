@@ -11,7 +11,7 @@ Camera::Camera(GameObject* owner): Component(owner, ComponentType::Camera)
 	glGenFramebuffers(1, &fbo);
 	aspect = 1.f;
 	frustum.type = FrustumType::PerspectiveFrustum;
-	frustum.pos = float3{ 0.0f,0.0f, -20.0f };
+	frustum.pos = float3{ 0.0f,0.0f, -120.0f };
 	frustum.front = float3::unitZ;
 	frustum.up = float3::unitY;
 	frustum.nearPlaneDistance = 1.f;

@@ -19,10 +19,14 @@ public:
 
 	bool Init();
 	bool CleanUp();
-	Texture LoadTexture(std::string&);
+	unsigned LoadTexture(std::string&);
 	Material* CreateMaterial();
+	void DrawTexture(unsigned&);
+	void DrawTextureSelector(unsigned&);
+	void DrawTexture(Texture&);
 private:
 	ILuint imageName;
 	ILinfo imageInfo;
+	bool drawSelector = false;
 };
 #endif

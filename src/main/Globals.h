@@ -22,22 +22,22 @@ enum class ComponentType { Transform, Mesh, Material, Camera };
 
 struct Vertex {
 	// position
-	float3 Position;
+	math::float3 Position;
 	// normal
-	float3 Normal;
+	math::float3 Normal;
 	// texCoords
-	float2 TexCoords;
+	math::float2 TexCoords;
 	// tangent
-	float3 Tangent;
+	math::float3 Tangent;
 	// bitangent
-	float3 Bitangent;
+	math::float3 Bitangent;
 };
 
 struct Texture {
-	unsigned int id;
+	unsigned id;
 	std::string  type;
-	int width;
-	int height;
+	unsigned width;
+	unsigned height;
 	std::string path;
 };
 
