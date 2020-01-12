@@ -56,15 +56,11 @@ Camera::~Camera()
 	glDeleteFramebuffers(1, &fb_depth);
 }
 
-void Camera::Update()
-{
-	//frustum->pos = owner->
-}
+
 void Camera::DrawFrustumPlanes()
 {
 	float4x4 clipMatrix = proj * view;
 	//dd::frustum(clipMatrix.Inverted(), float3(0, 0, 1));
-
 	return;
 }
 int Camera::isCollidingFrustum(const AABB& aabb) const

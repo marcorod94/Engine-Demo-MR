@@ -15,20 +15,6 @@
 bool ModuleCamera::Init() {
 	int windowWidth, windowHeight;
 	SDL_GetWindowSize(App->window->window, &windowWidth, &windowHeight);
-	///////////////previous code
-	//frustum.type = FrustumType::PerspectiveFrustum;
-	//frustum.pos = float3(-1.0F, 1.0F, 1.0F);
-	//frustum.front = -float3::unitZ;
-	//frustum.up = float3::unitY;
-	//frustum.nearPlaneDistance = 0.3F;
-	//frustum.farPlaneDistance = 250.0F;
-	//frustum.verticalFov = math::pi / 4.0F;
-	////UpdateAspectRatio();
-	//CalculateRotationAngles(frustum.front);
-	//sceneCameraGO = App->scene->CreateGameObject("Root Scene");
-	//scene_cameraGO->transform.SetTranslation(float3(0.5f, 2.f, -15.f));
-	//sceneCamera = CreateComponentCamera();
-	//scene_camera->SetFarDistance(500);
 	return true;
 }
 

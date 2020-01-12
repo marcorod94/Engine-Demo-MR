@@ -5,11 +5,12 @@
 #include "main/Globals.h"
 #include "SDL.h"
 
-
 class Camera;
+class GameObject;
 class Mesh;
 class Material;
-class GameObject;
+class Transform;
+
 class ModuleRender : public Module {
 public:
 	SDL_GLContext glContext;
@@ -23,17 +24,11 @@ public:
 	update_status PreUpdate();
 	update_status Update();
 	update_status PostUpdate();
-
-	void DisplayFrameBuffer(Camera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height);
 	GameObject* RayIntersectsObject(float3 origin, LineSegment &ray);
 	bool CleanUp();
 	Mesh* CreateMesh();
 private:
-	void DrawGrid(Camera* cam) const;
-	void DrawAxis() const;
 	void DrawGameObject(GameObject*, Camera*);
-	void DrawMesh(Mesh*);
-	void DrawMaterial(Material*);
-
+	void DrawMesh(Camera*, Transform*, Mesh*, Material*);
 };
 #endif
