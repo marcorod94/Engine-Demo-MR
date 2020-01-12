@@ -5,11 +5,12 @@
 #include "main/Globals.h"
 #include "SDL.h"
 
-
 class Camera;
+class GameObject;
 class Mesh;
 class Material;
-class GameObject;
+class Transform;
+
 class ModuleRender : public Module {
 public:
 	SDL_GLContext glContext;
@@ -32,7 +33,6 @@ private:
 	void DrawGrid(Camera* cam) const;
 	void DrawAxis() const;
 	void DrawGameObject(GameObject*, Camera*);
-	void DrawMesh(Mesh*);
-	void DrawMaterial(Material*);
+	void DrawMesh(Camera*, Transform*, Mesh*, Material*);
 };
 #endif
