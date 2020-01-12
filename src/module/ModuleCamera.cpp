@@ -15,26 +15,12 @@
 bool ModuleCamera::Init() {
 	int windowWidth, windowHeight;
 	SDL_GetWindowSize(App->window->window, &windowWidth, &windowHeight);
-	///////////////previous code
-	//frustum.type = FrustumType::PerspectiveFrustum;
-	//frustum.pos = float3(-1.0F, 1.0F, 1.0F);
-	//frustum.front = -float3::unitZ;
-	//frustum.up = float3::unitY;
-	//frustum.nearPlaneDistance = 0.3F;
-	//frustum.farPlaneDistance = 250.0F;
-	//frustum.verticalFov = math::pi / 4.0F;
-	////UpdateAspectRatio();
-	//CalculateRotationAngles(frustum.front);
-	//sceneCameraGO = App->scene->CreateGameObject("Root Scene");
-	//scene_cameraGO->transform.SetTranslation(float3(0.5f, 2.f, -15.f));
-	//sceneCamera = CreateComponentCamera();
-	//scene_camera->SetFarDistance(500);
 	return true;
 }
 
 Camera* ModuleCamera::CreateComponentCamera()
 {
-	Camera* cam = new Camera();
+	Camera* cam = new Camera(nullptr);
 	loadedCameras.push_back(cam);
 	return cam;
 }//dont forget to create a remove component also
@@ -61,7 +47,7 @@ update_status  ModuleCamera::Update() {
 		if (loadedCameras[i]->isHovered)
 		{
 			orbit = false;
-			App->imgui->AddLog("CAMERA name: %s", loadedCameras[i]->owner->name.c_str());
+			//App->imgui->AddLog("CAMERA name: %s", loadedCameras[i]->owner->name.c_str());
 			if (App->input->GetKey(SDL_SCANCODE_W)) {
 
 				loadedCameras[i]->frustum.pos += movementSpeed * loadedCameras[i]->frustum.front;
@@ -94,12 +80,12 @@ update_status  ModuleCamera::Update() {
 			if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
 				MouseScrolling(loadedCameras[i]);
 			}
-			if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
-				ImVec2 hoveredWindowPos = ImGui::GetWindowPos();
-				ImVec2 hoveredWindowSize = ImGui::GetWindowSize();
-				App->scene->PickObject(hoveredWindowPos, hoveredWindowSize);
-				//MousePick()
-			}
+			//if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
+			//	ImVec2 hoveredWindowPos = ImGui::GetWindowPos();
+			//	ImVec2 hoveredWindowSize = ImGui::GetWindowSize();
+			//	App->scene->PickObject(hoveredWindowPos, hoveredWindowSize);
+			//	//MousePick()
+			//}
 			movementSpeed = cameraSpeed;
 			
 			UpdateAspectRatio(loadedCameras[i], loadedCameras[i]->width, loadedCameras[i]->height);

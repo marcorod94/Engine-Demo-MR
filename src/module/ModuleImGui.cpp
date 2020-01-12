@@ -35,6 +35,7 @@ bool ModuleImGui::Init() {
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-solid-900.ttf", 16.0F, &icons_config, iconsRanges);
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-regular-400.ttf", 16.0F, &icons_config, iconsRanges);
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-brands-400.ttf", 16.0F, &icons_config, iconsBrandRange);
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	return true;
 }
@@ -102,9 +103,9 @@ update_status ModuleImGui::Update() {
 	}
 	if (showAbout) {
 		ImGui::Begin("About", &showAbout);
-		ImGui::Text("Engine: EM ENGINE");
+		ImGui::Text(u8"Engine: \uf534 Engine");
 		ImGui::Text("Desciption: Super Cool Engine develop with love <3");
-		ImGui::Text("Author: Marco Rodriguez");
+		ImGui::Text("Author: Artemis Georgakopoulou && Marco Rodriguez");
 		ImGui::End();
 	}
 	

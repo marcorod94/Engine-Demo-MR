@@ -12,19 +12,20 @@
 #include "module/ModuleRender.h"
 #include "component/Camera.h"
 #include <string>
+#include "imgui.h"
 
 bool ModuleScene::Init() {
 
 	root = CreateGameObject("Root Scene");
 	App->model->LoadModel(std::string("Models\\Zombunny.fbx"));
-	MeshShape shape;
+	/*MeshShape shape;
 	shape.type = ShapeType::Torus;
 	shape.size = 0.5F;
 	shape.radius = 1.0F;
 	shape.slices = 20;
 	shape.stacks = 20;
-	App->model->LoadShapes(root, "sphere0", float3(1.0f, 1.0f, 1.0f), Quat::identity, shape, ProgramType::Default, float4(0.5f, 0.0f, 0.5f, 1.0f));
-	//sceneVie
+	App->model->LoadShapes(root, "sphere0", float3(1.0f, 1.0f, 1.0f), Quat::identity, shape, ProgramType::Default, float4(0.5f, 0.0f, 0.5f, 1.0f));*/
+    //sceneViewCamera
 	Camera* cam = App->camera->CreateComponentCamera();
 	cam->owner = root;
 	root->components.push_back(cam);
@@ -60,13 +61,13 @@ GameObject* ModuleScene::CreateGameObject(const std::string& name, const float3&
 	return new GameObject(name, pos, rot);
 }
 
-void ModuleScene::PickObject(const ImVec2 &winSize, const ImVec2 &winPos)
+void ModuleScene::PickObject(const ImVec2& winSize, const ImVec2& winPos)
 {
-	float2 mouse = App->input->GetMouseMotion();
+	/*float2 mouse = App->input->GetMouseMotion();
 	float2 normalizedPos = float2(mouse.x - winSize.x / 2, (winSize.y - mouse.y) - winSize.y / 2).Normalized();
 
 	LineSegment ray;
 	App->camera->loadedCameras[0]->CreateRay(normalizedPos, ray);
 
-	GameObject* isIntersected = App->renderer->RayIntersectsObject(App->camera->loadedCameras[0]->frustum.pos, ray);
+	GameObject* isIntersected = App->renderer->RayIntersectsObject(App->camera->loadedCameras[0]->frustum.pos, ray);*/
 }

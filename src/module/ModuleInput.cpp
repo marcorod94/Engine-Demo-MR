@@ -100,10 +100,12 @@ update_status ModuleInput::PreUpdate()
 				}
 				break;
 			case SDL_KEYDOWN:
-				currentKey = SDL_GetKeyName(event.key.keysym.sym);
+				SDL_Keycode key = event.key.keysym.sym;
+				currentKey = SDL_GetKeyName(key);
+				ImGuiIO& io = ImGui::GetIO();
+				UpadteImGuiModifiers(key, &io);
+				io.AddInputCharacter(key);
 				break;
-
-
 		}
 	}
 	if (GetWindowEvent(EventWindow::WE_QUIT) == true || GetKey(SDL_SCANCODE_ESCAPE)) {
@@ -125,4 +127,18 @@ bool ModuleInput::CleanUp() {
 	App->imgui->AddLog("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
+}
+
+
+void ModuleInput::UpadteImGuiModifiers(const SDL_Keycode key, ImGuiIO* io) {
+	io->KeyAlt = io->KeyCtrl = io->KeyShift = false;
+	if (key == SDLK_LALT || key == SDLK_RALT) {
+		io->KeyAlt = true;
+	}
+	if (key == SDLK_LCTRL || key == SDLK_RCTRL) {
+		io->KeyCtrl = true;
+	}
+	if (key == SDLK_LSHIFT || key == SDLK_RSHIFT) {
+		io->KeyShift = true;
+	}
 }

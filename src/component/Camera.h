@@ -11,13 +11,11 @@ const int INTERSECT = 2;
 
 class Camera : public Component {
 public:
-	Camera();
 	Camera(GameObject* theOwner);
 	~Camera();
 
 	void SetFrustum();
 	Frustum frustum;
-	void Update() override;
 
 	void Draw(const char*);
 	void GenerateFBOTexture(unsigned w, unsigned h);
@@ -63,10 +61,6 @@ public:
 private:
 	
 	float aspect = 1.f;
-	unsigned frustumVAO = 0;
-	unsigned frustumVBO = 0;
-	unsigned frustumEBO = 0;
-	
 	unsigned fb_depth = 0;
 	unsigned fb_tex = 0;
 	unsigned fb_width = 0;

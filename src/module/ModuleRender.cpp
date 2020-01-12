@@ -7,10 +7,13 @@
 #include "ModuleScene.h"
 #include "ModuleCamera.h"
 #include "ModuleModel.h"
+#include "util/DebugDraw.h"
+#include "ModuleDebugDraw.h"
 #include "main/GameObject.h"
 #include "component/Mesh.h"
 #include "component/Material.h"
 #include "component/Camera.h"
+#include "component/Transform.h"
 #include "SDL.h"
 #include "GL/glew.h"
 #include <map>
@@ -41,7 +44,6 @@ bool ModuleRender::Init()
 	glFrontFace(GL_CCW);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
-
 	return true;
 }
 
@@ -49,6 +51,7 @@ update_status ModuleRender::PreUpdate()
 {
 	SDL_GetWindowSize(App->window->window, &App->window->screenWidth, &App->window->screenHeight);
 	glViewport(0, 0, App->window->screenWidth, App->window->screenHeight);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	return UPDATE_CONTINUE;
 }
@@ -58,63 +61,46 @@ update_status ModuleRender::Update()
 {	
 	if (App->scene->root) {
 		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
+		cam->GenerateFBOTexture(cam->width, cam->height);
 		glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
-		
-		unsigned program = App->program->programs[int(ProgramType::Default)];
-		glUseProgram(program);
-		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &(cam->model[0][0]));
-		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &(cam->view[0][0]));
-		glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &(cam->proj[0][0]));
 		glViewport(0, 0, cam->width, cam->height);
 		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		DrawGameObject(App->scene->root, cam);
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		if (showAxis) {
 			glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
-			DrawAxis();
-			//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			/*float axis_size = max(App->models->bsphere.radius, 1.0f);
+			dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);*/
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 		if (showGrid) {
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			//DrawGrid(cam);
 			glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
-			DrawGrid(cam);
+			dd::xzSquareGrid(-40.0f, 40.0f, 0.0f, 1.0f, math::float3(0.65f, 0.65f, 0.65f));
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
-		cam->GenerateFBOTexture(cam->width, cam->height);
-		//cam->DrawView();
+		App->debugDraw->Draw(cam);
 	}
 	if (App->scene->mainCamera) {
 		Camera* cam2 = (Camera*)App->scene->mainCamera->FindComponent(ComponentType::Camera);
+		cam2->GenerateFBOTexture(cam2->width, cam2->height);
 		glBindFramebuffer(GL_FRAMEBUFFER, cam2->fbo);
-		
-		unsigned program2 = App->program->programs[int(ProgramType::Default)];
-		glUseProgram(program2);
-		glUniformMatrix4fv(glGetUniformLocation(program2, "model"), 1, GL_TRUE, &(cam2->model[0][0]));
-		glUniformMatrix4fv(glGetUniformLocation(program2, "view"), 1, GL_TRUE, &(cam2->view[0][0]));
-		glUniformMatrix4fv(glGetUniformLocation(program2, "proj"), 1, GL_TRUE, &(cam2->proj[0][0]));
 		glViewport(0, 0, cam2->width, cam2->height);
 		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
 		DrawGameObject(App->scene->root, cam2);
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		if (showAxis) {
 			glBindFramebuffer(GL_FRAMEBUFFER, cam2->fbo);
-			DrawAxis();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 		if (showGrid) {
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			//DrawGrid(cam);
 			glBindFramebuffer(GL_FRAMEBUFFER, cam2->fbo);
-			DrawGrid(cam2);
+			dd::xzSquareGrid(-40.0f, 40.0f, 0.0f, 1.0f, math::float3(0.65f, 0.65f, 0.65f));
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
-		//cam->DrawView();
-		cam2->GenerateFBOTexture(cam2->width, cam2->height);
+		App->debugDraw->Draw(cam2);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	
 	return UPDATE_CONTINUE;
 }
 
@@ -139,101 +125,24 @@ Mesh* ModuleRender::CreateMesh() {
 	return new Mesh(nullptr);
 }
 
-void ModuleRender::DrawGrid(Camera* cam) const {
-	glLineWidth(1.0F);
-	float d = 200.0F;
-	glBegin(GL_LINES);
-	//Near
-	//glVertex3f(cam->ntl.x, cam->ntl.y, cam->ntl.z);
-	//glVertex3f(cam->ntr.x, cam->ntr.y, cam->ntr.z);
-
-	//glVertex3f(cam->nbl.x, cam->nbl.y, cam->nbl.z);
-	//glVertex3f(cam->ntr.x, cam->ntr.y, cam->ntr.z);
-
-	//glVertex3f(cam->nbl.x, cam->nbl.y, cam->nbl.z);
-	//glVertex3f(cam->nbr.x, cam->nbr.y, cam->nbr.z);
-
-	//glVertex3f(cam->ntl.x, cam->ntl.y, cam->ntl.z);
-	//glVertex3f(cam->nbr.x, cam->nbr.y, cam->nbr.z);
-
-	////Far
-	//glVertex3f(cam->ftl.x, cam->ftl.y, cam->ftl.z);
-	//glVertex3f(cam->ftr.x, cam->ftr.y, cam->ftr.z);
-
-	//glVertex3f(cam->fbl.x, cam->fbl.y, cam->fbl.z);
-	//glVertex3f(cam->ftr.x, cam->ftr.y, cam->ftr.z);
-
-	//glVertex3f(cam->fbl.x, cam->fbl.y, cam->fbl.z);
-	//glVertex3f(cam->fbr.x, cam->fbr.y, cam->fbr.z);
-
-	//glVertex3f(cam->ftl.x, cam->ftl.y, cam->ftl.z);
-	//glVertex3f(cam->fbr.x, cam->fbr.y, cam->fbr.z);
-
-	for (float i = -d; i <= d; i += 1.0F)
-	{
-		glVertex3f(i, 0.0F, -d);
-		glVertex3f(i, 0.0F, d);
-		glVertex3f(-d, 0.0F, i);
-		glVertex3f(d, 0.0F, i);
-	}
-	glEnd();
-}
-
-void ModuleRender::DrawAxis() const {
-	glLineWidth(2.0F);
-	glBegin(GL_LINES);
-	// red X
-	glColor4f(1.0F, 0.0F, 0.0F, 1.0F);
-	glVertex3f(0.0F, 0.0F, 0.0F); glVertex3f(1.0F, 0.0F, 0.0F);
-	glVertex3f(1.0F, 0.1F, 0.0F); glVertex3f(1.1F, -0.1F, 0.0F);
-	glVertex3f(1.1F, 0.1F, 0.0F); glVertex3f(1.0F, -0.1F, 0.0F);
-	// green Y
-	glColor4f(0.0F, 1.0F, 0.0F, 1.0F);
-	glVertex3f(0.0F, 0.0F, 0.0F); glVertex3f(0.0F, 1.0F, 0.0F);
-	glVertex3f(-0.05F, 1.25F, 0.0F); glVertex3f(0.0F, 1.15F, 0.0F);
-	glVertex3f(0.05F, 1.25F, 0.0F); glVertex3f(0.0F, 1.15F, 0.0F);
-	glVertex3f(0.0F, 1.15F, 0.0F); glVertex3f(0.0F, 1.05F, 0.0F);
-
-	glColor4f(0.0F, 0.0F, 1.0F, 1.0F);
-	glVertex3f(0.0F, 0.0F, 0.0F); glVertex3f(0.0F, 0.0F, 1.0F);
-	glVertex3f(-0.05F, 0.1F, 1.05F); glVertex3f(0.05F, 0.1F, 1.05F);
-	glVertex3f(0.05F, 0.1F, 1.05F); glVertex3f(-0.05F, -0.1F, 1.05F);
-	glVertex3f(-0.05F, -0.1F, 1.05F); glVertex3f(0.05F, -0.1F, 1.05F);
-	glEnd();
-	glLineWidth(1.0F);
-}
 
 void  ModuleRender::DrawGameObject(GameObject* parent, Camera* cam) {
-	DrawMaterial((Material*)parent->FindComponent(ComponentType::Material));
-	DrawMesh((Mesh*)parent->FindComponent(ComponentType::Mesh));
+	DrawMesh(cam, (Transform*)parent->FindComponent(ComponentType::Transform), (Mesh*)parent->FindComponent(ComponentType::Mesh), (Material*)parent->FindComponent(ComponentType::Material));
 	for (unsigned i = 0; i < parent->children.size(); i++) {
 		Mesh* mesh = (Mesh*)parent->children[i]->FindComponent(ComponentType::Mesh);
-
-		if (mesh != nullptr && cam->isCollidingFrustum(mesh->box) == IS_IN)
+		DrawGameObject(parent->children[i], cam);
+		/*if (mesh != nullptr && (cam->isCollidingFrustum(mesh->box) == IS_IN || cam->isCollidingFrustum(mesh->box) == INTERSECT))
 		{
 			DrawGameObject(parent->children[i], cam);
-		}
-		
+		}*/
 	}
 }
 
-void ModuleRender::DisplayFrameBuffer(Camera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height)
-{
-
-}
-
-void  ModuleRender::DrawMesh(Mesh* mesh) {
-	if (mesh) {
-		glBindVertexArray(mesh->vao);
-		glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-		glActiveTexture(GL_TEXTURE0);
-	}
-}
-
-void  ModuleRender::DrawMaterial(Material* material) {
+void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material* material) {
+	unsigned program = App->program->programs[int(ProgramType::Default)];
+	glUseProgram(program);
 	if (material) {
-		unsigned program = App->program->programs[material->program];
+		program = App->program->programs[material->program];
 		glUseProgram(program);
 		glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->model->light.pos);
 		glUniform1f(glGetUniformLocation(program, "ambient"), App->model->ambient);
@@ -244,12 +153,26 @@ void  ModuleRender::DrawMaterial(Material* material) {
 		if (material->diffuseMap == 0) {
 			glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 0);
 			glUniform4fv(glGetUniformLocation(program, "object_color"), 1, (const float*)&material->diffuseColor);
-		} else {
+		}
+		else {
 			glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 1);
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, material->diffuseMap);
 			glUniform1i(glGetUniformLocation(program, "diffuse_map"), 0);
 		}
+	}
+	if (trans) {
+		trans->CalculateTransform();
+		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &(trans->worldTransform[0][0]));
+	}
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &(cam->view[0][0]));
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &(cam->proj[0][0]));
+	if (mesh) {
+		glBindVertexArray(mesh->vao);
+		glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+		glActiveTexture(GL_TEXTURE0);
 	}
 }
 
