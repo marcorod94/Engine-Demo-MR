@@ -12,6 +12,7 @@
 #include "module/ModuleRender.h"
 #include "component/Camera.h"
 #include <string>
+#include "imgui.h"
 
 bool ModuleScene::Init() {
 
@@ -60,13 +61,13 @@ GameObject* ModuleScene::CreateGameObject(const std::string& name, const float3&
 	return new GameObject(name, pos, rot);
 }
 
-void ModuleScene::PickObject(const ImVec2 &winSize, const ImVec2 &winPos)
+void ModuleScene::PickObject(const ImVec2& winSize, const ImVec2& winPos)
 {
-	float2 mouse = App->input->GetMouseMotion();
+	/*float2 mouse = App->input->GetMouseMotion();
 	float2 normalizedPos = float2(mouse.x - winSize.x / 2, (winSize.y - mouse.y) - winSize.y / 2).Normalized();
 
 	LineSegment ray;
 	App->camera->loadedCameras[0]->CreateRay(normalizedPos, ray);
 
-	GameObject* isIntersected = App->renderer->RayIntersectsObject(App->camera->loadedCameras[0]->frustum.pos, ray);
+	GameObject* isIntersected = App->renderer->RayIntersectsObject(App->camera->loadedCameras[0]->frustum.pos, ray);*/
 }

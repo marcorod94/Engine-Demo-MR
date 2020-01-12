@@ -103,9 +103,9 @@ update_status ModuleImGui::Update() {
 	}
 	if (showAbout) {
 		ImGui::Begin("About", &showAbout);
-		ImGui::Text("Engine: EM ENGINE");
+		ImGui::Text(u8"Engine: \uf534 Engine");
 		ImGui::Text("Desciption: Super Cool Engine develop with love <3");
-		ImGui::Text("Author: Marco Rodriguez");
+		ImGui::Text("Author: Artemis Georgakopoulou && Marco Rodriguez");
 		ImGui::End();
 	}
 	

@@ -20,7 +20,7 @@ bool ModuleCamera::Init() {
 
 Camera* ModuleCamera::CreateComponentCamera()
 {
-	Camera* cam = new Camera();
+	Camera* cam = new Camera(nullptr);
 	loadedCameras.push_back(cam);
 	return cam;
 }//dont forget to create a remove component also
@@ -47,7 +47,7 @@ update_status  ModuleCamera::Update() {
 		if (loadedCameras[i]->isHovered)
 		{
 			orbit = false;
-			App->imgui->AddLog("CAMERA name: %s", loadedCameras[i]->owner->name.c_str());
+			//App->imgui->AddLog("CAMERA name: %s", loadedCameras[i]->owner->name.c_str());
 			if (App->input->GetKey(SDL_SCANCODE_W)) {
 
 				loadedCameras[i]->frustum.pos += movementSpeed * loadedCameras[i]->frustum.front;
@@ -80,12 +80,12 @@ update_status  ModuleCamera::Update() {
 			if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
 				MouseScrolling(loadedCameras[i]);
 			}
-			if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
-				ImVec2 hoveredWindowPos = ImGui::GetWindowPos();
-				ImVec2 hoveredWindowSize = ImGui::GetWindowSize();
-				App->scene->PickObject(hoveredWindowPos, hoveredWindowSize);
-				//MousePick()
-			}
+			//if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
+			//	ImVec2 hoveredWindowPos = ImGui::GetWindowPos();
+			//	ImVec2 hoveredWindowSize = ImGui::GetWindowSize();
+			//	App->scene->PickObject(hoveredWindowPos, hoveredWindowSize);
+			//	//MousePick()
+			//}
 			movementSpeed = cameraSpeed;
 			
 			UpdateAspectRatio(loadedCameras[i], loadedCameras[i]->width, loadedCameras[i]->height);

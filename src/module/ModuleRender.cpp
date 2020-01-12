@@ -90,7 +90,6 @@ update_status ModuleRender::Update()
 		DrawGameObject(App->scene->root, cam2);
 		if (showAxis) {
 			glBindFramebuffer(GL_FRAMEBUFFER, cam2->fbo);
-			DrawAxis();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 		if (showGrid) {
@@ -130,10 +129,11 @@ void  ModuleRender::DrawGameObject(GameObject* parent, Camera* cam) {
 	DrawMesh(cam, (Transform*)parent->FindComponent(ComponentType::Transform), (Mesh*)parent->FindComponent(ComponentType::Mesh), (Material*)parent->FindComponent(ComponentType::Material));
 	for (unsigned i = 0; i < parent->children.size(); i++) {
 		Mesh* mesh = (Mesh*)parent->children[i]->FindComponent(ComponentType::Mesh);
-		if (mesh != nullptr && cam->isCollidingFrustum(mesh->box) == IS_IN)
+		DrawGameObject(parent->children[i], cam);
+		/*if (mesh != nullptr && (cam->isCollidingFrustum(mesh->box) == IS_IN || cam->isCollidingFrustum(mesh->box) == INTERSECT))
 		{
 			DrawGameObject(parent->children[i], cam);
-		}
+		}*/
 	}
 }
 
@@ -185,5 +185,6 @@ GameObject*  ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 			DrawGameObject(parent->children[i], cam);
 		}
 
-	}*/
+	}*/\
+	return nullptr;
 }

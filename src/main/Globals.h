@@ -49,5 +49,5 @@ struct Texture {
 #define SCREEN_HEIGHT 720
 #define FULLSCREEN true
 #define RESIZABLE true
-#define TITLE "EM ENGINE"
+#define TITLE "Infinity Engine"
 #endif

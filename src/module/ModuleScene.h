@@ -5,6 +5,8 @@
 #include "main/Globals.h"
 #include "GL/glew.h"
 
+struct ImVec2;
+
 class ModuleScene : public Module {
 public:
 	GameObject* root;
