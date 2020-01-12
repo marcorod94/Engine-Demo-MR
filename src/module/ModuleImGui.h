@@ -33,7 +33,7 @@ private:
 	GameObject* sourceGO = nullptr;
 	bool showMain = true;
 	bool showInfo = false;
-	bool showConsole = false;
+	bool showConsole = true;
 	bool showModule = false;
 	bool showAbout = false;
 	bool showProperties = false;

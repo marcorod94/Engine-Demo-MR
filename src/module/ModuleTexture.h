@@ -24,6 +24,9 @@ public:
 	void DrawTexture(unsigned&);
 	void DrawTextureSelector(unsigned&);
 	void DrawTexture(Texture&);
+
+	void LoadSkybox(std::vector<std::string> faces)const;
+	bool isLoaded;
 private:
 	ILuint imageName;
 	ILinfo imageInfo;

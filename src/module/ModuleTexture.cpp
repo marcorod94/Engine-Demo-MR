@@ -78,3 +78,8 @@ void ModuleTexture::DrawTexture(Texture& texture) {
 Material* ModuleTexture::CreateMaterial() {
 	return new Material(nullptr);
 }
+
+void ModuleTexture::LoadSkybox(std::vector<std::string> faces)const
+{
+	
+}

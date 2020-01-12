@@ -18,6 +18,7 @@
 #include "GL/glew.h"
 
 class Camera;
+
 // Called before render is available
 bool ModuleRender::Init()
 {
@@ -64,7 +65,6 @@ update_status ModuleRender::Update()
 		glViewport(0, 0, cam->width, cam->height);
 		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
 		DrawGameObject(App->scene->root, cam);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		if (showAxis) {
@@ -78,11 +78,28 @@ update_status ModuleRender::Update()
 			dd::xzSquareGrid(-40.0f, 40.0f, 0.0f, 1.0f, math::float3(0.65f, 0.65f, 0.65f));
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
-
 		App->debugDraw->Draw(cam);
 	}
+	if (App->scene->mainCamera) {
+		Camera* cam2 = (Camera*)App->scene->mainCamera->FindComponent(ComponentType::Camera);
+		cam2->GenerateFBOTexture(cam2->width, cam2->height);
+		glBindFramebuffer(GL_FRAMEBUFFER, cam2->fbo);
+		glViewport(0, 0, cam2->width, cam2->height);
+		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		DrawGameObject(App->scene->root, cam2);
+		if (showAxis) {
+			glBindFramebuffer(GL_FRAMEBUFFER, cam2->fbo);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+		if (showGrid) {
+			glBindFramebuffer(GL_FRAMEBUFFER, cam2->fbo);
+			dd::xzSquareGrid(-40.0f, 40.0f, 0.0f, 1.0f, math::float3(0.65f, 0.65f, 0.65f));
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+		App->debugDraw->Draw(cam2);
+	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	
 	return UPDATE_CONTINUE;
 }
 
@@ -111,13 +128,13 @@ Mesh* ModuleRender::CreateMesh() {
 void  ModuleRender::DrawGameObject(GameObject* parent, Camera* cam) {
 	DrawMesh(cam, (Transform*)parent->FindComponent(ComponentType::Transform), (Mesh*)parent->FindComponent(ComponentType::Mesh), (Material*)parent->FindComponent(ComponentType::Material));
 	for (unsigned i = 0; i < parent->children.size(); i++) {
+		Mesh* mesh = (Mesh*)parent->children[i]->FindComponent(ComponentType::Mesh);
 		DrawGameObject(parent->children[i], cam);
+		/*if (mesh != nullptr && (cam->isCollidingFrustum(mesh->box) == IS_IN || cam->isCollidingFrustum(mesh->box) == INTERSECT))
+		{
+			DrawGameObject(parent->children[i], cam);
+		}*/
 	}
-}
-
-void ModuleRender::DisplayFrameBuffer(Camera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height)
-{
-
 }
 
 void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material* material) {
@@ -156,4 +173,18 @@ void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material
 		glBindVertexArray(0);
 		glActiveTexture(GL_TEXTURE0);
 	}
+}
+
+GameObject*  ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
+{
+	/*for (unsigned i = 0; i < parent->children.size(); i++) {
+		Mesh* mesh = (Mesh*)parent->children[i]->FindComponent(ComponentType::Mesh);
+
+		if (mesh != nullptr && cam->isCollidingFrustum(mesh->box) == IS_IN)
+		{
+			DrawGameObject(parent->children[i], cam);
+		}
+
+	}*/\
+	return nullptr;
 }

@@ -41,7 +41,7 @@ const void ModuleModel::LoadModel(std::string& path) {
 	model->parent = App->scene->root;
 	processNode(scene->mRootNode, scene, model);
 	App->scene->root->children.push_back(model);
-	App->camera->Focus();
+	
 	Assimp::DefaultLogger::kill();
 }
 
