@@ -13,6 +13,7 @@
 #include "component/Camera.h"
 #include "SDL.h"
 #include "GL/glew.h"
+#include <map>
 
 class Camera;
 
@@ -252,15 +253,32 @@ void  ModuleRender::DrawMaterial(Material* material) {
 	}
 }
 
-GameObject*  ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
+GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 {
-	/*for (unsigned i = 0; i < parent->children.size(); i++) {
-		Mesh* mesh = (Mesh*)parent->children[i]->FindComponent(ComponentType::Mesh);
-
-		if (mesh != nullptr && cam->isCollidingFrustum(mesh->box) == IS_IN)
+	float distance = -1.0f;
+	std::map<float, GameObject*> intersected;
+	std::map<float, GameObject*>::iterator it;
+	std::vector<Mesh*> intersectedMshes;
+	GameObject* selected = nullptr;
+	for (it = symbolTable.begin(); it != symbolTable.end(); it++)
+	{
+		std::cout << it->first  // string (key)
+			<< ':'
+			<< it->second   // string's value 
+			<< std::endl;
+	}
+	for (unsigned i = 0; i < App->scene->root->children.size(); i++) {
+		Mesh* mesh = (Mesh*)App->scene->root->children[i]->FindComponent(ComponentType::Mesh);
+		bool hit_point = ray.Intersects(mesh->box); // ray vs. AABB
+		if (hit_point)
 		{
-			DrawGameObject(parent->children[i], cam);
+			float dist = origin.Distance(mesh->box);
+			intersected[dist] = mesh->owner;
+			intersectedMshes.push_back(mesh);
 		}
-
-	}*/
+		bool hit = ray_local_space.Intersects(tri, &distance, &hit_point); // ray vs. triangle
+	}
+	
+	
+	return selected;
 }
