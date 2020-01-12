@@ -32,6 +32,7 @@ bool ModuleImGui::Init() {
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-solid-900.ttf", 16.0F, &icons_config, iconsRanges);
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-regular-400.ttf", 16.0F, &icons_config, iconsRanges);
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-brands-400.ttf", 16.0F, &icons_config, iconsBrandRange);
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	return true;
 }
@@ -41,7 +42,6 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
-	DrawShaderProperties();
 	if (App->scene->root) {
 		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
 		cam->Draw();
@@ -76,7 +76,7 @@ update_status ModuleImGui::Update() {
 	}
 	ImGui::EndMainMenuBar();
 	
-    if (showConsole) {
+	if (showConsole) {
 		DrawConsoleWindow();
 	}
 	if (showInfo) {
@@ -89,7 +89,7 @@ update_status ModuleImGui::Update() {
 		ImGui::Begin("About", &showAbout);
 		ImGui::Text("Engine: EM ENGINE");
 		ImGui::Text("Desciption: Super Cool Engine develop with love <3");
-		ImGui::Text("Author: Artemis Georgakopoulou,  Marco Rodriguez");
+		ImGui::Text("Author: Marco Rodriguez");
 		ImGui::End();
 	}
 	
@@ -285,10 +285,10 @@ void ModuleImGui::LoadShapes(ShapeType s) {
 	shape.slices = 30;
 	shape.stacks = 30;
 	App->model->LoadShapes(root, "shape0", float3(2.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape1", float3(5.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Flat, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape2", float3(8.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Gouraud, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape3", float3(11.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Phong, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape4", float3(14.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Blinn, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape1", float3(5.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape2", float3(8.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape3", float3(11.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape4", float3(14.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
 }
 
 const void ModuleImGui::DrawConsoleWindow()

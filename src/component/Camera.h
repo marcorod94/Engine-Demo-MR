@@ -70,6 +70,8 @@ public:
 
 	float height = 600;
 	float width = 800;
+
+	Frustum frustum;
 private:
 	float movementSpeed = cameraSpeed;
 	float3 cameraTarget = float3::zero;
@@ -78,7 +80,6 @@ private:
 	float pitch = -90.0f;
 	void CalculateRotationAngles(float3&);
 
-	Frustum frustum;
 	float aspect = 1.f;
 	
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

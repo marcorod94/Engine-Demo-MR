@@ -1,9 +1,8 @@
-#include "main/Application.h"
-#include "ModuleWindow.h"
-#include "ModuleCamera.h"
 #include "ModuleDebugDraw.h"
+#include "component/Camera.h"
 #define DEBUG_DRAW_IMPLEMENTATION
-#include "debug_draw.hpp"
+#include "util/DebugDraw.h"
+//#include "debug_draw.hpp"
 #include "GL/glew.h"
 #include <assert.h>
 
@@ -566,7 +565,7 @@ const char * DDRenderInterface::textFragShaderSrc = "\n"
 DDRenderInterface* ModuleDebugDraw::ddRenderer = 0;
 
 bool ModuleDebugDraw::Init() {
-	ddRenderer = new DDRenderInterface();
+	ddRenderer = new DDRenderInterface;
 	dd::initialize(ddRenderer);
 	return true;
 }
@@ -577,13 +576,12 @@ bool ModuleDebugDraw::CleanUp() {
 	return true;
 }
 
-void  ModuleDebugDraw::Draw(unsigned fbo) {
+void  ModuleDebugDraw::Draw(Camera* cam) {
 
-	ddRenderer->width = App->window->screenWidth;
-	ddRenderer->height = App->window->screenHeight;
-	ddRenderer->mvpMatrix = App->camera->proj * App->camera->view;
-
-	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	ddRenderer->width = cam->width;
+	ddRenderer->height = cam->height;
+	ddRenderer->mvpMatrix = cam->proj * cam->view;
+	glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
 	dd::flush();
-	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

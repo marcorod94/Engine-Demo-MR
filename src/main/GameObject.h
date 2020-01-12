@@ -10,7 +10,7 @@ public:
 	int uuid;
 	std::string name;
 	std::vector<Component*> components;
-	GameObject* parent;
+	GameObject* parent = nullptr;
 	std::vector<GameObject*> children;
 	GameObject() {}
 	GameObject(const std::string& name): name(name) {

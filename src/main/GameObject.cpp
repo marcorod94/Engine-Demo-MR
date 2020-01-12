@@ -2,6 +2,7 @@
 #include "component/Component.h"
 #include "component/Transform.h"
 #include "imgui.h"
+#include "imgui_stdlib.h"
 #include <algorithm>
 
 update_status GameObject::Update() {
@@ -53,7 +54,8 @@ void GameObject::DeleteChild(const GameObject* child) {
 }
 
 void GameObject::ShowProperties() {
-	ImGui::Begin("Properties Test");
+	ImGui::Begin("Properties");
+	ImGui::InputText("Name", &name);
 	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
 		(*it)->uuid = uuid;
 		//ImGui::Begin("Component:%s:", (*it)->);

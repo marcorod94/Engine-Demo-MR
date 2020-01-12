@@ -11,14 +11,14 @@ Camera::Camera(GameObject* owner): Component(owner, ComponentType::Camera)
 	glGenFramebuffers(1, &fbo);
 	aspect = 1.f;
 	frustum.type = FrustumType::PerspectiveFrustum;
-	frustum.pos = float3{ 0.0f,0.0f, -20.0f };
+	frustum.pos = float3{ 5.0f, 5.0f, 5.0f };
 	frustum.front = float3::unitZ;
 	frustum.up = float3::unitY;
 	frustum.nearPlaneDistance = 1.f;
 	frustum.farPlaneDistance = 100.0f;
 	frustum.verticalFov = math::pi / 4.0f;
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * aspect);
-	camPos = float3{ 0.0f,0.0f, 100.0f };
+	camPos = float3{ 1.0f,0.0f, 100.0f };
 	proj = frustum.ProjectionMatrix();
 	view = frustum.ViewMatrix();
 	glGenFramebuffers(1, &fbo);
