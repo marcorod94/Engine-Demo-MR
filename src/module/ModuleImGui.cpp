@@ -48,11 +48,13 @@ update_status ModuleImGui::Update() {
 	if (App->scene->root) {
 		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
 		cam->Draw("Scene");
+		cam->DrawFrustumPlanes();
 	}
 	if (App->scene->mainCamera)
 	{
 		Camera* cam2 = (Camera*)App->scene->mainCamera->FindComponent(ComponentType::Camera);
 		cam2->Draw("Game");
+		cam2->DrawFrustumPlanes();
 	}
 	if (showHierarchy) {
 		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);

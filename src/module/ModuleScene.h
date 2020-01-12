@@ -17,8 +17,7 @@ public:
 	update_status Update();
 	GameObject* CreateGameObject(const std::string&) const;
 	GameObject* CreateGameObject(const std::string&, const float3&, const Quat&) const;
-
-
+	void PickObject(const ImVec2 &winSize, const ImVec2 &winPos);
 	bool CleanUp();
 };
 #endif

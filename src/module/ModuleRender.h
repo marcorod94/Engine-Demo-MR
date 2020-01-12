@@ -25,7 +25,7 @@ public:
 	update_status PostUpdate();
 
 	void DisplayFrameBuffer(Camera* camera, unsigned fbo, unsigned fb_width, unsigned fb_height);
-
+	GameObject* RayIntersectsObject(float3 origin, LineSegment &ray);
 	bool CleanUp();
 	Mesh* CreateMesh();
 private:
@@ -34,5 +34,6 @@ private:
 	void DrawGameObject(GameObject*, Camera*);
 	void DrawMesh(Mesh*);
 	void DrawMaterial(Material*);
+
 };
 #endif

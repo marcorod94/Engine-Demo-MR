@@ -8,6 +8,8 @@
 #include "ModuleModel.h"
 #include "component/Mesh.h"
 #include "component/Material.h"
+#include "module/ModuleInput.h"
+#include "module/ModuleRender.h"
 #include "component/Camera.h"
 #include <string>
 
@@ -22,29 +24,16 @@ bool ModuleScene::Init() {
 	shape.slices = 20;
 	shape.stacks = 20;
 	App->model->LoadShapes(root, "sphere0", float3(1.0f, 1.0f, 1.0f), Quat::identity, shape, ProgramType::Default, float4(0.5f, 0.0f, 0.5f, 1.0f));
-	//userViewport
+	//sceneVie
 	Camera* cam = App->camera->CreateComponentCamera();
-	//Camera* cam = new Camera(root);
 	cam->owner = root;
 	root->components.push_back(cam);
-	//sceneCamera
+	//activeCamera
 	mainCamera = CreateGameObject("Main Camera");
 	Camera* cam2 = App->camera->CreateComponentCamera();
-	//Camera* cam2 = new Camera(mainCamera);
 	cam2->owner = mainCamera;
 	mainCamera->parent = root;
 	mainCamera->components.push_back(cam2);
-
-
-	/////////////////////////////////////////////////////////////////////
-
-	/*GameObject* camera = CreateGameObject("Root Scene");
-	camera->name = "Main Camera";
-	Camera* componentCamera = App->camera->CreateComponentCamera();
-	App->camera->currentCamera = componentCamera;
-	componentCamera->owner = camera;*/
-	/*App->camera->currentCamera->SetPosition(float3(0.f, 100.f, -100.f));
-	App->camera->currentCamera->SetFarDistance(500);*/
 	
 	return true;
 }
@@ -69,4 +58,15 @@ GameObject* ModuleScene::CreateGameObject(const std::string& name) const {
 
 GameObject* ModuleScene::CreateGameObject(const std::string& name, const float3& pos, const Quat& rot) const {
 	return new GameObject(name, pos, rot);
+}
+
+void ModuleScene::PickObject(const ImVec2 &winSize, const ImVec2 &winPos)
+{
+	float2 mouse = App->input->GetMouseMotion();
+	float2 normalizedPos = float2(mouse.x - winSize.x / 2, (winSize.y - mouse.y) - winSize.y / 2).Normalized();
+
+	LineSegment ray;
+	App->camera->loadedCameras[0]->CreateRay(normalizedPos, ray);
+
+	GameObject* isIntersected = App->renderer->RayIntersectsObject(App->camera->loadedCameras[0]->frustum.pos, ray);
 }

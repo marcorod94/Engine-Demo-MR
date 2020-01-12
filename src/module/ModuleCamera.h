@@ -43,6 +43,8 @@ public:
 	float3 helper2 = float3(1.0f, 1.0f, 1.0f);
 	float cameraSpeed = 0.05f;
 	float sensitivity = 0.2F;
+
+	
 private:
 	GameObject *sceneCameraGO = nullptr;
 	float movementSpeed = cameraSpeed;
