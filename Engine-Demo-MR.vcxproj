@@ -97,7 +97,7 @@
     <ClInclude Include="src\module\ModuleScene.h" />
     <ClInclude Include="src\module\ModuleTexture.h" />
     <ClInclude Include="src\module\ModuleWindow.h" />
-    <ClInclude Include="src\util\DDRenderInterface.h" />
+    <ClInclude Include="src\util\DebugDraw.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\imgui\imgui.cpp" />

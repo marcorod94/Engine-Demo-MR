@@ -16,30 +16,28 @@ bool ModuleCamera::Init() {
 	//sceneCamera->SetFarDistance();
 
 	///////////////previous code
-	/*frustum.type = FrustumType::PerspectiveFrustum;
-	frustum.pos = float3(-1.0F, 1.0F, 1.0F);
-	frustum.front = -float3::unitZ;
-	frustum.up = float3::unitY;
-	frustum.nearPlaneDistance = 0.3F;
-	frustum.farPlaneDistance = 250.0F;
-	frustum.verticalFov = math::pi / 4.0F;
+	/*root->frustum.type = root->frustumType::Perspectiveroot->frustum;
+	root->frustum.pos = float3(-1.0F, 1.0F, 1.0F);
+	root->frustum.front = -float3::unitZ;
+	root->frustum.up = float3::unitY;
+	root->frustum.nearPlaneDistance = 0.3F;
+	root->frustum.farPlaneDistance = 250.0F;
+	root->frustum.verticalFov = math::pi / 4.0F;
 	UpdateAspectRatio();
-	CalculateRotationAngles(frustum.front);*/
+	CalculateRotationAngles(root->frustum.front);*/
 	return true;
 }
 
 Camera* ModuleCamera::CreateComponentCamera()
 {
-	return new Camera(nullptr);
+	root = new Camera(nullptr);
+	return root;
 }//dont forget to create a remove component also
 
 update_status  ModuleCamera::PreUpdate() {
 	UpdateAspectRatio();
-	proj = frustum.ProjectionMatrix();
-	model =
-		float4x4::FromTRS(helper1,
-			float3x3::RotateY(frustum.verticalFov), helper2);
-	view = LookAt(frustum.pos, frustum.pos + frustum.front - cameraTarget, frustum.up);
+	root->proj = root->frustum.ProjectionMatrix();
+	root->view = LookAt(root->frustum.pos, root->frustum.pos + root->frustum.front - cameraTarget, root->frustum.up);
 	return UPDATE_CONTINUE;
 }
 
@@ -62,16 +60,16 @@ update_status  ModuleCamera::Update() {
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT)) {
 		MouseMove();
 		if (App->input->GetKey(SDL_SCANCODE_W)) {
-			frustum.pos += movementSpeed * frustum.front;
+			root->frustum.pos += movementSpeed * root->frustum.front;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_S)) {
-			frustum.pos -= movementSpeed * frustum.front;
+			root->frustum.pos -= movementSpeed * root->frustum.front;
 		}
 		if (App->input->GetKey(SDL_SCANCODE_A)) {
-			frustum.pos -= movementSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+			root->frustum.pos -= movementSpeed * (root->frustum.front.Cross(root->frustum.up)).Normalized();
 		}
 		if (App->input->GetKey(SDL_SCANCODE_D)) {
-			frustum.pos += movementSpeed * (frustum.front.Cross(frustum.up)).Normalized();
+			root->frustum.pos += movementSpeed * (root->frustum.front.Cross(root->frustum.up)).Normalized();
 		}
 	}
 	return UPDATE_CONTINUE;
@@ -114,11 +112,11 @@ void ModuleCamera::MouseMove()
 	direction.y = sin(DegToRad(pitch));
 	direction.z = sin(DegToRad(yaw)) * cos(DegToRad(pitch));
 	if (orbit) {
-		/*frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * direction.Normalized();*/
-		cameraTarget = frustum.pos + frustum.front;
+		/*root->frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * direction.Normalized();*/
+		cameraTarget = root->frustum.pos + root->frustum.front;
 	} else {
 		cameraTarget = float3::zero;
-		frustum.front = direction.Normalized();
+		root->frustum.front = direction.Normalized();
 	}
 }
 
@@ -127,15 +125,15 @@ void ModuleCamera::MouseScrolling()
 {
 	float2 offset = App->input->GetMouseScroll();
 	if (offset.y > 0) {
-		frustum.pos += cameraSpeed * frustum.front;
+		root->frustum.pos += cameraSpeed * root->frustum.front;
 	}
 	if (offset.y < 0) {
-		frustum.pos -= cameraSpeed * frustum.front;
+		root->frustum.pos -= cameraSpeed * root->frustum.front;
 	}
 }
 
 void ModuleCamera::UpdateAspectRatio() {
-	frustum.horizontalFov = 2.0F * atanf(tanf(frustum.verticalFov * 0.5F) * App->window->screenWidth / App->window->screenHeight);
+	root->frustum.horizontalFov = 2.0F * atanf(tanf(root->frustum.verticalFov * 0.5F) * App->window->screenWidth / App->window->screenHeight);
 }
 
 void ModuleCamera::CalculateRotationAngles(float3& vector) {
@@ -144,20 +142,20 @@ void ModuleCamera::CalculateRotationAngles(float3& vector) {
 }
 
 void ModuleCamera::Focus() {
-	cameraTarget = float3::zero;
-	frustum.front = -float3::unitZ;
-	CalculateRotationAngles(frustum.front);
-	/*frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * frustum.front;*/
+	/*cameraTarget = float3::zero;
+	root->frustum.front = -float3::unitZ;
+	CalculateRotationAngles(root->frustum.front);*/
+	/*root->frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * root->frustum.front;*/
 }
 
 void ModuleCamera::ZoomIn()
 {
-	frustum.pos += cameraSpeed * frustum.front;
+	root->frustum.pos += cameraSpeed * root->frustum.front;
 }
 
 void ModuleCamera::ZoomOut()
 {
-	frustum.pos -= cameraSpeed * frustum.front;
+	root->frustum.pos -= cameraSpeed * root->frustum.front;
 }
 
 bool ModuleCamera::CleanUp()

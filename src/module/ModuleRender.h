@@ -30,8 +30,6 @@ public:
 	bool CleanUp();
 	Mesh* CreateMesh();
 private:
-	void DrawGrid(Camera* cam) const;
-	void DrawAxis() const;
 	void DrawGameObject(GameObject*, Camera*);
 	void DrawMesh(Camera*, Transform*, Mesh*, Material*);
 };
