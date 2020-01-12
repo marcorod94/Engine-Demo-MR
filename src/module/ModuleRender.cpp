@@ -151,9 +151,9 @@ void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material
 	}
 	if (trans) {
 		trans->CalculateTransform();
-		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &(trans->localTransform[0][0]));
+		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &(trans->worldTransform[0][0]));
 	}
-	
+
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &(cam->view[0][0]));
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &(cam->proj[0][0]));
 	if (mesh) {

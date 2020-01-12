@@ -5,12 +5,12 @@
 #include "main/Globals.h"
 #include "SDL.h"
 
-
 class Camera;
+class GameObject;
 class Mesh;
 class Material;
-class GameObject;
 class Transform;
+
 class ModuleRender : public Module {
 public:
 	SDL_GLContext glContext;
