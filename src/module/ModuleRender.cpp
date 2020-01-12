@@ -11,6 +11,7 @@
 #include "component/Mesh.h"
 #include "component/Material.h"
 #include "component/Camera.h"
+#include "component/Transform.h"
 #include "SDL.h"
 #include "GL/glew.h"
 
@@ -172,8 +173,8 @@ void ModuleRender::DrawAxis() const {
 }
 
 void  ModuleRender::DrawGameObject(GameObject* parent, Camera* cam) {
-	DrawMaterial((Material*)parent->FindComponent(ComponentType::Material));
-	DrawMesh((Mesh*)parent->FindComponent(ComponentType::Mesh));
+	LOG("Current Object: %s", parent->name.c_str());
+	DrawMesh(cam, (Transform*)parent->FindComponent(ComponentType::Transform), (Mesh*)parent->FindComponent(ComponentType::Mesh), (Material*)parent->FindComponent(ComponentType::Material));
 	for (unsigned i = 0; i < parent->children.size(); i++) {
 		DrawGameObject(parent->children[i], cam);
 	}
@@ -184,18 +185,11 @@ void ModuleRender::DisplayFrameBuffer(Camera* camera, unsigned fbo, unsigned fb_
 
 }
 
-void  ModuleRender::DrawMesh(Mesh* mesh) {
-	if (mesh) {
-		glBindVertexArray(mesh->vao);
-		glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-		glActiveTexture(GL_TEXTURE0);
-	}
-}
-
-void  ModuleRender::DrawMaterial(Material* material) {
+void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material* material) {
+	unsigned program = App->program->programs[int(ProgramType::Default)];
+	glUseProgram(program);
 	if (material) {
-		unsigned program = App->program->programs[material->program];
+		program = App->program->programs[material->program];
 		glUseProgram(program);
 		glUniform3fv(glGetUniformLocation(program, "light_pos"), 1, (const float*)&App->model->light.pos);
 		glUniform1f(glGetUniformLocation(program, "ambient"), App->model->ambient);
@@ -206,11 +200,25 @@ void  ModuleRender::DrawMaterial(Material* material) {
 		if (material->diffuseMap == 0) {
 			glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 0);
 			glUniform4fv(glGetUniformLocation(program, "object_color"), 1, (const float*)&material->diffuseColor);
-		} else {
+		}
+		else {
 			glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 1);
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, material->diffuseMap);
 			glUniform1i(glGetUniformLocation(program, "diffuse_map"), 0);
 		}
+	}
+	if (trans) {
+		trans->CalculateTransform();
+		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &(trans->worldTransform[0][0]));
+	}
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &(cam->view[0][0]));
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &(cam->proj[0][0]));
+	if (mesh) {
+		glBindVertexArray(mesh->vao);
+		glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+		glActiveTexture(GL_TEXTURE0);
 	}
 }
