@@ -2,9 +2,10 @@
 #define Component_h
 #include "main/Globals.h"
 #include "main/GameObject.h"
+#include "crossguid/guid.hpp"
 class Component {
 public:
-	int uuid;
+	std::string uuid = xg::newGuid().str();
 	ComponentType type;
 	bool active;
 	GameObject* owner;

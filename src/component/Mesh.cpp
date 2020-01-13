@@ -34,6 +34,7 @@ void Mesh::Setup() {
 
 void Mesh::DrawView() {
 	if (ImGui::TreeNode("Geometry ")) {
+		ImGui::Text("UUID: %s", uuid.c_str());
 		ImGui::Text("Vertex Total: %d", totalVertex);
 		ImGui::Text("Primitive Total: %d", totalPrimitives);
 		ImGui::TreePop();

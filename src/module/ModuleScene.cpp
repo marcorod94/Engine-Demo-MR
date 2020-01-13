@@ -30,12 +30,12 @@ bool ModuleScene::Init() {
 	cam->owner = root;
 	root->components.push_back(cam);
 	//activeCamera
-	mainCamera = CreateGameObject("Main Camera");
+	GameObject* mainCamera = CreateGameObject("Main Camera");
 	Camera* cam2 = App->camera->CreateComponentCamera();
 	cam2->owner = mainCamera;
 	mainCamera->parent = root;
 	mainCamera->components.push_back(cam2);
-	
+	root->children.push_back(mainCamera);
 	return true;
 }
 

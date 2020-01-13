@@ -3,6 +3,7 @@
 
 void Transform::DrawView() {
 	if (ImGui::TreeNode("Transform")) {
+		ImGui::Text("UUID: %s", uuid.c_str());
 		DrawFloat3View("Position", &position, -100.00F, 100.00F);
 		DrawFloat3View("Rotation", &rotationEU, -360.00F, 360.00F);
 		DrawFloat3View("Scalling", &scaling, 0.000001, 50.00F, 0.001F, "%.6F");

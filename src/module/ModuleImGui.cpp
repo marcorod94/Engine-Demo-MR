@@ -46,27 +46,20 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 	//ImGui::ShowDemoWindow();
+	Camera* cam = nullptr;
 	if (App->scene->root) {
-		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
-		cam->Draw("Scene");
-		cam->DrawFrustumPlanes();
-	}
-	if (App->scene->mainCamera)
-	{
-		Camera* cam2 = (Camera*)App->scene->mainCamera->FindComponent(ComponentType::Camera);
-		cam2->Draw("Game");
-		cam2->DrawFrustumPlanes();
+		for (unsigned i = 0; i < App->camera->loadedCameras.size(); i++) {
+
+			cam = App->camera->loadedCameras[i];
+			cam->Draw(cam->owner->name.c_str());
+			cam->DrawFrustumPlanes();
+		}
 	}
 	if (showHierarchy) {
 		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
 		if (ImGui::TreeNode(App->scene->root->name.c_str())) {
 			int root = 0;
 			DrawHierarchy(App->scene->root->children, root);
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode(App->scene->mainCamera->name.c_str())) {
-			int mainCamera = 0;
-			DrawHierarchy(App->scene->mainCamera->children, mainCamera);
 			ImGui::TreePop();
 		}
 		ImGui::End();
