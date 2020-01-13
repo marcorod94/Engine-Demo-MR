@@ -3,12 +3,12 @@
 #include <string>
 #include <vector>
 #include "main/Globals.h"
-
+#include "crossguid/guid.hpp"
 class Component;
 class Transform;
 class GameObject {
 public:
-	int uuid;
+	std::string uuid = xg::newGuid().str();
 	std::string name;
 	std::vector<Component*> components;
 	GameObject* parent = nullptr;
