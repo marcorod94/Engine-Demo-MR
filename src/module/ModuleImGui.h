@@ -5,6 +5,8 @@
 #include "main/Globals.h"
 #include "imgui.h"
 #include <vector>
+#include "ImGuizmo.h"
+
 class GameObject;
 enum class ShapeType;
 class ModuleImGui : public Module {
@@ -19,9 +21,12 @@ public:
 
 	const void DrawConsoleWindow();
 	const void DrawInspectorWindow();
+	unsigned selected = 0;
+	void ShowGizmos();
+	ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
 private: 
 	bool show_demo_window = true;
-	unsigned selected = 0;
+	
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 	ImGuiTextBuffer buffer;
 	bool scrollToBottom;

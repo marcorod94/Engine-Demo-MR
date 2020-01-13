@@ -19,7 +19,7 @@
 #include <map>
 
 class Camera;
-
+class Transform;
 // Called before render is available
 bool ModuleRender::Init()
 {
@@ -178,30 +178,55 @@ void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material
 
 GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 {
-	float distance = -1.0f;
+	LineSegment localRay = ray;
+	Triangle tri;
+	bool hit_point;
 	std::map<float, GameObject*> intersected;
 	std::map<float, GameObject*>::iterator it;
 	std::vector<Mesh*> intersectedMshes;
 	GameObject* selected = nullptr;
-	for (it = symbolTable.begin(); it != symbolTable.end(); it++)
-	{
-		std::cout << it->first  // string (key)
-			<< ':'
-			<< it->second   // string's value 
-			<< std::endl;
-	}
+	float distance = -1.0f;
+
 	for (unsigned i = 0; i < App->scene->root->children.size(); i++) {
 		Mesh* mesh = (Mesh*)App->scene->root->children[i]->FindComponent(ComponentType::Mesh);
-		bool hit_point = ray.Intersects(mesh->box); // ray vs. AABB
-		if (hit_point)
+		Transform* trans = (Transform*)App->scene->root->children[i]->FindComponent(ComponentType::Transform);
+		if (mesh != nullptr)
 		{
-			float dist = origin.Distance(mesh->box);
-			intersected[dist] = mesh->owner;
-			intersectedMshes.push_back(mesh);
+			localRay.Transform(trans->worldTransform.Inverted());
+			hit_point = localRay.Intersects(mesh->box); // ray vs. AABB
+			if (hit_point)
+			{
+				float dist = origin.Distance(mesh->box);
+				intersected[dist] = mesh->owner;
+				intersectedMshes.push_back(mesh);
+			}
+
+			for (it = intersected.begin(); it != intersected.end(); it++)
+			{
+				if (it->first < distance)
+				{
+					distance = it->first;
+					selected = it->second;
+				}
+			}
+			Mesh* minDistMesh = (Mesh*)selected->FindComponent(ComponentType::Mesh);
+			if (minDistMesh != nullptr)
+			{
+				for (unsigned int i = 0; i < selected->children.size(); i++)
+				{
+					tri = Triangle(mesh->vertices[mesh->indices[i]].Position, mesh->vertices[mesh->indices[i + 1]].Position, mesh->vertices[mesh->indices[i + 2]].Position);
+					bool hit = tri.Intersects(localRay);
+					if (hit)
+					{
+						distance = tri.Distance(origin);
+					}
+				}
+			}
 		}
-		bool hit = ray_local_space.Intersects(tri, &distance, &hit_point); // ray vs. triangle
 	}
-	
-	
+	if (intersected.size() == 0)
+	{
+		return nullptr;
+	}
 	return selected;
 }

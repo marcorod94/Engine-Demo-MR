@@ -218,7 +218,8 @@ const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, i
 	
 	for (unsigned i = 0; i < objects.size(); ++i)
 	{
-		++index;
+		index++;
+		objects[i]->uuid = index;
 		unsigned flags = ImGuiTreeNodeFlags_None;
 		if (objects[i]->children.size() == 0) {
 			flags = ImGuiTreeNodeFlags_Leaf;
@@ -227,6 +228,7 @@ const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, i
 		if (ImGui::TreeNodeEx(objects[i]->name.c_str(), flags)) {
 			if (selected == index) {
 				objects[i]->ShowProperties();
+				ShowGizmos();
 				/*if (objects[i]->)
 				{
 
@@ -339,3 +341,21 @@ const void ModuleImGui::DrawInspectorWindow()
 
 }
 
+void ModuleImGui::ShowGizmos()
+{
+	gizmoOperation = ImGuizmo::TRANSLATE;
+	/*if (ImGui::Button(ICON_FA_ARROWS_ALT))
+	{
+		gizmoOperation = ImGuizmo::TRANSLATE;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_FA_SYNC_ALT))
+	{
+		gizmoOperation = ImGuizmo::ROTATE;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(ICON_FA_EXPAND_ARROWS_ALT))
+	{
+		gizmoOperation = ImGuizmo::SCALE;
+	}*/
+}

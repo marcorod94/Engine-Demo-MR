@@ -110,6 +110,8 @@ void Camera::Draw(const char* name)
 	{
 		isHovered = true;
 		//App->imgui->AddLog("TRYIN TO UPDATE CAM");
+		hoveredWindowPos = ImGui::GetWindowPos();
+		hoveredWindowSize = ImGui::GetWindowSize();
 	}
 	width = ImGui::GetWindowContentRegionWidth();
 	height = ImGui::GetContentRegionAvail().y;

@@ -3,6 +3,7 @@
 
 #include "MathGeoLib.h"
 #include "Component.h"
+#include "imgui.h"
 #include <string>
 
 const int IS_IN = 0;
@@ -27,6 +28,8 @@ public:
 
 	float4x4 proj, view, model;
 	float cameraSpeed = 0.05f;
+	ImVec2 hoveredWindowPos;
+	ImVec2 hoveredWindowSize;
 	unsigned fbo = 0;
 	unsigned rbo = 0;
 	float3 camPos;

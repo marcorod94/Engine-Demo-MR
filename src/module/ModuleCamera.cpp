@@ -80,12 +80,11 @@ update_status  ModuleCamera::Update() {
 			if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
 				MouseScrolling(loadedCameras[i]);
 			}
-			//if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
-			//	ImVec2 hoveredWindowPos = ImGui::GetWindowPos();
-			//	ImVec2 hoveredWindowSize = ImGui::GetWindowSize();
-			//	App->scene->PickObject(hoveredWindowPos, hoveredWindowSize);
-			//	//MousePick()
-			//}
+			if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
+			
+				App->scene->PickObject(loadedCameras[i]->hoveredWindowSize, loadedCameras[i]->hoveredWindowPos);
+			
+			}
 			movementSpeed = cameraSpeed;
 			
 			UpdateAspectRatio(loadedCameras[i], loadedCameras[i]->width, loadedCameras[i]->height);
