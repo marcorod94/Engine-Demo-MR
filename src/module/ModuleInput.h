@@ -4,9 +4,12 @@
 #include "Module.h"
 #include "main/Globals.h"
 #include "MathGeoLib.h"
+#include "component/Camera.h"
 #include "SDL.h"
 
 #define KEY_NUM 300
+
+struct ImGuiIO;
 typedef uint8_t Uint8;
 enum EventWindow
 {
@@ -49,5 +52,6 @@ private:
 	const Uint8* keyboard;
 	float2 mouse_motion = float2::zero;
 	float2 mouse_scroll = float2::zero;
+	void UpadteImGuiModifiers(const SDL_Keycode, ImGuiIO*);
 };
 #endif

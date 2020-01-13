@@ -12,6 +12,11 @@ A demo of an engine for game development develop from scratch, it has a camera s
 ### Screen Shots
 
 ![](https://github.com/marcorod94/Engine-Demo-MR/blob/master/Screenshots/home.png)
+## Author (Artemis Georgakopoulou)
+Diploma Engineer from Greece, currently studying a masters on Game Development at UPC Barcelona, Spain.
+Over the course of my studies, I learned various skills related to Computer Engineering. As a continuation of my studies I would like to keep working on Graphics and Game development and I consider Serious Game development a good way to test and improve my skills.  
+
+You can find some of my projects [here.](https://github.com/Misarte)
 
 ## Author (Marco Rodriguez)
 Software Engineer from Ecuador, currently studying a masters on Game Development at UPC Barcelona, Spain.

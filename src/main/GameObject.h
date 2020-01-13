@@ -5,12 +5,13 @@
 #include "main/Globals.h"
 
 class Component;
+class Transform;
 class GameObject {
 public:
 	int uuid;
 	std::string name;
 	std::vector<Component*> components;
-	GameObject* parent;
+	GameObject* parent = nullptr;
 	std::vector<GameObject*> children;
 	GameObject() {}
 	GameObject(const std::string& name): name(name) {
@@ -23,6 +24,7 @@ public:
 	update_status Update();
 	Component* CreateComponent(const ComponentType);
 	Component* FindComponent(const ComponentType);
+	Transform* myTransform = nullptr;
 	void DeleteChild(const GameObject*);
 	void ShowProperties();
 private:

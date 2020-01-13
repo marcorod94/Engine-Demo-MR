@@ -3,6 +3,7 @@
 
 #include "MathGeoLib.h"
 #include "Component.h"
+#include <string>
 
 const int IS_IN = 0;
 const int IS_OUT = 1;
@@ -10,40 +11,25 @@ const int INTERSECT = 2;
 
 class Camera : public Component {
 public:
-	Camera(GameObject* owner);
+	Camera(GameObject* theOwner);
 	~Camera();
 
 	void SetFrustum();
-	void SetFOV(const float fov);
-	void UpdateAspectRatio();
-	void SetNearDistance(const float distance);
-	void SetFarDistance(const float distance);
+	Frustum frustum;
 
-	float4x4 LookAt(float3&, float3&, float3&) const;
-
-	void SetTransform(const math::float3& f, const math::float3& r, const math::float3& u, const math::float3& pos);
-	void SetPosition(const math::float3& pos);
-	void SetRotation(const math::Quat& quat);
-
-
-
-	void SetPerspective(float fovY, float aspect, float near, float far);
-	void SetOrtho(float left, float right, float bottom, float top, float near, float far);
-
-	void Focus();
-
-	void Draw();
+	void Draw(const char*);
 	void GenerateFBOTexture(unsigned w, unsigned h);
-	void CenterCamera();
-
+	void GenerateMatrices();
 	int isCollidingFrustum(const AABB& aabb) const;
+	void DrawFrustumPlanes();
+	void DrawView();
 
-	void GenerateFrameBuffers(const float width, const float height);//check
+	void CreateRay(const float2& normalizedPos, LineSegment &value) const;
 
-	
 	float4x4 proj, view, model;
 	float cameraSpeed = 0.05f;
 	unsigned fbo = 0;
+	unsigned rbo = 0;
 	float3 camPos;
 
 	float Hnear;
@@ -70,22 +56,12 @@ public:
 
 	float height = 600;
 	float width = 800;
-private:
-	float movementSpeed = cameraSpeed;
-	float3 cameraTarget = float3::zero;
-	bool orbit = false;
+	bool isHovered = false;
 	float yaw = 0.0f;
-	float pitch = -90.0f;
-	void CalculateRotationAngles(float3&);
-
-	Frustum frustum;
+	float pitch = 0.0f;
+private:
+	
 	float aspect = 1.f;
-	
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	
-
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	
 	unsigned fb_depth = 0;
 	unsigned fb_tex = 0;
 	unsigned fb_width = 0;

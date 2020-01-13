@@ -29,9 +29,13 @@ bool ModuleImGui::Init() {
 	ImFontConfig icons_config;
 	icons_config.MergeMode = true;
 	icons_config.PixelSnapH = true;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	
+	//icons_config.dockinEna
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-solid-900.ttf", 16.0F, &icons_config, iconsRanges);
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-regular-400.ttf", 16.0F, &icons_config, iconsRanges);
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-brands-400.ttf", 16.0F, &icons_config, iconsBrandRange);
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	return true;
 }
@@ -41,9 +45,15 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
+	//ImGui::ShowDemoWindow();
+	Camera* cam = nullptr;
 	if (App->scene->root) {
-		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
-		cam->Draw();
+		for (unsigned i = 0; i < App->camera->loadedCameras.size(); i++) {
+
+			cam = App->camera->loadedCameras[i];
+			cam->Draw(cam->owner->name.c_str());
+			cam->DrawFrustumPlanes();
+		}
 	}
 	if (showHierarchy) {
 		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
@@ -86,9 +96,9 @@ update_status ModuleImGui::Update() {
 	}
 	if (showAbout) {
 		ImGui::Begin("About", &showAbout);
-		ImGui::Text("Engine: EM ENGINE");
+		ImGui::Text(u8"Engine: \uf534 Engine");
 		ImGui::Text("Desciption: Super Cool Engine develop with love <3");
-		ImGui::Text("Author: Marco Rodriguez");
+		ImGui::Text("Author: Artemis Georgakopoulou && Marco Rodriguez");
 		ImGui::End();
 	}
 	
@@ -198,6 +208,7 @@ const void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
 }
 
 const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, int& index) {
+	
 	for (unsigned i = 0; i < objects.size(); ++i)
 	{
 		++index;
@@ -209,6 +220,10 @@ const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, i
 		if (ImGui::TreeNodeEx(objects[i]->name.c_str(), flags)) {
 			if (selected == index) {
 				objects[i]->ShowProperties();
+				/*if (objects[i]->)
+				{
+
+				}*/
 			}
 			if (ImGui::IsItemClicked()) {
 				selected = index;
@@ -297,13 +312,13 @@ const void ModuleImGui::DrawConsoleWindow()
 	ImGui::Begin("Console", &showConsole);
 	ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
 	ImGui::SetWindowPos(ImVec2(0, App->window->screenHeight - consoleH));
-	ImVec2 size = ImGui::GetWindowSize();//to be able to resize it
-	if (size.x != consoleW && size.y != consoleH)
-	{
-		consoleW = size.x;
-		consoleH = size.y;
-		ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
-	}
+	//ImVec2 size = ImGui::GetWindowSize();//to be able to resize it
+	//if (size.x != consoleW && size.y != consoleH)
+	//{
+	//	consoleW = size.x;
+	//	consoleH = size.y;
+	//	ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
+	//}
 
 	ImGui::TextUnformatted(buffer.begin());
 	if (scrollToBottom)

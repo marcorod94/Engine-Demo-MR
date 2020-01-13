@@ -1,258 +1,84 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\main\Application.cpp">
-      <Filter>src\main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\Camera.cpp">
-      <Filter>src\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main\GameObject.cpp">
-      <Filter>src\main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main\log.cpp">
-      <Filter>src\main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main\Main.cpp">
-      <Filter>src\main</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\Material.cpp">
-      <Filter>src\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\Mesh.cpp">
-      <Filter>src\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\module\ModuleCamera.cpp">
-      <Filter>src\module</Filter>
-    </ClCompile>
-    <ClCompile Include="src\module\ModuleDebugDraw.cpp">
-      <Filter>src\module</Filter>
-    </ClCompile>
-    <ClCompile Include="src\module\ModuleImGui.cpp">
-      <Filter>src\module</Filter>
-    </ClCompile>
-    <ClCompile Include="src\module\ModuleInput.cpp">
-      <Filter>src\module</Filter>
-    </ClCompile>
-    <ClCompile Include="src\module\ModuleModel.cpp">
-      <Filter>src\module</Filter>
-    </ClCompile>
-    <ClCompile Include="src\module\ModuleProgram.cpp">
-      <Filter>src\module</Filter>
-    </ClCompile>
-    <ClCompile Include="src\module\ModuleRender.cpp">
-      <Filter>src\module</Filter>
-    </ClCompile>
-    <ClCompile Include="src\module\ModuleScene.cpp">
-      <Filter>src\module</Filter>
-    </ClCompile>
-    <ClCompile Include="src\module\ModuleTexture.cpp">
-      <Filter>src\module</Filter>
-    </ClCompile>
-    <ClCompile Include="src\module\ModuleWindow.cpp">
-      <Filter>src\module</Filter>
-    </ClCompile>
-    <ClCompile Include="src\component\Transform.cpp">
-      <Filter>src\components</Filter>
-    </ClCompile>
-    <ClCompile Include="include\imgui\imgui_demo.cpp">
-      <Filter>lib\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\imgui\imgui_draw.cpp">
-      <Filter>lib\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp">
-      <Filter>lib\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\imgui\imgui_impl_sdl.cpp">
-      <Filter>lib\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\imgui\imgui_widgets.cpp">
-      <Filter>lib\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\imgui\imgui.cpp">
-      <Filter>lib\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\TriangleMesh.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Polyhedron.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\AABB.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\MathLog.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\float4.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\float3x3.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Circle.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\OBB.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Algorithm\Random\LCG.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\MathOps.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\float4x4.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Line.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\LineSegment.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\float3x4.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Polygon.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\float3.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Plane.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Cone.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\Quat.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Ray.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Frustum.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Sphere.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Cylinder.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\TransformOps.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Triangle.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\float2.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\MathFunc.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\SSEMath.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\BitOps.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Time\Clock.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Geometry\Capsule.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="include\MathGeoLib\Math\Polynomial.cpp">
-      <Filter>lib\MathGeolib</Filter>
-    </ClCompile>
+    <ClCompile Include="src\component\Camera.cpp" />
+    <ClCompile Include="src\component\Material.cpp" />
+    <ClCompile Include="src\component\Transform.cpp" />
+    <ClCompile Include="src\component\Mesh.cpp" />
+    <ClCompile Include="src\main\Application.cpp" />
+    <ClCompile Include="src\main\GameObject.cpp" />
+    <ClCompile Include="src\main\log.cpp" />
+    <ClCompile Include="src\main\Main.cpp" />
+    <ClCompile Include="src\module\ModuleCamera.cpp" />
+    <ClCompile Include="src\module\ModuleDebugDraw.cpp" />
+    <ClCompile Include="src\module\ModuleImGui.cpp" />
+    <ClCompile Include="src\module\ModuleInput.cpp" />
+    <ClCompile Include="src\module\ModuleModel.cpp" />
+    <ClCompile Include="src\module\ModuleProgram.cpp" />
+    <ClCompile Include="src\module\ModuleRender.cpp" />
+    <ClCompile Include="src\module\ModuleScene.cpp" />
+    <ClCompile Include="src\module\ModuleTexture.cpp" />
+    <ClCompile Include="src\module\ModuleWindow.cpp" />
+    <ClCompile Include="include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="include\imgui\imgui_impl_sdl.cpp" />
+    <ClCompile Include="include\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="include\imgui\imgui.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Polygon.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\BitOps.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Line.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Sphere.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\TransformOps.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\Polynomial.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\float4.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\Quat.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Ray.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\OBB.cpp" />
+    <ClCompile Include="include\MathGeoLib\Time\Clock.cpp" />
+    <ClCompile Include="include\MathGeoLib\Algorithm\Random\LCG.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\MathOps.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\float2.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\LineSegment.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\float3x3.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Triangle.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\float3.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\AABB.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Circle.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Frustum.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Capsule.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\float3x4.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\float4x4.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\SSEMath.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Polyhedron.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Cone.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Plane.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\MathFunc.cpp" />
+    <ClCompile Include="include\MathGeoLib\Math\MathLog.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\TriangleMesh.cpp" />
+    <ClCompile Include="include\MathGeoLib\Geometry\Cylinder.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\main\Application.h">
-      <Filter>src\main</Filter>
-    </ClInclude>
-    <ClInclude Include="src\component\Component.h">
-      <Filter>src\components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\component\Camera.h">
-      <Filter>src\components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util\DDRenderInterface.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\main\GameObject.h">
-      <Filter>src\main</Filter>
-    </ClInclude>
-    <ClInclude Include="src\main\Globals.h">
-      <Filter>src\main</Filter>
-    </ClInclude>
-    <ClInclude Include="src\component\Material.h">
-      <Filter>src\components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\component\Mesh.h">
-      <Filter>src\components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\module\Module.h">
-      <Filter>src\module</Filter>
-    </ClInclude>
-    <ClInclude Include="src\module\ModuleCamera.h">
-      <Filter>src\module</Filter>
-    </ClInclude>
-    <ClInclude Include="src\module\ModuleDebugDraw.h">
-      <Filter>src\module</Filter>
-    </ClInclude>
-    <ClInclude Include="src\module\ModuleImGui.h">
-      <Filter>src\module</Filter>
-    </ClInclude>
-    <ClInclude Include="src\module\ModuleInput.h">
-      <Filter>src\module</Filter>
-    </ClInclude>
-    <ClInclude Include="src\module\ModuleModel.h">
-      <Filter>src\module</Filter>
-    </ClInclude>
-    <ClInclude Include="src\module\ModuleProgram.h">
-      <Filter>src\module</Filter>
-    </ClInclude>
-    <ClInclude Include="src\module\ModuleRender.h">
-      <Filter>src\module</Filter>
-    </ClInclude>
-    <ClInclude Include="src\module\ModuleScene.h">
-      <Filter>src\module</Filter>
-    </ClInclude>
-    <ClInclude Include="src\module\ModuleTexture.h">
-      <Filter>src\module</Filter>
-    </ClInclude>
-    <ClInclude Include="src\module\ModuleWindow.h">
-      <Filter>src\module</Filter>
-    </ClInclude>
-    <ClInclude Include="src\component\Transform.h">
-      <Filter>src\components</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="lib">
-      <UniqueIdentifier>{f46e4aca-f7c8-4108-921d-17fc468fa58f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="lib\imgui">
-      <UniqueIdentifier>{40746dbd-4a5b-4840-9e99-6321f51fc3db}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="lib\MathGeolib">
-      <UniqueIdentifier>{edda26af-782f-4104-9cc5-88a1ec492e01}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src">
-      <UniqueIdentifier>{5d0e9167-b2d9-4ada-9b42-1857ede8b7f2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\components">
-      <UniqueIdentifier>{e9afe803-d85e-49b5-bb2b-4a07ad82ed25}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\main">
-      <UniqueIdentifier>{b58df13d-5b18-449b-9aaa-b6cc031a7d19}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\module">
-      <UniqueIdentifier>{8448c798-35fd-4b62-b264-588187fc5594}</UniqueIdentifier>
-    </Filter>
+    <ClInclude Include="src\component\Camera.h" />
+    <ClInclude Include="src\component\Component.h" />
+    <ClInclude Include="src\component\Material.h" />
+    <ClInclude Include="src\component\Transform.h" />
+    <ClInclude Include="src\component\Mesh.h" />
+    <ClInclude Include="src\main\Application.h" />
+    <ClInclude Include="src\main\GameObject.h" />
+    <ClInclude Include="src\main\Globals.h" />
+    <ClInclude Include="src\module\Module.h" />
+    <ClInclude Include="src\module\ModuleCamera.h" />
+    <ClInclude Include="src\module\ModuleDebugDraw.h" />
+    <ClInclude Include="src\module\ModuleImGui.h" />
+    <ClInclude Include="src\module\ModuleInput.h" />
+    <ClInclude Include="src\module\ModuleModel.h" />
+    <ClInclude Include="src\module\ModuleProgram.h" />
+    <ClInclude Include="src\module\ModuleRender.h" />
+    <ClInclude Include="src\module\ModuleScene.h" />
+    <ClInclude Include="src\module\ModuleTexture.h" />
+    <ClInclude Include="src\module\ModuleWindow.h" />
+    <ClInclude Include="src\util\DebugDraw.h" />
   </ItemGroup>
 </Project>
