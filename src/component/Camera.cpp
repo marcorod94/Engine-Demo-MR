@@ -14,13 +14,13 @@
 
 Camera::Camera(GameObject* theOwner) : Component(owner, ComponentType::Camera)
 {
-	aspect = 1.f;
+	aspect = 1.0F;
 	frustum.type = FrustumType::PerspectiveFrustum;
 	frustum.pos = float3(0,5,0);
 	frustum.front = float3::unitX;
 	frustum.up = float3::unitY;
 	frustum.nearPlaneDistance = 1.f;
-	frustum.farPlaneDistance = 100.0f;
+	frustum.farPlaneDistance = 50.0f;
 	frustum.verticalFov = math::pi / 4.0f;
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * aspect);
 	
@@ -37,9 +37,10 @@ Camera::~Camera()
 
 void Camera::DrawFrustumPlanes()
 {
-	/*float4x4 clipMatrix = proj * view;
-	dd::frustum(clipMatrix.Inverted(), float3(0, 0, 1));*/
+	float4x4 clipMatrix = proj * view;
+	dd::frustum(clipMatrix.Inverted(), float3(0, 0, 1));
 }
+
 int Camera::isCollidingFrustum(const AABB& aabb) const
 {
 	float3 edges[8];
@@ -172,5 +173,9 @@ void Camera::GenerateFBOTexture(unsigned w, unsigned h)
 void Camera::CreateRay(const float2& normalizedPos, LineSegment &value) const
 {
 	value = frustum.UnProjectLineSegment(normalizedPos.x, normalizedPos.y);
+}
+
+void Camera::DrawView() {
+	ImGui::SliderFloat("Far Plane Distance", &frustum.farPlaneDistance, frustum.nearPlaneDistance + 4.0F, 100.0F);
 }
 

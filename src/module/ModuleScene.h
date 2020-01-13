@@ -10,7 +10,6 @@ struct ImVec2;
 class ModuleScene : public Module {
 public:
 	GameObject* root;
-	GameObject* mainCamera;
 	ModuleScene() {}
 	~ModuleScene() {}
 
