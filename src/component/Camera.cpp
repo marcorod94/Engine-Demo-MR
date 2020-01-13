@@ -176,6 +176,10 @@ void Camera::CreateRay(const float2& normalizedPos, LineSegment &value) const
 }
 
 void Camera::DrawView() {
-	ImGui::SliderFloat("Far Plane Distance", &frustum.farPlaneDistance, frustum.nearPlaneDistance + 4.0F, 100.0F);
+	if (ImGui::TreeNode("Camera")) {
+		ImGui::Text("UUID: %s", uuid.c_str());
+		ImGui::SliderFloat("Far Plane Distance", &frustum.farPlaneDistance, frustum.nearPlaneDistance + 4.0F, 100.0F);
+		ImGui::TreePop();
+	}
 }
 

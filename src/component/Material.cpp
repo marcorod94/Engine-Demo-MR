@@ -4,8 +4,8 @@
 #include "imgui.h"
 
 void Material::DrawView() {
-
 	if (ImGui::TreeNode("Material")) {
+		ImGui::Text("UUID: %s", uuid.c_str());
 		if (ImGui::TreeNode("Ambient")) {
 			App->texture->DrawTexture(occlusionMap);
 			ImGui::SliderFloat("K ambient", &kAmbient, 0.0f, 1.0f);
