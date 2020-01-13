@@ -22,6 +22,7 @@ public:
 	void GenerateMatrices();
 	int isCollidingFrustum(const AABB& aabb) const;
 	void DrawFrustumPlanes();
+	void DrawView();
 
 	void CreateRay(const float2& normalizedPos, LineSegment &value) const;
 
