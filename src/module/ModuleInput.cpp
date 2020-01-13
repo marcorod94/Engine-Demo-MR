@@ -4,6 +4,7 @@
 #include "ModuleImGui.h"
 #include "ModuleTexture.h"
 #include "ModuleModel.h"
+#include "ModuleCamera.h"
 #include "ModuleScene.h"
 #include "SDL.h"
 #include <string>
@@ -20,7 +21,7 @@ bool ModuleInput::Init()
 		App->imgui->AddLog("SDL_EVENTS could not initialize! SDL_Error: %s", SDL_GetError());
 		ret = false;
 	}
-
+	//sceneCamera = sceneCamera->GetComponentCamera();
 	return ret;
 }
 
@@ -79,6 +80,24 @@ update_status ModuleInput::PreUpdate()
 			case SDL_MOUSEWHEEL :
 				mouse_scroll.x = (float) event.wheel.x;
 				mouse_scroll.y = (float) event.wheel.y;
+				if (event.wheel.y > 0)
+				{
+					/*if(sceneCamera->isHovered == true)
+					{
+						App->camera->ZoomIn();
+					}*/
+					
+					//App->imgui->AddLogInput("Input: Mouse Scroll Up\n");
+				}
+				else if (event.wheel.y < 0)
+				{
+					/*if (sceneCamera->isHovered == true)
+					{
+						App->camera->ZoomOut();
+					}*/
+					
+					//App->imgui->AddLogInput("Input: Mouse Scroll Down\n");
+				}
 				break;
 			case SDL_KEYDOWN:
 				SDL_Keycode key = event.key.keysym.sym;
