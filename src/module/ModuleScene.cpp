@@ -12,19 +12,20 @@
 #include "module/ModuleRender.h"
 #include "component/Camera.h"
 #include <string>
+#include "util/DebugDraw.h"
 #include "imgui.h"
 
 bool ModuleScene::Init() {
 
 	root = CreateGameObject("Root Scene");
 	App->model->LoadModel(std::string("Models\\Zombunny.fbx"));
-	/*MeshShape shape;
+	MeshShape shape;
 	shape.type = ShapeType::Torus;
 	shape.size = 0.5F;
 	shape.radius = 1.0F;
 	shape.slices = 20;
 	shape.stacks = 20;
-	App->model->LoadShapes(root, "sphere0", float3(1.0f, 1.0f, 1.0f), Quat::identity, shape, ProgramType::Default, float4(0.5f, 0.0f, 0.5f, 1.0f));*/
+	App->model->LoadShapes(root, "sphere0", float3(1.0f, 1.0f, 1.0f), Quat::identity, shape, ProgramType::Default, float4(0.5f, 0.0f, 0.5f, 1.0f));
     //sceneViewCamera
 	Camera* cam = App->camera->CreateComponentCamera();
 	cam->owner = root;
@@ -63,15 +64,24 @@ GameObject* ModuleScene::CreateGameObject(const std::string& name, const float3&
 
 void ModuleScene::PickObject(const ImVec2& winSize, const ImVec2& winPos)
 {
-	float2 mouse = App->input->GetMouseMotion();
-	float2 normalizedPos = float2(mouse.x - winSize.x / 2, (winSize.y - mouse.y) - winSize.y / 2).Normalized();
-
+	int mouseX, mouseY;
+	SDL_GetGlobalMouseState(&mouseX, &mouseY);
+	//float2 normalizedPos = float2(mouseX - winSize.x / 2, (winSize.y - mouseY) - winSize.y / 2).Normalized();
+	//float2 normalizedPos = float2((mouseX - (winPos.x - winSize.x) / 2) - winPos.x, ((winSize.y - winPos.y) / 2 - mouseY) - winPos.y).Normalized();
+	//float2 normalizedPos = float2(mouseX - winSize.x / 2, - mouseY / 2).Normalized();
+	//(mouseX - (winPos.x + (winSize.x / 2)) / (winSize.x / 2), ((winPos.y + (winSize.y / 2)) - mouseY) / (winSize.x / 2))
+	App->imgui->AddLog("Mouse X: %d, Y: %d", mouseX, mouseY);
+	float2 normalizedPos = float2((mouseX - (winPos.x + (winSize.x / 2))) / (winSize.x / 2), ((winPos.y + (winSize.y / 2)) - mouseY) / (winSize.x / 2));
+	App->imgui->AddLog("X: %.2F, Y: %.2F", normalizedPos.x, normalizedPos.y);
 	LineSegment ray;
-	App->camera->loadedCameras[0]->CreateRay(normalizedPos, ray);
+	App->camera->loadedCameras[1]->CreateRay(normalizedPos, ray);
 
-	GameObject* isIntersected = App->renderer->RayIntersectsObject(App->camera->loadedCameras[0]->frustum.pos, ray);
+	GameObject* isIntersected = App->renderer->RayIntersectsObject(App->camera->loadedCameras[1]->frustum.pos, ray);
+	//dd::arrow(ray.a, ray.b, float3(0,0,1), 10.0f);
+	dd::line(ray.a, ray.b, float3(0, 0, 1));
 	if (isIntersected != nullptr)
 	{
+		App->imgui->AddLog("Selecting object: %s", isIntersected->name);
 		isIntersected->uuid = App->imgui->selected;
 	}
 	else

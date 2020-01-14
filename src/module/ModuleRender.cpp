@@ -167,7 +167,7 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 	std::map<float, GameObject*>::iterator it;
 	std::vector<Mesh*> intersectedMshes;
 	GameObject* selected = nullptr;
-	float distance = -1.0f;
+	float distance = 1000.0f;
 
 	for (unsigned i = 0; i < App->scene->root->children.size(); i++) {
 		Mesh* mesh = (Mesh*)App->scene->root->children[i]->FindComponent(ComponentType::Mesh);
@@ -175,6 +175,7 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 		if (mesh != nullptr)
 		{
 			localRay.Transform(trans->worldTransform.Inverted());
+			
 			hit_point = localRay.Intersects(mesh->box); // ray vs. AABB
 			if (hit_point)
 			{
@@ -183,15 +184,19 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 				intersectedMshes.push_back(mesh);
 			}
 
-			for (it = intersected.begin(); it != intersected.end(); it++)
-			{
-				if (it->first < distance)
+			for (std::pair<float, GameObject*> element : intersected) {
+				if (element.first < distance)
 				{
-					distance = it->first;
-					selected = it->second;
+					distance = element.first;
+					selected = element.second;
 				}
 			}
-			Mesh* minDistMesh = (Mesh*)selected->FindComponent(ComponentType::Mesh);
+			Mesh* minDistMesh = nullptr;
+			if (selected != nullptr)
+			{
+				minDistMesh = (Mesh*)selected->FindComponent(ComponentType::Mesh);
+			}
+			
 			if (minDistMesh != nullptr)
 			{
 				for (unsigned int i = 0; i < selected->children.size(); i++)
@@ -201,7 +206,7 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 					if (hit)
 					{
 						distance = tri.Distance(origin);
-					}
+					}//TODOfix changing the object
 				}
 			}
 		}

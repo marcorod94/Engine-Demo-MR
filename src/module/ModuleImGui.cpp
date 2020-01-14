@@ -211,24 +211,19 @@ const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, i
 	
 	for (unsigned i = 0; i < objects.size(); ++i)
 	{
-		index++;
-		objects[i]->uuid = index;
+		objects[i]->uuid;
 		unsigned flags = ImGuiTreeNodeFlags_None;
 		if (objects[i]->children.size() == 0) {
 			flags = ImGuiTreeNodeFlags_Leaf;
 		}
-		flags |= index == selected ? ImGuiTreeNodeFlags_Selected : 0;
+		flags |= selected.compare(objects[i]->uuid) == 0 ? ImGuiTreeNodeFlags_Selected : 0;
 		if (ImGui::TreeNodeEx(objects[i]->name.c_str(), flags)) {
-			if (selected == index) {
+			if (selected.compare(objects[i]->uuid) == 0) {
 				objects[i]->ShowProperties();
 				ShowGizmos();
-				/*if (objects[i]->)
-				{
-
-				}*/
 			}
 			if (ImGui::IsItemClicked()) {
-				selected = index;
+				selected = objects[i]->uuid;
 			}
 			if (ImGui::BeginDragDropTarget()) {
 				if (ImGui::AcceptDragDropPayload("ITEM")) {

@@ -21,7 +21,7 @@ public:
 
 	const void DrawConsoleWindow();
 	const void DrawInspectorWindow();
-	unsigned selected = 0;
+	std::string selected = "";
 	void ShowGizmos();
 	ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
 private: 

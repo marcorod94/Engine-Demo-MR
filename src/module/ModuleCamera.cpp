@@ -82,7 +82,7 @@ update_status  ModuleCamera::Update() {
 			}
 			if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
 			
-				App->scene->PickObject(loadedCameras[i]->hoveredWindowSize, loadedCameras[i]->hoveredWindowPos);
+				App->scene->PickObject(loadedCameras[1]->hoveredWindowSize, loadedCameras[1]->hoveredWindowPos);
 			
 			}
 			movementSpeed = cameraSpeed;
