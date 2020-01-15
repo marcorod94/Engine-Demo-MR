@@ -39,9 +39,13 @@ public:
 	bool GetWindowEvent(const EventWindow ev) const {
 		return windowEvents[ev];
 	}
+	const float2& ModuleInput::GetMousePos() const {
+		return mousePos;
+	}
 	const float2& ModuleInput::GetMouseMotion() const {
 		return mouse_motion;
 	}
+
 
 	const float2& ModuleInput::GetMouseScroll() const {
 		return mouse_scroll;
@@ -50,6 +54,7 @@ public:
 private:
 	bool windowEvents[WE_COUNT];
 	const Uint8* keyboard;
+	float2 mousePos = float2::zero;
 	float2 mouse_motion = float2::zero;
 	float2 mouse_scroll = float2::zero;
 	void UpadteImGuiModifiers(const SDL_Keycode, ImGuiIO*);

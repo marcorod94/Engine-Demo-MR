@@ -16,6 +16,7 @@
 #include "component/Transform.h"
 #include "SDL.h"
 #include "GL/glew.h"
+#include <map>
 
 // Called before render is available
 bool ModuleRender::Init()
@@ -69,7 +70,7 @@ update_status ModuleRender::Update()
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			if (showAxis) {
 				glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
-				float axis_size = 1.0f;
+				float axis_size = max(1.0f, 1.0f);
 				dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
@@ -155,16 +156,64 @@ void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material
 	}
 }
 
-GameObject*  ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
+GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 {
-	/*for (unsigned i = 0; i < parent->children.size(); i++) {
-		Mesh* mesh = (Mesh*)parent->children[i]->FindComponent(ComponentType::Mesh);
+	LineSegment localRay = ray;
+	Triangle tri;
+	bool hit_point;
+	std::map<float, GameObject*> intersected;
+	std::map<float, GameObject*>::iterator it;
+	std::vector<Mesh*> intersectedMshes;
+	GameObject* selected = nullptr;
+	float distance = 1000.0f;
 
-		if (mesh != nullptr && cam->isCollidingFrustum(mesh->box) == IS_IN)
+	for (unsigned i = 0; i < App->scene->root->children.size(); i++) {
+		Mesh* mesh = (Mesh*)App->scene->root->children[i]->FindComponent(ComponentType::Mesh);
+		Transform* trans = (Transform*)App->scene->root->children[i]->FindComponent(ComponentType::Transform);
+		if (mesh != nullptr)
 		{
-			DrawGameObject(parent->children[i], cam);
-		}
+			localRay.Transform(trans->worldTransform.Inverted());
+			
+			hit_point = localRay.Intersects(mesh->box); // ray vs. AABB
+			if (hit_point)
+			{
+				float dist = origin.Distance(mesh->box);
+				intersected[dist] = mesh->owner;
+				intersectedMshes.push_back(mesh);
+			}
 
-	}*/\
-	return nullptr;
+			for (std::pair<float, GameObject*> element : intersected) {
+				if (element.first < distance)
+				{
+					distance = element.first;
+					selected = element.second;
+				}
+			}
+			Mesh* minDistMesh = nullptr;
+			if (selected != nullptr)
+			{
+				minDistMesh = (Mesh*)selected->FindComponent(ComponentType::Mesh);
+				showAxis = true;
+			}
+			
+			if (minDistMesh != nullptr)
+			{
+				for (unsigned int i = 0; i < minDistMesh->indices.size() - 2; i++)
+				{
+					tri = Triangle(mesh->vertices[mesh->indices[i]].Position, mesh->vertices[mesh->indices[i + 1]].Position, mesh->vertices[mesh->indices[i + 2]].Position);
+					bool hit = tri.Intersects(localRay);
+					if (hit)
+					{
+						distance = tri.Distance(origin);
+					}//TODOfix changing the object
+				}
+			}
+		}
+	}
+	if (intersected.size() == 0)
+	{
+		return nullptr;
+	}
+	
+	return selected;
 }

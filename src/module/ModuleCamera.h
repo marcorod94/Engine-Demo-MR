@@ -22,12 +22,6 @@ public:
 	void UpdateAspectRatio(Camera* cam, float w, float h);
 	void SetNearDistance(Camera* cam, const float distance);
 	void SetFarDistance(Camera* cam, const float distance);
-	//void SetTransform(const math::float3& f, const math::float3& r, const math::float3& u, const math::float3& pos);
-	void SetPosition(Camera* cam, const math::float3& pos);
-	void SetRotation(Camera* cam, const math::Quat& quat);
-	void SetPerspective(Camera* cam, float fovY, float aspect, float near, float far);
-	void SetOrtho(Camera* cam, float left, float right, float bottom, float top, float near, float far);
-	void CenterCamera(Camera* cam);
 
 	void MouseMove(Camera* cam);
 	void MouseScrolling(Camera* cam);
@@ -46,7 +40,6 @@ public:
 	float cameraSpeed = 0.05f;
 	float sensitivity = 0.2F;
 
-	
 private:
 	GameObject *sceneCameraGO = nullptr;
 	float movementSpeed = cameraSpeed;

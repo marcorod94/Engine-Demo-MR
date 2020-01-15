@@ -19,7 +19,7 @@ Camera::Camera(GameObject* theOwner) : Component(owner, ComponentType::Camera)
 	frustum.pos = float3(0,5,0);
 	frustum.front = float3::unitX;
 	frustum.up = float3::unitY;
-	frustum.nearPlaneDistance = 1.f;
+	frustum.nearPlaneDistance = 5.f;
 	frustum.farPlaneDistance = 50.0f;
 	frustum.verticalFov = math::pi / 4.0f;
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * aspect);
@@ -73,33 +73,6 @@ int Camera::isCollidingFrustum(const AABB& aabb) const
 	return INTERSECT;
 }
 
-void Camera::SetFrustum()
-{
-	camPos = frustum.pos;
-
-	Hnear = 2 * tan(frustum.verticalFov / 2) * frustum.nearPlaneDistance;
-	Wnear = Hnear * aspect;
-
-	Hfar = 2 * tan(frustum.verticalFov / 2) * frustum.farPlaneDistance;
-	Wfar = Hfar * aspect;
-
-
-	nCenter = frustum.pos + frustum.front * frustum.nearPlaneDistance;
-	fCenter = frustum.pos + frustum.front * frustum.farPlaneDistance;
-
-	ftl = fCenter + (frustum.up * (Hfar / 2)) - (frustum.WorldRight()* (Wfar / 2));
-	ftr = fCenter + (frustum.up * (Hfar / 2)) + (frustum.WorldRight()* (Wfar / 2));
-
-	fbl = fCenter - (frustum.up * (Hfar / 2)) - (frustum.WorldRight()* (Wfar / 2));
-	fbr = fCenter - (frustum.up * (Hfar / 2)) + (frustum.WorldRight()* (Wfar / 2));
-
-	ntl = nCenter + (frustum.up * (Hnear / 2)) - (frustum.WorldRight()* (Wnear / 2));
-	ntr = nCenter + (frustum.up * (Hnear / 2)) + (frustum.WorldRight()* (Wnear / 2));
-
-	nbl = nCenter - (frustum.up * (Hnear / 2)) - (frustum.WorldRight()* (Wnear / 2));
-	nbr = nCenter - (frustum.up * (Hnear / 2)) + (frustum.WorldRight()* (Wnear / 2));
-}
-
 void Camera::Draw(const char* name)
 {
 	isHovered = false;
@@ -109,8 +82,15 @@ void Camera::Draw(const char* name)
 	ImGui::Begin(name);
 	if (ImGui::IsWindowHovered())
 	{
-		isHovered = true;
 		//App->imgui->AddLog("TRYIN TO UPDATE CAM");
+		hoveredWindowPos = ImGui::GetWindowPos();
+		ImVec2 contentMin = ImGui::GetWindowContentRegionMin();
+		hoveredWindowSize = ImGui::GetWindowSize();
+		hoveredWindowPos.x += contentMin.x;
+		hoveredWindowPos.y += contentMin.y;
+		hoveredWindowSize.x = hoveredWindowSize.x - (2 * contentMin.x);
+		hoveredWindowSize.y = hoveredWindowSize.y - (contentMin.y + contentMin.x);
+		isHovered = true;
 	}
 	width = ImGui::GetWindowContentRegionWidth();
 	height = ImGui::GetContentRegionAvail().y;
@@ -123,6 +103,7 @@ void Camera::Draw(const char* name)
 		ImVec2(0, 1), ImVec2(1, 0));
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	
 	ImGui::End();
 	
 }

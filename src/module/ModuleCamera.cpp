@@ -11,7 +11,6 @@
 #include "SDL_scancode.h"
 #include "SDL_mouse.h"
 
-
 bool ModuleCamera::Init() {
 	int windowWidth, windowHeight;
 	SDL_GetWindowSize(App->window->window, &windowWidth, &windowHeight);
@@ -25,9 +24,6 @@ Camera* ModuleCamera::CreateComponentCamera(GameObject* owner)
 	return cam;
 }//dont forget to create a remove component also
 
-
-
-
 update_status  ModuleCamera::PreUpdate() {
 	for (int i = 0; i < loadedCameras.size(); i++)
 	{
@@ -37,7 +33,6 @@ update_status  ModuleCamera::PreUpdate() {
 		loadedCameras[i]->view = LookAt(loadedCameras[i]->frustum.pos, loadedCameras[i]->frustum.front + loadedCameras[i]->frustum.pos, loadedCameras[i]->frustum.up);
 		UpdateAspectRatio(loadedCameras[i], loadedCameras[i]->width, loadedCameras[i]->height);
 	}
-	
 	return UPDATE_CONTINUE;
 }
 
@@ -80,17 +75,15 @@ update_status  ModuleCamera::Update() {
 			if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
 				MouseScrolling(loadedCameras[i]);
 			}
-			//if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
-			//	ImVec2 hoveredWindowPos = ImGui::GetWindowPos();
-			//	ImVec2 hoveredWindowSize = ImGui::GetWindowSize();
-			//	App->scene->PickObject(hoveredWindowPos, hoveredWindowSize);
-			//	//MousePick()
-			//}
+			if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
+			
+				App->scene->PickObject(loadedCameras[0]->hoveredWindowSize, loadedCameras[0]->hoveredWindowPos);
+			
+			}
 			movementSpeed = cameraSpeed;
 			
 			UpdateAspectRatio(loadedCameras[i], loadedCameras[i]->width, loadedCameras[i]->height);
 		}
-		
 	}
 	return UPDATE_CONTINUE;
 }
@@ -111,7 +104,6 @@ void ModuleCamera::MouseMove(Camera* cam)
 {
 	float2 offset = App->input->GetMouseMotion();
 
-	
 	offset.x *= sensitivity;
 	offset.y *= sensitivity;
 
@@ -208,7 +200,4 @@ bool ModuleCamera::CleanUp()
 	return true;
 }
 
-void ModuleCamera::SetPosition(Camera* cam, const math::float3& pos)
-{
 
-}

@@ -15,7 +15,7 @@ class ModuleRender : public Module {
 public:
 	SDL_GLContext glContext;
 	bool showGrid = true;
-	bool showAxis = true;
+	bool showAxis = false;
 
 	ModuleRender() {}
 	~ModuleRender() {}

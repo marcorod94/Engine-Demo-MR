@@ -77,6 +77,11 @@ update_status ModuleInput::PreUpdate()
 				mouse_motion.y = (float) (event.motion.yrel / SCREEN_SIZE);
 				break;
 
+			case SDL_MOUSEBUTTONDOWN:
+				mousePos = float2(event.button.x, event.button.y);
+				/*mousePos.x = (float)(event.motion.x / SCREEN_SIZE);
+				mousePos.y = (float)(event.motion.y / SCREEN_SIZE);*/
+
 			case SDL_MOUSEWHEEL :
 				mouse_scroll.x = (float) event.wheel.x;
 				mouse_scroll.y = (float) event.wheel.y;
