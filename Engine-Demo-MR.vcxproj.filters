@@ -58,6 +58,10 @@
     <ClCompile Include="include\MathGeoLib\Math\MathLog.cpp" />
     <ClCompile Include="include\MathGeoLib\Geometry\TriangleMesh.cpp" />
     <ClCompile Include="include\MathGeoLib\Geometry\Cylinder.cpp" />
+    <ClCompile Include="include\ImGuizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="include\ImGuizmo\ImGradient.cpp" />
+    <ClCompile Include="include\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="include\ImGuizmo\ImSequencer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\component\Camera.h" />

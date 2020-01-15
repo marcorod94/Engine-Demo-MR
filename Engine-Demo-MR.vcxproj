@@ -49,7 +49,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>./src;./include/util;./include/imgui;./include/MathGeoLib;./include/SDL;./include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./include/ImGuizmo;./src;./include/util;./include/imgui;./include/MathGeoLib;./include/SDL;./include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -104,6 +104,10 @@
     <ClInclude Include="src\util\DebugDraw.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\ImGuizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="include\ImGuizmo\ImGradient.cpp" />
+    <ClCompile Include="include\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="include\ImGuizmo\ImSequencer.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
     <ClCompile Include="include\imgui\imgui_draw.cpp" />

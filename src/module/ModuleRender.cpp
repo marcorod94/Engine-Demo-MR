@@ -72,8 +72,8 @@ update_status ModuleRender::Update()
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			if (showAxis) {
 				glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
-				/*float axis_size = max(App->models->bsphere.radius, 1.0f);
-				dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);*/
+				float axis_size = max(1.0f, 1.0f);
+				dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
 			if (showGrid) {
@@ -195,6 +195,7 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 			if (selected != nullptr)
 			{
 				minDistMesh = (Mesh*)selected->FindComponent(ComponentType::Mesh);
+				showAxis = true;
 			}
 			
 			if (minDistMesh != nullptr)
@@ -215,5 +216,6 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 	{
 		return nullptr;
 	}
+	
 	return selected;
 }

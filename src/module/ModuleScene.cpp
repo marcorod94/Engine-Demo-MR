@@ -74,9 +74,9 @@ void ModuleScene::PickObject(const ImVec2& winSize, const ImVec2& winPos)
 	float2 normalizedPos = float2((mouseX - (winPos.x + (winSize.x / 2))) / (winSize.x / 2), ((winPos.y + (winSize.y / 2)) - mouseY) / (winSize.x / 2));
 	App->imgui->AddLog("X: %.2F, Y: %.2F", normalizedPos.x, normalizedPos.y);
 	LineSegment ray;
-	App->camera->loadedCameras[1]->CreateRay(normalizedPos, ray);
+	App->camera->loadedCameras[0]->CreateRay(normalizedPos, ray);
 
-	GameObject* isIntersected = App->renderer->RayIntersectsObject(App->camera->loadedCameras[1]->frustum.pos, ray);
+	GameObject* isIntersected = App->renderer->RayIntersectsObject(App->camera->loadedCameras[0]->frustum.pos, ray);
 	//dd::arrow(ray.a, ray.b, float3(0,0,1), 10.0f);
 	dd::line(ray.a, ray.b, float3(0, 0, 1));
 	if (isIntersected != nullptr)

@@ -20,9 +20,9 @@ public:
 	void AddLog(const char*, ...);
 
 	const void DrawConsoleWindow();
-	const void DrawInspectorWindow();
 	std::string selected = "";
-	void ShowGizmos();
+	void ShowGizmosButtons();
+	bool gizmo = false;
 	ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
 private: 
 	bool show_demo_window = true;
@@ -34,6 +34,9 @@ private:
 	std::vector<float> fps_log{0.0F};
 	std::vector<float> ms_log{0.0F};
 	unsigned shape = 0;
+
+	const bool useSnap = false;
+	const float snap[3] = { 1.f, 1.f, 1.f };
 
 	GameObject* sourceGO = nullptr;
 	bool showMain = true;

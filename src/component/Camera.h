@@ -15,7 +15,6 @@ public:
 	Camera(GameObject* theOwner);
 	~Camera();
 
-	void SetFrustum();
 	Frustum frustum;
 
 	void Draw(const char*);
@@ -33,29 +32,7 @@ public:
 	ImVec2 hoveredWindowSize;
 	unsigned fbo = 0;
 	unsigned rbo = 0;
-	float3 camPos;
-
-	float Hnear;
-	float Wnear;
-
-	float Hfar;
-	float Wfar;
-
-	float nearDist;
-	float farDist;
-
-	float3 nCenter;
-	float3 fCenter;
-
-	float3 ntl;//near top left
-	float3 ntr;//near top right
-	float3 nbl;
-	float3 nbr;
-
-	float3 ftl;
-	float3 ftr;
-	float3 fbl;//far bottom left
-	float3 fbr;//far bottom right
+	
 
 	float height = 600;
 	float width = 800;
