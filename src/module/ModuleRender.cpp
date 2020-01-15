@@ -199,7 +199,7 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 			
 			if (minDistMesh != nullptr)
 			{
-				for (unsigned int i = 0; i < selected->children.size(); i++)
+				for (unsigned int i = 0; i < minDistMesh->indices.size() - 2; i++)
 				{
 					tri = Triangle(mesh->vertices[mesh->indices[i]].Position, mesh->vertices[mesh->indices[i + 1]].Position, mesh->vertices[mesh->indices[i + 2]].Position);
 					bool hit = tri.Intersects(localRay);

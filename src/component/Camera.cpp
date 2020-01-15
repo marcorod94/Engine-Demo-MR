@@ -19,7 +19,7 @@ Camera::Camera(GameObject* theOwner) : Component(owner, ComponentType::Camera)
 	frustum.pos = float3(0,5,0);
 	frustum.front = float3::unitX;
 	frustum.up = float3::unitY;
-	frustum.nearPlaneDistance = 1.f;
+	frustum.nearPlaneDistance = 5.f;
 	frustum.farPlaneDistance = 50.0f;
 	frustum.verticalFov = math::pi / 4.0f;
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * aspect);
@@ -109,10 +109,15 @@ void Camera::Draw(const char* name)
 	ImGui::Begin(name);
 	if (ImGui::IsWindowHovered())
 	{
-		isHovered = true;
 		//App->imgui->AddLog("TRYIN TO UPDATE CAM");
 		hoveredWindowPos = ImGui::GetWindowPos();
+		ImVec2 contentMin = ImGui::GetWindowContentRegionMin();
 		hoveredWindowSize = ImGui::GetWindowSize();
+		hoveredWindowPos.x += contentMin.x;
+		hoveredWindowPos.y += contentMin.y;
+		hoveredWindowSize.x = hoveredWindowSize.x - (2 * contentMin.x);
+		hoveredWindowSize.y = hoveredWindowSize.y - (contentMin.y + contentMin.x);
+		isHovered = true;
 	}
 	width = ImGui::GetWindowContentRegionWidth();
 	height = ImGui::GetContentRegionAvail().y;
