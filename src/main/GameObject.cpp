@@ -4,10 +4,8 @@
 #include "imgui.h"
 #include "imgui_stdlib.h"
 #include <algorithm>
-
-update_status GameObject::Update() {
-	return UPDATE_CONTINUE;
-}
+//#include "rapidjson/rapidjson.h"
+//#include "rapidjson/document.h"
 
 Component* GameObject::CreateComponent(ComponentType type) {
 	if (type == ComponentType::Transform) {
@@ -67,4 +65,42 @@ void GameObject::ShowProperties() {
 
 void GameObject::CreateTransform(const float3& pos, const Quat& rot) {
 	components.push_back(new Transform(this, pos, rot));
+}
+
+void GameObject::OnLoad(rapidjson::Document* config) {
+
+}
+
+void GameObject::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
+	rapidjson::Value object(rapidjson::kObjectType);
+	object.AddMember("uuid", rapidjson::StringRef(uuid.c_str()), *allocator);
+	object.AddMember("name", rapidjson::StringRef(name.c_str()), *allocator);
+	std::string parentuuid;
+	if (parent) {
+		parentuuid = parent->uuid;
+	}
+	object.AddMember("parentuuid", rapidjson::StringRef(parentuuid.c_str()), *allocator);
+
+	rapidjson::Value jComponent(rapidjson::kArrayType);
+	SaveComponents(&jComponent.GetArray(), allocator);
+	object.AddMember("component", jComponent, *allocator);
+
+	rapidjson::Value jChildren(rapidjson::kArrayType);
+	SaveChildren(&jChildren.GetArray(), allocator);
+	object.AddMember("children", jChildren, *allocator);
+
+	list->PushBack(object, *allocator);
+
+}
+
+void GameObject::SaveChildren(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
+	for (GameObject* child : children) {
+		child->OnSave(list, allocator);
+	}
+}
+
+void GameObject::SaveComponents(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
+	for (Component* component : components) {
+		component->OnSave(list, allocator);
+	}
 }

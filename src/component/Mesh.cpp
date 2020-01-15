@@ -40,3 +40,19 @@ void Mesh::DrawView() {
 		ImGui::TreePop();
 	}
 }
+
+void Mesh::OnLoad(rapidjson::Document* config) {
+
+}
+
+void Mesh::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
+	rapidjson::Value object(rapidjson::kObjectType);
+	object.AddMember("uuid", rapidjson::StringRef(uuid.c_str()), *allocator);
+	object.AddMember("type", int(type), *allocator);
+	std::string owneruuid;
+	if (owner) {
+		owneruuid = owner->uuid;
+	}
+	object.AddMember("owneruuid", rapidjson::StringRef(owneruuid.c_str()), *allocator);
+	list->PushBack(object, *allocator);
+}

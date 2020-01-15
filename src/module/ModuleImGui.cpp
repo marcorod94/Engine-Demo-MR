@@ -55,15 +55,14 @@ update_status ModuleImGui::Update() {
 			cam->DrawFrustumPlanes();
 		}
 	}
-	if (showHierarchy) {
-		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
-		if (ImGui::TreeNode(App->scene->root->name.c_str())) {
-			int root = 0;
-			DrawHierarchy(App->scene->root->children, root);
-			ImGui::TreePop();
-		}
-		ImGui::End();
+	
+	ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
+	if (ImGui::TreeNode(App->scene->root->name.c_str())) {
+		int root = 0;
+		DrawHierarchy(App->scene->root->children, root);
+		ImGui::TreePop();
 	}
+	ImGui::End();
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu(u8"\uf0c9 Menu")) {
 		showModule = ImGui::MenuItem("Module Configuration");
@@ -71,6 +70,9 @@ update_status ModuleImGui::Update() {
 		showInfo = ImGui::MenuItem("System Information");
 		showConsole = ImGui::MenuItem("Console Window");
 		showHierarchy = ImGui::MenuItem("Hierarchy");
+		if (ImGui::MenuItem(u8"\uf0c7 Save")) {
+			App->scene->SaveScene();
+		}
 		ImGui::EndMenu();
 	}
 	if (ImGui::BeginMenu(u8"\uf059 Help")) {
@@ -85,9 +87,8 @@ update_status ModuleImGui::Update() {
 	}
 	ImGui::EndMainMenuBar();
 	
-	if (showConsole) {
-		DrawConsoleWindow();
-	}
+	DrawConsoleWindow();
+
 	if (showInfo) {
 		ShowInformationWindow(io);
 	}

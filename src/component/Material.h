@@ -17,5 +17,7 @@ public:
 	math::float3 emissiveColor = math::float3::zero;
 	Material(GameObject* owner): Component(owner, ComponentType::Material) {}
 	void DrawView();
+	void OnLoad(rapidjson::Document*);
+	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
 };
 #endif

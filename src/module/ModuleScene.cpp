@@ -13,9 +13,12 @@
 #include "component/Camera.h"
 #include <string>
 #include "imgui.h"
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include <fstream>
 
 bool ModuleScene::Init() {
-
 	root = CreateGameObject("Root Scene");
 	App->model->LoadModel(std::string("Models\\Zombunny.fbx"));
 	/*MeshShape shape;
@@ -70,4 +73,21 @@ void ModuleScene::PickObject(const ImVec2& winSize, const ImVec2& winPos)
 	App->camera->loadedCameras[0]->CreateRay(normalizedPos, ray);
 
 	GameObject* isIntersected = App->renderer->RayIntersectsObject(App->camera->loadedCameras[0]->frustum.pos, ray);*/
+}
+
+void ModuleScene::LoadScene() {
+
+}
+
+void ModuleScene::SaveScene() {
+	config.SetArray();
+	root->OnSave(&config.GetArray(), &config.GetAllocator());
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	config.Accept(writer);
+	App->imgui->AddLog("Test: %s", buffer.GetString());
+
+	std::string json(buffer.GetString(), buffer.GetSize());
+	std::ofstream of("example.json");
+	of << json;
 }

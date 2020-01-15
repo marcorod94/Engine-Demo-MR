@@ -183,3 +183,37 @@ void Camera::DrawView() {
 	}
 }
 
+void Camera::OnLoad(rapidjson::Document* config) {
+
+}
+
+void Camera::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
+	/*frustum.type = FrustumType::PerspectiveFrustum;
+	frustum.pos = float3(0, 5, 0);
+	frustum.front = float3::unitX;
+	frustum.up = float3::unitY;
+	frustum.nearPlaneDistance = 1.f;
+	frustum.farPlaneDistance = 50.0f;
+	frustum.verticalFov = math::pi / 4.0f;
+	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * aspect);*/
+	rapidjson::Value object(rapidjson::kObjectType);
+	object.AddMember("uuid", rapidjson::StringRef(uuid.c_str()), *allocator);
+	object.AddMember("type", int(type), *allocator);
+	std::string owneruuid;
+	if (owner) {
+		owneruuid = owner->uuid;
+	}
+	object.AddMember("owneruuid", rapidjson::StringRef(owneruuid.c_str()), *allocator);
+	rapidjson::Value frustrumJSON(rapidjson::kObjectType);
+	frustrumJSON.AddMember("type", int(frustum.type), *allocator);
+	frustrumJSON.AddMember("nearPlane", frustum.nearPlaneDistance, *allocator);
+	frustrumJSON.AddMember("farPlane", frustum.farPlaneDistance, *allocator);
+	frustrumJSON.AddMember("verticalFov", frustum.verticalFov, *allocator);
+	frustrumJSON.AddMember("horizontalFov", frustum.horizontalFov, *allocator);
+	Component::AddFloat3ToObjectJSON(&frustrumJSON.GetObjectA(), allocator, "pos", &frustum.pos);
+	Component::AddFloat3ToObjectJSON(&frustrumJSON.GetObjectA(), allocator, "up", &frustum.up);
+	Component::AddFloat3ToObjectJSON(&frustrumJSON.GetObjectA(), allocator, "front", &frustum.front);
+	object.AddMember("frustrum", frustrumJSON, *allocator);
+	list->PushBack(object, *allocator);
+}
+

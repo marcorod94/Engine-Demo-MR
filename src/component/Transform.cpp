@@ -49,3 +49,22 @@ void Transform::DrawFloat3View(const char* label, float3* vector, float min, flo
 		ImGui::TreePop();
 	}
 }
+
+void Transform::OnLoad(rapidjson::Document* config) {
+
+}
+
+void Transform::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
+	rapidjson::Value object(rapidjson::kObjectType);
+	object.AddMember("uuid", rapidjson::StringRef(uuid.c_str()), *allocator);
+	object.AddMember("type", int(type), *allocator);
+	std::string owneruuid;
+	if (owner) {
+		owneruuid = owner->uuid;
+	}
+	object.AddMember("owneruuid", rapidjson::StringRef(owneruuid.c_str()), *allocator);
+	Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "position", &position);
+	Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "rotation", &rotationEU);
+	Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "scalling", &scaling);
+	list->PushBack(object, *allocator);
+}

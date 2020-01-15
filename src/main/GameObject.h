@@ -4,6 +4,8 @@
 #include <vector>
 #include "main/Globals.h"
 #include "crossguid/guid.hpp"
+#include "rapidjson/document.h"
+
 class Component;
 class Transform;
 class GameObject {
@@ -21,13 +23,16 @@ public:
 		CreateTransform(pos, rot);
 	}
 	~GameObject() {}
-	update_status Update();
 	Component* CreateComponent(const ComponentType);
 	Component* FindComponent(const ComponentType);
 	Transform* myTransform = nullptr;
 	void DeleteChild(const GameObject*);
 	void ShowProperties();
+	void OnLoad(rapidjson::Document*);
+	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
 private:
 	void CreateTransform(const float3&, const Quat&);
+	void SaveChildren(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
+	void SaveComponents(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
 };
 #endif

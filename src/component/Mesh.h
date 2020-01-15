@@ -16,5 +16,7 @@ public:
 	}
 	void Setup();
 	void DrawView();
+	void OnLoad(rapidjson::Document*);
+	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
 };
 #endif
