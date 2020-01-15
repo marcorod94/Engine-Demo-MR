@@ -3,7 +3,7 @@
 #include "Component.h"
 class Material : public Component {
 public:
-	unsigned program;
+	unsigned program = 0;
 	unsigned diffuseMap = 0;
 	math::float4 diffuseColor = math::float4::zero;
 	float kDiffuse = 0.0f;
@@ -17,7 +17,7 @@ public:
 	math::float3 emissiveColor = math::float3::zero;
 	Material(GameObject* owner): Component(owner, ComponentType::Material) {}
 	void DrawView();
-	void OnLoad(rapidjson::Document*);
+	void OnLoad(rapidjson::Document::Object*);
 	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
 };
 #endif

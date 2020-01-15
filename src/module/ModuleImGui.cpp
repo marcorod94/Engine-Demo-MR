@@ -70,7 +70,10 @@ update_status ModuleImGui::Update() {
 		showInfo = ImGui::MenuItem("System Information");
 		showConsole = ImGui::MenuItem("Console Window");
 		showHierarchy = ImGui::MenuItem("Hierarchy");
-		if (ImGui::MenuItem(u8"\uf0c7 Save")) {
+		if (ImGui::MenuItem(u8"\uf093 Load")) {
+			App->scene->LoadScene();
+		}
+		if (ImGui::MenuItem(u8"\uf019 Save")) {
 			App->scene->SaveScene();
 		}
 		ImGui::EndMenu();

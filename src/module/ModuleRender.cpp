@@ -17,8 +17,6 @@
 #include "SDL.h"
 #include "GL/glew.h"
 
-class Camera;
-
 // Called before render is available
 bool ModuleRender::Init()
 {
@@ -71,8 +69,8 @@ update_status ModuleRender::Update()
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			if (showAxis) {
 				glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
-				/*float axis_size = max(App->models->bsphere.radius, 1.0f);
-				dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);*/
+				float axis_size = 1.0f;
+				dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
 			if (showGrid) {
@@ -105,8 +103,8 @@ bool ModuleRender::CleanUp()
 	return true;
 }
 
-Mesh* ModuleRender::CreateMesh() {
-	return new Mesh(nullptr);
+Mesh* ModuleRender::CreateMesh(GameObject* owner) {
+	return new Mesh(owner);
 }
 
 

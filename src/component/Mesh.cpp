@@ -41,8 +41,13 @@ void Mesh::DrawView() {
 	}
 }
 
-void Mesh::OnLoad(rapidjson::Document* config) {
-
+void Mesh::OnLoad(rapidjson::Document::Object* object) {
+	uuid = (object->FindMember("uuid"))->value.GetString();
+	vao = (object->FindMember("vao"))->value.GetInt();
+	auto indicesJSON = (object->FindMember("indices"))->value.GetArray();
+	for (auto& indice : indicesJSON) {
+		indices.push_back(indice.GetInt());
+	}
 }
 
 void Mesh::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
@@ -54,5 +59,11 @@ void Mesh::OnSave(rapidjson::Document::Array* list, rapidjson::Document::Allocat
 		owneruuid = owner->uuid;
 	}
 	object.AddMember("owneruuid", rapidjson::StringRef(owneruuid.c_str()), *allocator);
+	object.AddMember("vao", vao, *allocator);
+	rapidjson::Value indicesJSON(rapidjson::kArrayType);
+	for (unsigned index : indices) {
+		indicesJSON.PushBack(index, *allocator);
+	}
+	object.AddMember("indices", indicesJSON, *allocator);
 	list->PushBack(object, *allocator);
 }

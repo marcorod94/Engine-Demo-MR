@@ -26,7 +26,7 @@ public:
 	update_status PostUpdate();
 	GameObject* RayIntersectsObject(float3 origin, LineSegment &ray);
 	bool CleanUp();
-	Mesh* CreateMesh();
+	Mesh* CreateMesh(GameObject*);
 private:
 	void DrawGameObject(GameObject*, Camera*);
 	void DrawMesh(Camera*, Transform*, Mesh*, Material*);

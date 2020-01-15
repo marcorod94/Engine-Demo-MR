@@ -64,7 +64,7 @@ void ModuleModel::processNode(const aiNode *node, const aiScene *scene, GameObje
 
 
 void ModuleModel::processMesh(const aiMesh* mesh, GameObject* owner) {
-	Mesh* meshAux = App->renderer->CreateMesh();
+	Mesh* meshAux = (Mesh*)owner->CreateComponent(ComponentType::Mesh);
 	meshAux->totalPrimitives = mesh->mNumFaces;
 	meshAux->totalVertex = mesh->mNumVertices;
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -117,12 +117,10 @@ void ModuleModel::processMesh(const aiMesh* mesh, GameObject* owner) {
 			meshAux->indices.push_back(face.mIndices[j]);
 	}
 	meshAux->Setup();
-	meshAux->owner = owner;
-	owner->components.push_back(meshAux);
 }
 
 void ModuleModel::processMaterials(const aiMaterial* mat, GameObject* owner) {
-	Material* material = App->texture->CreateMaterial();
+	Material* material = (Material*)owner->CreateComponent(ComponentType::Material);
 	// 1. diffuse maps
 	loadMaterialTextures(mat, aiTextureType_DIFFUSE, "texture_diffuse", material);
 	// 2. specular maps
@@ -131,9 +129,7 @@ void ModuleModel::processMaterials(const aiMaterial* mat, GameObject* owner) {
 	loadMaterialTextures(mat, aiTextureType_AMBIENT, "texture_normal", material);
 	// 4. height maps
 	loadMaterialTextures(mat, aiTextureType_EMISSIVE, "texture_height", material);
-	material->owner = owner;
 	material->program = int(ProgramType::Default);
-	owner->components.push_back(material);
 }
 
 void ModuleModel::loadMaterialTextures(const aiMaterial* mat, aiTextureType type, const char* typeName,  Material* material) {
@@ -198,15 +194,13 @@ void ModuleModel::LoadShapes(GameObject* parent, const char* name, const float3&
 		GenerateMesh(model, mesh);
 		par_shapes_free_mesh(mesh);
 
-		Material* material = App->texture->CreateMaterial();
+		Material* material = (Material*) model->CreateComponent(ComponentType::Material);
 		material->program = int(programType);
 		material->diffuseColor = color;
 		material->shininess = 64.0f;
 		material->kSpecular = 0.6f;
 		material->kDiffuse = 0.5f;
 		material->kAmbient = 1.0f;
-		material->owner = model;
-		model->components.push_back(material);
 		model->parent = parent;
 		parent->children.push_back(model);
 	}
@@ -286,7 +280,7 @@ par_shapes_mesh* ModuleModel::LoadCube(float size)
 
 void ModuleModel::GenerateMesh(GameObject* owner, par_shapes_mesh_s* shape)
 {
-	Mesh* meshDest = App->renderer->CreateMesh();
+	Mesh* meshDest = (Mesh*)owner->CreateComponent(ComponentType::Mesh);
 	Transform* transform = (Transform*) (owner->FindComponent(ComponentType::Transform));
 
 	// Positions
@@ -316,8 +310,6 @@ void ModuleModel::GenerateMesh(GameObject* owner, par_shapes_mesh_s* shape)
 	meshDest->totalVertex = shape->npoints;
 	meshDest->totalPrimitives = shape->ntriangles;
 	meshDest->Setup();
-	meshDest->owner = owner;
-	owner->components.push_back(meshDest);
 	/*bsphere.center = (max_v + min_v)*0.5f;
 	bsphere.radius = (max_v - min_v).Length()*0.5f;*/
 }

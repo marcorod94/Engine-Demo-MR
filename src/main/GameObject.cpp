@@ -1,6 +1,12 @@
 #include "GameObject.h"
+#include "main/Application.h"
+#include "module/ModuleCamera.h"
+#include "module/ModuleRender.h"
+#include "module/ModuleTexture.h"
+
 #include "component/Component.h"
 #include "component/Transform.h"
+#include "component/Mesh.h"
 #include "imgui.h"
 #include "imgui_stdlib.h"
 #include <algorithm>
@@ -8,31 +14,32 @@
 //#include "rapidjson/document.h"
 
 Component* GameObject::CreateComponent(ComponentType type) {
-	if (type == ComponentType::Transform) {
-		components.push_back(new Transform(this));
-	}
-
-	Component *newComponent;
+	Component* newComponent;
 	switch (type)
 	{
-	case ComponentType::Camera:
-		//components.push_back(new Camera());
-		break;
-
-	case ComponentType::Material:
-		//components.push_back(new Material());
+	case ComponentType::Transform :
+		newComponent = new Transform(this);
 		break;
 
 	case ComponentType::Mesh:
-		//components.push_back(new Mesh());
+		newComponent = App->renderer->CreateMesh(this);
 		break;
+
+	case ComponentType::Material:
+		newComponent = App->texture->CreateMaterial(this);
+		break;
+
+	case ComponentType::Camera:
+		newComponent = App->camera->CreateComponentCamera(this);
+		break;
+
 	default:
 		return nullptr;
 	}
-
-	newComponent->owner = this;
-	components.push_back(newComponent);
-
+	if (newComponent) {
+		newComponent->owner = this;
+		components.push_back(newComponent);
+	}
 	return newComponent;
 	
 }
@@ -44,6 +51,21 @@ Component* GameObject::FindComponent(ComponentType type) {
 		}
 	}
 	return nullptr;
+}
+
+GameObject* GameObject::FindGameObject(std::string* uuid) {
+	GameObject* obj = nullptr;
+	if (this->uuid.compare(*uuid) == 0) {
+		return this;
+	}
+	else {
+		for (GameObject* child : children) {
+			if (obj = child->FindGameObject(uuid)) {
+				break;
+			}
+		}
+	}
+	return obj;
 }
 
 void GameObject::DeleteChild(const GameObject* child) {
@@ -67,8 +89,34 @@ void GameObject::CreateTransform(const float3& pos, const Quat& rot) {
 	components.push_back(new Transform(this, pos, rot));
 }
 
-void GameObject::OnLoad(rapidjson::Document* config) {
+void GameObject::OnLoad(rapidjson::Document::Object* object, GameObject* parent) {
+	uuid = (object->FindMember("uuid"))->value.GetString();
+	name = (object->FindMember("name"))->value.GetString();
+	LoadChildren(&(object->FindMember("children"))->value.GetArray(), this);
+	LodComponents(&(object->FindMember("component"))->value.GetArray());
+	if (parent) {
+		this->parent = parent;
+		parent->children.push_back(this);
+	}
 
+}
+
+void GameObject::LoadChildren(rapidjson::Document::Array* list, GameObject* parent) {
+	assert(list);
+	GameObject* obj = nullptr;
+	for (auto& item : *list) {
+		obj = new GameObject();
+		obj->OnLoad(&item.GetObjectA(), parent);
+	}
+}
+void GameObject::LodComponents(rapidjson::Document::Array* list) {
+	assert(list);
+	Component* comp = nullptr;
+	for (auto& item : *list) {
+		auto obj = item.GetObjectA();
+		comp = CreateComponent(ComponentType((obj.FindMember("type"))->value.GetInt()));
+		comp->OnLoad(&obj);
+	}
 }
 
 void GameObject::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {

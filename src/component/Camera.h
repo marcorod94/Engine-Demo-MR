@@ -23,7 +23,7 @@ public:
 	int isCollidingFrustum(const AABB& aabb) const;
 	void DrawFrustumPlanes();
 	void DrawView();
-	void OnLoad(rapidjson::Document*);
+	void OnLoad(rapidjson::Document::Object*);
 	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
 
 	void CreateRay(const float2& normalizedPos, LineSegment &value) const;

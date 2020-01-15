@@ -17,9 +17,15 @@ public:
 	virtual void Enable() { active = true; }
 	virtual void Disable() { active = false; }
 	virtual void DrawView() {}
-	virtual void OnLoad(rapidjson::Document*) {}
-	virtual void OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {}
+	virtual void OnLoad(rapidjson::Document::Object*) {}
+	virtual void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*) {}
 protected:
+	virtual void GetFloat3FromObjectJSON(rapidjson::Document::Object* object, float3* vector) {
+		vector->x = (object->FindMember("x"))->value.GetFloat();
+		vector->y = (object->FindMember("y"))->value.GetFloat();
+		vector->z = (object->FindMember("z"))->value.GetFloat();
+	}
+
 	virtual void AddFloat3ToObjectJSON(rapidjson::Document::Object* object, rapidjson::Document::AllocatorType* allocator, const char* label, float3* vector) {
 		rapidjson::Value ob(rapidjson::kObjectType);
 		ob.AddMember("x", vector->x, * allocator);

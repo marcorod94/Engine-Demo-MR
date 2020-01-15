@@ -6,7 +6,7 @@
 
 class Transform : public Component {
 public:
-	float3 scaling = float3::zero;
+	float3 scaling = float3::one;
 	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
 	float3 rotationEU = float3::zero;
@@ -20,11 +20,10 @@ public:
 	void DrawView();
 	void SetTransform(const aiMatrix4x4&);
 	void CalculateTransform();
-	void OnLoad(rapidjson::Document*);
+	void OnLoad(rapidjson::Document::Object*);
 	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
 
 private:
-	void DrawFloat3View(const char*, float3*, float, float, float speed = 1.0F, const char* format = "%.2F");
 	void CalculateWorldTransform();
 };
 #endif

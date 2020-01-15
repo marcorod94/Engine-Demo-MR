@@ -33,8 +33,8 @@ void Material::DrawView() {
 	}
 }
 
-void Material::OnLoad(rapidjson::Document* config) {
-
+void Material::OnLoad(rapidjson::Document::Object* object) {
+	uuid = (object->FindMember("uuid"))->value.GetString();
 }
 
 void Material::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
