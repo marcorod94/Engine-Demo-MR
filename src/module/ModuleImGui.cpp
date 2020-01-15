@@ -15,6 +15,7 @@
 #include "assimp/version.h"
 #include "main/GameObject.h"
 #include "component/Camera.h"
+#include "component/Transform.h"
 
 bool ModuleImGui::Init() {
 	IMGUI_CHECKVERSION();
@@ -45,6 +46,10 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
+	if (App->camera->loadedCameras[0]->isHovered) 
+	{
+		//ImGui::lo
+	}
 	//ImGui::ShowDemoWindow();
 	Camera* cam = nullptr;
 	if (App->scene->root) {
@@ -85,6 +90,7 @@ update_status ModuleImGui::Update() {
 	}
 	ImGui::EndMainMenuBar();
 	
+	
 	if (showConsole) {
 		DrawConsoleWindow();
 	}
@@ -101,7 +107,8 @@ update_status ModuleImGui::Update() {
 		ImGui::Text("Author: Artemis Georgakopoulou && Marco Rodriguez");
 		ImGui::End();
 	}
-	
+	ShowGizmosButtons();
+	ImGuizmo::ViewManipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), 1.f, ImVec2(io.DisplaySize.x - 128, 0), ImVec2(128, 128), 0x10101010);
 	// Render
 	ImGui::Render();
 	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
@@ -125,7 +132,6 @@ void ModuleImGui::AddLog(const char* fmt, ...) {
 	buffer.append("\n");
 	scrollToBottom = true;
 }
-
 
 const void  ModuleImGui::ShowModulesWindow() {
 	ImGui::Begin("Module Configuration", &showModule);
@@ -211,22 +217,19 @@ const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, i
 	
 	for (unsigned i = 0; i < objects.size(); ++i)
 	{
-		++index;
+		objects[i]->uuid;
 		unsigned flags = ImGuiTreeNodeFlags_None;
 		if (objects[i]->children.size() == 0) {
 			flags = ImGuiTreeNodeFlags_Leaf;
 		}
-		flags |= index == selected ? ImGuiTreeNodeFlags_Selected : 0;
+		flags |= selected.compare(objects[i]->uuid) == 0 ? ImGuiTreeNodeFlags_Selected : 0;
 		if (ImGui::TreeNodeEx(objects[i]->name.c_str(), flags)) {
-			if (selected == index) {
+			if (selected.compare(objects[i]->uuid) == 0) {
 				objects[i]->ShowProperties();
-				/*if (objects[i]->)
-				{
-
-				}*/
+				
 			}
 			if (ImGui::IsItemClicked()) {
-				selected = index;
+				selected = objects[i]->uuid;
 			}
 			if (ImGui::BeginDragDropTarget()) {
 				if (ImGui::AcceptDragDropPayload("ITEM")) {
@@ -327,8 +330,50 @@ const void ModuleImGui::DrawConsoleWindow()
 	ImGui::End();
 }
 
-const void ModuleImGui::DrawInspectorWindow()
-{
 
+void ModuleImGui::ShowGizmosButtons()
+{
+	ImGuizmo::SetRect(App->camera->loadedCameras[0]->hoveredWindowPos.x, App->camera->loadedCameras[0]->hoveredWindowPos.y, App->camera->loadedCameras[0]->hoveredWindowSize.x, App->camera->loadedCameras[0]->hoveredWindowSize.y);
+	ImGuizmo::SetDrawlist();
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::Enable(true);
+	const std::vector<GameObject*>&objects = App->scene->root->children;
+	Transform* trans;
+	float4x4 goGizmo;
+	for (unsigned i = 0; i < App->scene->root->children.size(); ++i)
+	{
+		if (objects[i]->uuid == selected)
+		{
+			trans = (Transform*)App->scene->root->children[i]->FindComponent(ComponentType::Transform);
+			goGizmo = trans->worldTransform.Transposed();
+		}
+	}
+	ImGuiIO& io = ImGui::GetIO();
+	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+	if (ImGui::Button(u8"\uf0b2"))
+	{
+		gizmoOperation = ImGuizmo::TRANSLATE;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(u8"\uf021"))
+	{
+		gizmoOperation = ImGuizmo::ROTATE;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(u8"\uf31e"))
+	{
+		gizmoOperation = ImGuizmo::SCALE;
+	}
+	ImGui::SameLine(0.0f, 700.0f);
+	if (ImGui::Button(u8"\uf04b"))
+	{
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(u8"\uf04c"))
+	{
+	}
+	ImGuizmo::Manipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), App->camera->loadedCameras[0]->proj.Transposed().ptr(), gizmoOperation, ImGuizmo::WORLD, goGizmo.ptr());
+	//gizmo = ImGuizmo::IsOver();
+	
 }
 
