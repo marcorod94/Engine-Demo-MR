@@ -40,3 +40,30 @@ void Mesh::DrawView() {
 		ImGui::TreePop();
 	}
 }
+
+void Mesh::OnLoad(rapidjson::Document::Object* object) {
+	uuid = (object->FindMember("uuid"))->value.GetString();
+	vao = (object->FindMember("vao"))->value.GetInt();
+	auto indicesJSON = (object->FindMember("indices"))->value.GetArray();
+	for (auto& indice : indicesJSON) {
+		indices.push_back(indice.GetInt());
+	}
+}
+
+void Mesh::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
+	rapidjson::Value object(rapidjson::kObjectType);
+	object.AddMember("uuid", rapidjson::StringRef(uuid.c_str()), *allocator);
+	object.AddMember("type", int(type), *allocator);
+	std::string owneruuid;
+	if (owner) {
+		owneruuid = owner->uuid;
+	}
+	object.AddMember("owneruuid", rapidjson::StringRef(owneruuid.c_str()), *allocator);
+	object.AddMember("vao", vao, *allocator);
+	rapidjson::Value indicesJSON(rapidjson::kArrayType);
+	for (unsigned index : indices) {
+		indicesJSON.PushBack(index, *allocator);
+	}
+	object.AddMember("indices", indicesJSON, *allocator);
+	list->PushBack(object, *allocator);
+}

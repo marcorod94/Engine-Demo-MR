@@ -18,8 +18,6 @@
 #include "GL/glew.h"
 #include <map>
 
-class Camera;
-class Transform;
 // Called before render is available
 bool ModuleRender::Init()
 {
@@ -106,8 +104,8 @@ bool ModuleRender::CleanUp()
 	return true;
 }
 
-Mesh* ModuleRender::CreateMesh() {
-	return new Mesh(nullptr);
+Mesh* ModuleRender::CreateMesh(GameObject* owner) {
+	return new Mesh(owner);
 }
 
 

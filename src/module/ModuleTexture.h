@@ -9,7 +9,7 @@
 #define TEXTURE_PATH "Textures/"
 #define DEFAULT_TEXTURE "checkers.jpg"
 
-
+class GameObject;
 class ModuleTexture : public Module
 {
 public:
@@ -20,7 +20,7 @@ public:
 	bool Init();
 	bool CleanUp();
 	unsigned LoadTexture(std::string&);
-	Material* CreateMaterial();
+	Material* CreateMaterial(GameObject*);
 	void DrawTexture(unsigned&);
 	void DrawTextureSelector(unsigned&);
 	void DrawTexture(Texture&);

@@ -75,8 +75,8 @@ void ModuleTexture::DrawTexture(Texture& texture) {
 }
 
 
-Material* ModuleTexture::CreateMaterial() {
-	return new Material(nullptr);
+Material* ModuleTexture::CreateMaterial(GameObject* owner) {
+	return new Material(owner);
 }
 
 void ModuleTexture::LoadSkybox(std::vector<std::string> faces)const

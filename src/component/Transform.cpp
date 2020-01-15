@@ -4,9 +4,9 @@
 void Transform::DrawView() {
 	if (ImGui::TreeNode("Transform")) {
 		ImGui::Text("UUID: %s", uuid.c_str());
-		DrawFloat3View("Position", &position, -100.00F, 100.00F);
-		DrawFloat3View("Rotation", &rotationEU, -360.00F, 360.00F);
-		DrawFloat3View("Scalling", &scaling, 0.000001, 50.00F, 0.001F, "%.6F");
+		ImGui::DragFloat3("Position", position.ptr(), 1.0F, -100.00F, 100.00F);
+		ImGui::DragFloat3("Rotation", rotationEU.ptr(), 1.0F, -360.00F, 360.00F);
+		ImGui::DragFloat3("Scalling", scaling.ptr(), 0.001F, -50.00F, 50.00F);
 		ImGui::TreePop();
 	}
 }
@@ -40,12 +40,25 @@ void Transform::CalculateTransform() {
 	CalculateWorldTransform();
 }
 
+void Transform::OnLoad(rapidjson::Document::Object* object) {
+	uuid = (object->FindMember("uuid"))->value.GetString();
+	Component::GetFloat3FromObjectJSON(&(object->FindMember("position"))->value.GetObjectA(), &position);
+	Component::GetFloat3FromObjectJSON(&(object->FindMember("rotation"))->value.GetObjectA(), &rotationEU);
+	Component::GetFloat3FromObjectJSON(&(object->FindMember("scalling"))->value.GetObjectA(), &scaling);
+	CalculateTransform();
+}
 
-void Transform::DrawFloat3View(const char* label, float3* vector, float min, float max, float speed, const char* format) {
-	if (ImGui::TreeNode(label)) {
-		ImGui::DragFloat("X", &vector->x, speed, min, max, format);
-		ImGui::DragFloat("Y", &vector->y, speed, min, max, format);
-		ImGui::DragFloat("Z", &vector->z, speed, min, max, format);
-		ImGui::TreePop();
+void Transform::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
+	rapidjson::Value object(rapidjson::kObjectType);
+	object.AddMember("uuid", rapidjson::StringRef(uuid.c_str()), *allocator);
+	object.AddMember("type", int(type), *allocator);
+	std::string owneruuid;
+	if (owner) {
+		owneruuid = owner->uuid;
 	}
+	object.AddMember("owneruuid", rapidjson::StringRef(owneruuid.c_str()), *allocator);
+	Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "position", &position);
+	Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "rotation", &rotationEU);
+	Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "scalling", &scaling);
+	list->PushBack(object, *allocator);
 }
