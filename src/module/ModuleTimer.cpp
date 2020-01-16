@@ -24,7 +24,6 @@ bool ModuleTimer::Init() {
 
 update_status ModuleTimer::Update() {
 
-	//for test purposes, 
 	if (onPlay)
 	{
 		gameTime += (realTimeTimer->ReadTimer() - realTime) * timeScale;
