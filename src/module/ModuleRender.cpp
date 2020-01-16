@@ -6,6 +6,7 @@
 #include "ModuleProgram.h"
 #include "ModuleScene.h"
 #include "ModuleCamera.h"
+#include "ModuleTimer.h"
 #include "ModuleModel.h"
 #include "util/DebugDraw.h"
 #include "ModuleDebugDraw.h"
@@ -49,6 +50,7 @@ bool ModuleRender::Init()
 
 update_status ModuleRender::PreUpdate()
 {
+	App->timer->Start();
 	SDL_GetWindowSize(App->window->window, &App->window->screenWidth, &App->window->screenHeight);
 	glViewport(0, 0, App->window->screenWidth, App->window->screenHeight);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -92,6 +94,8 @@ update_status ModuleRender::Update()
 update_status ModuleRender::PostUpdate()
 {
 	SDL_GL_SwapWindow(App->window->window);
+	++App->timer->frameCount;//use for fastforwarding frames later after assignment
+	App->timer->End();
 	return UPDATE_CONTINUE;
 }
 

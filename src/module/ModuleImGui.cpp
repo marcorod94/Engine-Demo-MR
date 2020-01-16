@@ -8,6 +8,7 @@
 #include "ModuleScene.h"
 #include "ModuleInput.h"
 #include "ModuleProgram.h"
+#include "ModuleTimer.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
@@ -367,10 +368,12 @@ void ModuleImGui::ShowGizmosButtons()
 	ImGui::SameLine(0.0f, 700.0f);
 	if (ImGui::Button(u8"\uf04b"))
 	{
+		App->timer->Play();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(u8"\uf04c"))
 	{
+		App->timer->Pause();
 	}
 	ImGuizmo::Manipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), App->camera->loadedCameras[0]->proj.Transposed().ptr(), gizmoOperation, ImGuizmo::WORLD, goGizmo.ptr());
 	//gizmo = ImGuizmo::IsOver();

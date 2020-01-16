@@ -62,6 +62,9 @@
     <ClCompile Include="include\ImGuizmo\ImGradient.cpp" />
     <ClCompile Include="include\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="include\ImGuizmo\ImSequencer.cpp" />
+    <ClCompile Include="src\module\ModuleTimer.cpp" />
+    <ClCompile Include="src\util\Timer.cpp" />
+    <ClCompile Include="src\util\microSTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\component\Camera.h" />
@@ -84,5 +87,8 @@
     <ClInclude Include="src\module\ModuleTexture.h" />
     <ClInclude Include="src\module\ModuleWindow.h" />
     <ClInclude Include="src\util\DebugDraw.h" />
+    <ClInclude Include="src\module\ModuleTimer.h" />
+    <ClInclude Include="src\util\Timer.h" />
+    <ClInclude Include="src\util\microSTimer.h" />
   </ItemGroup>
 </Project>
