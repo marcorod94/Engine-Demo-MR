@@ -15,7 +15,7 @@ unsigned ModuleFileSystem::Load(const char* path, const char* file, char** buffe
 	return 0;
 }
 
-unsigned ModuleFileSystem::Save(const char* file, const void* buffer, unsigned size, bool append = false) const {
+unsigned ModuleFileSystem::Save(const char* file, const void* buffer, unsigned size, bool append) const {
 	return 0;
 }
 

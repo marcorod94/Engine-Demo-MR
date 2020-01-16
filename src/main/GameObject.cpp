@@ -73,14 +73,16 @@ void GameObject::DeleteChild(const GameObject* child) {
 	
 }
 
-void GameObject::ShowProperties() {
+void GameObject::ShowProperties(bool* show) {	
 	ImGui::SetNextWindowPos(ImVec2(916.0f, 16.0f), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(256.0f, 600.0f), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Properties");
-	ImGui::Text("UUID: %s", uuid.c_str());
-	ImGui::InputText("Name", &name);
-	for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
-		(*it)->DrawView();
+	ImGui::Begin("Properties", show);
+	if (parent) {
+		ImGui::Text("UUID: %s", uuid.c_str());
+		ImGui::InputText("Name", &name);
+		for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
+			(*it)->DrawView();
+		}
 	}
 	ImGui::End();
 }

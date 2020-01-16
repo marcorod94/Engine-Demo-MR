@@ -75,13 +75,7 @@ void ModuleModel::processMesh(const aiMesh* mesh, GameObject* owner) {
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
-		meshAux->box.maxPoint.x = max(meshAux->box.maxPoint.x, vector.x);
-		meshAux->box.minPoint.x = min(meshAux->box.minPoint.x, vector.x);
-		meshAux->box.maxPoint.y = max(meshAux->box.maxPoint.y, vector.y);
-		meshAux->box.minPoint.y = min(meshAux->box.minPoint.y, vector.y);
-		meshAux->box.maxPoint.z = max(meshAux->box.maxPoint.z, vector.z);
-		meshAux->box.minPoint.z = min(meshAux->box.minPoint.z, vector.z);
-		
+		meshAux->box.Enclose(vector);		
 		vertex.Position = vector;
 		// normals
 		vector.x = mesh->mNormals[i].x;
@@ -121,19 +115,14 @@ void ModuleModel::processMesh(const aiMesh* mesh, GameObject* owner) {
 
 void ModuleModel::processMaterials(const aiMaterial* mat, GameObject* owner) {
 	Material* material = (Material*)owner->CreateComponent(ComponentType::Material);
-	// 1. diffuse maps
-	loadMaterialTextures(mat, aiTextureType_DIFFUSE, "texture_diffuse", material);
-	// 2. specular maps
-	loadMaterialTextures(mat, aiTextureType_SPECULAR, "texture_specular", material);
-	// 3. normal maps
-	loadMaterialTextures(mat, aiTextureType_AMBIENT, "texture_normal", material);
-	// 4. height maps
-	loadMaterialTextures(mat, aiTextureType_EMISSIVE, "texture_height", material);
+	for (int i = 0; i <= aiTextureType_UNKNOWN; i++) {
+		loadMaterialTextures(mat, aiTextureType(i), material);
+	}
 	material->program = int(ProgramType::Default);
 }
 
-void ModuleModel::loadMaterialTextures(const aiMaterial* mat, aiTextureType type, const char* typeName,  Material* material) {
-	App->imgui->AddLog("\nLoading textures of type : %s", typeName);
+void ModuleModel::loadMaterialTextures(const aiMaterial* mat, aiTextureType type, Material* material) {
+	App->imgui->AddLog("\nLoading textures of type : %d", int(type));
 	for (unsigned i = 0; i < mat->GetTextureCount(type); ++i) {
 		aiString str;
 		aiTextureMapping mapping;
@@ -288,13 +277,8 @@ void ModuleModel::GenerateMesh(GameObject* owner, par_shapes_mesh_s* shape)
 		Vertex vertex;
 		float3 vector;
 		vector = float3(shape->points[i * 3], shape->points[i * 3 + 1], shape->points[i * 3 + 2]);
-		meshDest->box.maxPoint.x = max(meshDest->box.maxPoint.x, vector.x);
-		meshDest->box.minPoint.x = min(meshDest->box.minPoint.x, vector.x);
-		meshDest->box.maxPoint.y = max(meshDest->box.maxPoint.y, vector.y);
-		meshDest->box.minPoint.y = min(meshDest->box.minPoint.y, vector.y);
-		meshDest->box.maxPoint.z = max(meshDest->box.maxPoint.z, vector.z);
-		meshDest->box.minPoint.z = min(meshDest->box.minPoint.z, vector.z);
-		vertex.Position = transform->localTransform.TransformPos(vector);
+		meshDest->box.Enclose(vector);
+		vertex.Position = vector;
 		if (shape->normals) {
 			vector = float3(shape->normals[i * 3], shape->normals[i * 3 + 1], shape->normals[i * 3 + 2]);
 			vertex.Normal = vector;

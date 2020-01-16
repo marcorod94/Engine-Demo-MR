@@ -32,7 +32,6 @@ bool ModuleImGui::Init() {
 	icons_config.PixelSnapH = true;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	
-	//icons_config.dockinEna
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-solid-900.ttf", 16.0F, &icons_config, iconsRanges);
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-regular-400.ttf", 16.0F, &icons_config, iconsRanges);
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-brands-400.ttf", 16.0F, &icons_config, iconsBrandRange);
@@ -54,27 +53,40 @@ update_status ModuleImGui::Update() {
 	Camera* cam = nullptr;
 	if (App->scene->root) {
 		for (unsigned i = 0; i < App->camera->loadedCameras.size(); i++) {
-
 			cam = App->camera->loadedCameras[i];
 			cam->Draw(cam->owner->name.c_str());
 			cam->DrawFrustumPlanes();
 		}
 	}
-	
-	ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
-	if (ImGui::TreeNode(App->scene->root->name.c_str())) {
-		int root = 0;
-		DrawHierarchy(App->scene->root->children, root);
-		ImGui::TreePop();
+	if (showProperties) {
+		App->scene->root->ShowProperties(&showProperties);
 	}
-	ImGui::End();
+	
+	if (showHierarchy) {
+		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
+		if (ImGui::TreeNode(App->scene->root->name.c_str())) {
+			DrawHierarchy(App->scene->root->children);
+			ImGui::TreePop();
+		}
+		ImGui::End();
+	}
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu(u8"\uf0c9 Menu")) {
-		showModule = ImGui::MenuItem("Module Configuration");
-		showProperties = ImGui::MenuItem("Properties");
-		showInfo = ImGui::MenuItem("System Information");
-		showConsole = ImGui::MenuItem("Console Window");
-		showHierarchy = ImGui::MenuItem("Hierarchy");
+		if (ImGui::MenuItem("Module Configuration")) {
+			showModule = true;
+		}
+		if (ImGui::MenuItem("Properties")) {
+			showProperties = true;
+		}
+		if (ImGui::MenuItem("System Information")) {
+			showInfo = true;
+		}
+		if (ImGui::MenuItem(u8"\uf120 Console Window")) {
+			showConsole = true;
+		}
+		if (ImGui::MenuItem(u8"\uf542 Hierarchy")) {
+			showHierarchy = true;
+		}
 		if (ImGui::MenuItem(u8"\uf093 Load")) {
 			App->scene->LoadScene();
 		}
@@ -95,7 +107,9 @@ update_status ModuleImGui::Update() {
 	}
 	ImGui::EndMainMenuBar();
 	
-	DrawConsoleWindow();
+	if (showConsole) {
+		DrawConsoleWindow();
+	}
 
 	if (showInfo) {
 		ShowInformationWindow(io);
@@ -184,14 +198,14 @@ const void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
 		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0F, 40.0F, ImVec2(310, 100));
 		ImGui::TreePop();
 	}
-	if (ImGui::TreeNode("Hardware")) {
+	if (ImGui::TreeNode(u8"\uf2db Hardware")) {
 		ImGui::Text("CPU cores: %d (Cache: %d Kb)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
 		ImGui::Text("System RAM: %d Mb", SDL_GetSystemRAM());
 		ImGui::Text("GPU Vendor: %s", glGetString(GL_VENDOR));
 		ImGui::Text("GPU Model: %s", glGetString(GL_RENDERER));
 		ImGui::TreePop();
 	}
-	if (ImGui::TreeNode("Libraries")) {
+	if (ImGui::TreeNode(u8"\uf02d Libraries")) {
 		SDL_version compiled;
 		SDL_VERSION(&compiled);
 		ImGui::Text("SDL: %d.%d.%d", compiled.major, compiled.minor, compiled.patch);
@@ -216,23 +230,23 @@ const void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
 	}
 }
 
-const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, int& index) {
+const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects) {
 	
 	for (unsigned i = 0; i < objects.size(); ++i)
 	{
-		objects[i]->uuid;
 		unsigned flags = ImGuiTreeNodeFlags_None;
 		if (objects[i]->children.size() == 0) {
 			flags = ImGuiTreeNodeFlags_Leaf;
 		}
 		flags |= selected.compare(objects[i]->uuid) == 0 ? ImGuiTreeNodeFlags_Selected : 0;
 		if (ImGui::TreeNodeEx(objects[i]->name.c_str(), flags)) {
-			if (selected.compare(objects[i]->uuid) == 0) {
-				objects[i]->ShowProperties();
-				
-			}
 			if (ImGui::IsItemClicked()) {
 				selected = objects[i]->uuid;
+			}
+			if (selected.compare(objects[i]->uuid) == 0) {
+				if (showProperties) {
+					objects[i]->ShowProperties(&showProperties);
+				}
 			}
 			if (ImGui::BeginDragDropTarget()) {
 				if (ImGui::AcceptDragDropPayload("ITEM")) {
@@ -252,7 +266,7 @@ const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, i
 				ImGui::SetDragDropPayload("ITEM", nullptr, 0);
 				ImGui::EndDragDropSource();
 			}
-			DrawHierarchy(objects[i]->children, index);
+			DrawHierarchy(objects[i]->children);
 			ImGui::TreePop();
 		}
 	}

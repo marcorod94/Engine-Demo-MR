@@ -148,6 +148,7 @@ void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &(cam->proj[0][0]));
 	// TODO resize boundingbox
 	if (mesh) {
+		mesh->TransformAABB(&trans->worldTransform);
 		dd::aabb(mesh->box.minPoint, mesh->box.maxPoint, float3(0, 0, 1));
 		glBindVertexArray(mesh->vao);
 		glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);

@@ -190,7 +190,9 @@
     <ClCompile Include="include\MathGeoLib\Geometry\TriangleMesh.cpp">
       <Filter>lib\MathGeoLib</Filter>
     </ClCompile>
-    <ClCompile Include="src\module\ModuleFileSystem.cpp" />
+    <ClCompile Include="src\module\ModuleFileSystem.cpp">
+      <Filter>src\modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\main\Application.h">
@@ -262,7 +264,9 @@
     <ClInclude Include="src\component\Transform.h">
       <Filter>src\components</Filter>
     </ClInclude>
-    <ClInclude Include="src\module\ModuleFileSystem.h" />
+    <ClInclude Include="src\module\ModuleFileSystem.h">
+      <Filter>src\modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lib">

@@ -28,7 +28,7 @@ public:
 	GameObject* FindGameObject(std::string * );
 	Transform* myTransform = nullptr;
 	void DeleteChild(const GameObject*);
-	void ShowProperties();
+	void ShowProperties(bool* show);
 	void OnLoad(rapidjson::Document::Object*, GameObject*);
 	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
 private:
