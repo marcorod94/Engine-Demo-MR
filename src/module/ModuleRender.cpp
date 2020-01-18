@@ -203,7 +203,7 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 				minDistMesh = (Mesh*)selected->FindComponent(ComponentType::Mesh);
 				myTrans = (Transform*)selected->FindComponent(ComponentType::Transform);
 				showAxis = true;
-				dd::axisTriad(myTrans->worldTransform, 0.125f, 1.25f, 0, false);
+				dd::axisTriad(myTrans->worldTransform, 0.2f, 2.25f, 0, false);
 			}
 			
 			if (minDistMesh != nullptr)
@@ -224,7 +224,6 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 	{
 		return nullptr;
 	}
-	
 	return selected;
 }
 
@@ -232,3 +231,30 @@ void ModuleRender::SearchGO(GameObject* go)
 {
 
 }
+
+void ModuleRender::DrawGizmo(GameObject* selected) {
+
+	ImVec2 posW = App->camera->loadedCameras[0]->hoveredWindowPos;
+	float sceneHeight = App->camera->loadedCameras[0]->hoveredWindowSize.x;
+	float sceneWidth = App->camera->loadedCameras[0]->hoveredWindowSize.y;
+	ImGuizmo::SetRect((float)posW.x, (float)posW.y, sceneWidth, sceneHeight);
+	ImGuizmo::SetDrawlist();
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::Enable(true);
+
+	Transform* gizTrans = nullptr;
+	if (selected != nullptr) 
+	{
+		gizTrans = (Transform*)selected->FindComponent(ComponentType::Transform);
+		float4x4 transModel = gizTrans->worldTransform.Transposed();
+		float4x4 transView = App->camera->loadedCameras[0]->view.Transposed();
+		float4x4 transProj = App->camera->loadedCameras[0]->proj.Transposed();
+		ImGuizmo::Manipulate(transView.ptr(), transProj.ptr(), gizmoOperation, gizmoMode, transModel.ptr());
+
+		if (ImGuizmo::IsUsing()) {
+			//gizTrans = transModel.;
+		}
+	}
+
+}
+

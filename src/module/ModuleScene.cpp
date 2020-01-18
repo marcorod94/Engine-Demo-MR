@@ -77,12 +77,13 @@ void ModuleScene::PickObject(const ImVec2& winSize, const ImVec2& winPos)
 	App->camera->loadedCameras[0]->CreateRay(normalizedPos, ray);
 
 	GameObject* isIntersected = App->renderer->RayIntersectsObject(App->camera->loadedCameras[0]->frustum.pos, ray);
-	//dd::arrow(ray.a, ray.b, float3(0,0,1), 10.0f);
+	dd::arrow(ray.a, ray.b, float3(0,0,1), 10.0f);
 	dd::line(ray.a, ray.b, float3(0, 0, 1));
 	if (isIntersected != nullptr)
 	{
 		//App->imgui->AddLog("Selecting object: %s", isIntersected->name);
 		App->imgui->selected = isIntersected->uuid;
+
 	}
 	else
 	{

@@ -19,7 +19,7 @@ public:
 	float previousTime = 0;
 	float currentTime = 0;
 	int FPS = 60;
-	int limitFPS = 60;
+	int limitFPS = 30;
 	int frameCount = 0;
 	int frameCounter = 0;
 	float dt = 0;

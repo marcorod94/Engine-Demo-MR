@@ -23,7 +23,6 @@ public:
 	std::string selected = "";
 	void ShowGizmosButtons();
 	bool gizmo = false;
-	ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
 private: 
 	bool show_demo_window = true;
 	

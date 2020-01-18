@@ -14,6 +14,7 @@
 #include "imgui_impl_opengl3.h"
 #include "GL/glew.h"
 #include "assimp/version.h"
+#include "util/DebugDraw.h"
 #include "main/GameObject.h"
 #include "component/Camera.h"
 #include "component/Transform.h"
@@ -109,7 +110,7 @@ update_status ModuleImGui::Update() {
 		ImGui::End();
 	}
 	ShowGizmosButtons();
-	ImGuizmo::ViewManipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), 1.f, ImVec2(io.DisplaySize.x - 128, 0), ImVec2(128, 128), 0x10101010);
+	//ImGuizmo::ViewManipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), 1.f, ImVec2(io.DisplaySize.x - 128, 0), ImVec2(128, 128), 0x10101010);
 	// Render
 	ImGui::Render();
 	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
@@ -240,6 +241,8 @@ const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, i
 			}
 			if (ImGui::IsItemClicked()) {
 				selected = objects[i]->uuid;
+				Transform* trans = (Transform*)objects[i]->FindComponent(ComponentType::Transform);
+				dd::axisTriad(trans->worldTransform, 0.125f, 1.25f, 0, false);
 			}
 			if (ImGui::BeginDragDropTarget()) {
 				if (ImGui::AcceptDragDropPayload("ITEM")) {
@@ -343,36 +346,19 @@ const void ModuleImGui::DrawConsoleWindow()
 
 void ModuleImGui::ShowGizmosButtons()
 {
-	ImGuizmo::SetRect(App->camera->loadedCameras[0]->hoveredWindowPos.x, App->camera->loadedCameras[0]->hoveredWindowPos.y, App->camera->loadedCameras[0]->hoveredWindowSize.x, App->camera->loadedCameras[0]->hoveredWindowSize.y);
-	ImGuizmo::SetDrawlist();
-	ImGuizmo::SetOrthographic(false);
-	ImGuizmo::Enable(true);
-	const std::vector<GameObject*>&objects = App->scene->root->children;
-	Transform* trans;
-	float4x4 goGizmo;
-	for (unsigned i = 0; i < App->scene->root->children.size(); ++i)
-	{
-		if (objects[i]->uuid == selected)
-		{
-			trans = (Transform*)App->scene->root->children[i]->FindComponent(ComponentType::Transform);
-			goGizmo = trans->worldTransform.Transposed();
-		}
-	}
-	ImGuiIO& io = ImGui::GetIO();
-	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 	if (ImGui::Button(u8"\uf0b2"))
 	{
-		gizmoOperation = ImGuizmo::TRANSLATE;
+		App->renderer->gizmoOperation = ImGuizmo::TRANSLATE;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(u8"\uf021"))
 	{
-		gizmoOperation = ImGuizmo::ROTATE;
+		App->renderer->gizmoOperation = ImGuizmo::ROTATE;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(u8"\uf31e"))
 	{
-		gizmoOperation = ImGuizmo::SCALE;
+		App->renderer->gizmoOperation = ImGuizmo::SCALE;
 	}
 	ImGui::SameLine(0.0f, 700.0f);
 	if (ImGui::Button(u8"\uf04b"))
@@ -385,10 +371,6 @@ void ModuleImGui::ShowGizmosButtons()
 		App->timer->Pause();
 		AddLog("Game Time: %f", App->timer->gameTime/1000);
 		AddLog("Real Time: %f", App->timer->realTime/1000);
-		
 	}
-	ImGuizmo::Manipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), App->camera->loadedCameras[0]->proj.Transposed().ptr(), gizmoOperation, ImGuizmo::WORLD, goGizmo.ptr());
-	//gizmo = ImGuizmo::IsOver();
-	
 }
 
