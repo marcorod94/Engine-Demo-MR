@@ -237,6 +237,7 @@ const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, i
 		if (ImGui::TreeNodeEx(objects[i]->name.c_str(), flags)) {
 			if (selected.compare(objects[i]->uuid) == 0) {
 				objects[i]->ShowProperties();
+				App->renderer->DrawGizmo(objects[i]);
 				
 			}
 			if (ImGui::IsItemClicked()) {

@@ -252,6 +252,7 @@ void ModuleRender::DrawGizmo(GameObject* selected) {
 		ImGuizmo::Manipulate(transView.ptr(), transProj.ptr(), gizmoOperation, gizmoMode, transModel.ptr());
 
 		if (ImGuizmo::IsUsing()) {
+			App->imgui->AddLog("GIZMO ENABLED");
 			//gizTrans = transModel.;
 		}
 	}
