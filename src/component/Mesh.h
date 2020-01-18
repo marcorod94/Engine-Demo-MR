@@ -1,6 +1,20 @@
 #ifndef Mesh_h
 #define Mesh_h
 #include "Component.h"
+
+struct Vertex {
+	// position
+	math::float3 Position;
+	// normal
+	math::float3 Normal;
+	// texCoords
+	math::float2 TexCoords;
+	// tangent
+	math::float3 Tangent;
+	// bitangent
+	math::float3 Bitangent;
+};
+
 class Mesh : public Component {
 public:
 	unsigned int vbo, ebo, vao;

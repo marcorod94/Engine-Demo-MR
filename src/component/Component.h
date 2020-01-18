@@ -5,6 +5,7 @@
 #include "crossguid/guid.hpp"
 #include "rapidjson/document.h"
 
+enum class ComponentType { Transform, Mesh, Material, Camera };
 class Component {
 public:
 	std::string uuid = xg::newGuid().str();

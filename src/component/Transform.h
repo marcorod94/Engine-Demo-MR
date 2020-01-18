@@ -6,6 +6,7 @@
 
 class Transform : public Component {
 public:
+	bool isDirty = false;
 	float3 scaling = float3::one;
 	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
@@ -22,6 +23,7 @@ public:
 	void CalculateTransform();
 	void OnLoad(rapidjson::Document::Object*);
 	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
+	void UpdateDirtyFlag();
 
 private:
 	void CalculateWorldTransform();

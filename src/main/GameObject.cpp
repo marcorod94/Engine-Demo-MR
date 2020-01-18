@@ -13,6 +13,10 @@
 //#include "rapidjson/rapidjson.h"
 //#include "rapidjson/document.h"
 
+GameObject::GameObject(const std::string& name) : name(name) {
+	CreateComponent(ComponentType::Transform);
+}
+
 Component* GameObject::CreateComponent(ComponentType type) {
 	Component* newComponent;
 	switch (type)

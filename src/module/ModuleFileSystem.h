@@ -1,6 +1,8 @@
 #ifndef ModuleFileSystem_h
 #define ModuleFileSystem_h
 #include "Module.h"
+#include <fstream>
+
 class ModuleFileSystem : public Module {
 public:
 	ModuleFileSystem() {}
@@ -10,7 +12,7 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	unsigned Load(const char*, const char*, char**) const;
+	void Load(const char* , const char*, char**) const;
 	unsigned Save(const char*, const void*, unsigned, bool append = false) const;
 	bool Remove(const char*);
 	bool Exists(const char*);

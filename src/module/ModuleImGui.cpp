@@ -16,6 +16,7 @@
 #include "main/GameObject.h"
 #include "component/Camera.h"
 #include "component/Transform.h"
+#include "util/DebugDraw.h"
 
 bool ModuleImGui::Init() {
 	IMGUI_CHECKVERSION();
@@ -64,10 +65,7 @@ update_status ModuleImGui::Update() {
 	
 	if (showHierarchy) {
 		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
-		if (ImGui::TreeNode(App->scene->root->name.c_str())) {
-			DrawHierarchy(App->scene->root->children);
-			ImGui::TreePop();
-		}
+		DrawHierarchy(App->scene->root);
 		ImGui::End();
 	}
 	ImGui::BeginMainMenuBar();
@@ -220,8 +218,7 @@ const void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
 
 const void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
 	for (unsigned int i = 0; i < textures.size(); i++) {
-		ImGui::Text("Path: %s", textures[i].path.c_str());
-		ImGui::Text("Type: %s", textures[i].type.c_str());
+		ImGui::Text("Name: %s", textures[i].name.c_str());
 		ImGui::Text("Width: %d", textures[i].width);
 		ImGui::Text("Heigth: %d", textures[i].height);
 		if (ImGui::ImageButton((void*)(intptr_t)textures[i].id, ImVec2(128, 128))) {
@@ -230,45 +227,42 @@ const void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
 	}
 }
 
-const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects) {
+const void ModuleImGui::DrawHierarchy(GameObject* object) {
 	
-	for (unsigned i = 0; i < objects.size(); ++i)
-	{
-		unsigned flags = ImGuiTreeNodeFlags_None;
-		if (objects[i]->children.size() == 0) {
-			flags = ImGuiTreeNodeFlags_Leaf;
+	unsigned flags = ImGuiTreeNodeFlags_None;
+	if (object->children.size() == 0) {
+		flags = ImGuiTreeNodeFlags_Leaf;
+	}
+	flags |= selected.compare(object->uuid) == 0 ? ImGuiTreeNodeFlags_Selected : 0;
+	if (ImGui::TreeNodeEx(object->name.c_str(), flags)) {
+		if (ImGui::IsItemClicked()) {
+			selected = object->uuid;
 		}
-		flags |= selected.compare(objects[i]->uuid) == 0 ? ImGuiTreeNodeFlags_Selected : 0;
-		if (ImGui::TreeNodeEx(objects[i]->name.c_str(), flags)) {
-			if (ImGui::IsItemClicked()) {
-				selected = objects[i]->uuid;
+		if (selected.compare(object->uuid) == 0 && showProperties) {
+				object->ShowProperties(&showProperties);
+				dd::axisTriad(((Transform*)object->FindComponent(ComponentType::Transform))->worldTransform, 0.125f, 1.25f, 0, false);
+		}
+		if (ImGui::BeginDragDropTarget()) {
+			if (ImGui::AcceptDragDropPayload("ITEM")) {
+				sourceGO->parent->DeleteChild(sourceGO);
+				sourceGO->parent = object;
+				object->children.push_back(sourceGO);
+				Transform* trans = (Transform*)object->FindComponent(ComponentType::Transform);
+				trans->UpdateDirtyFlag();
+				sourceGO = nullptr;
 			}
-			if (selected.compare(objects[i]->uuid) == 0) {
-				if (showProperties) {
-					objects[i]->ShowProperties(&showProperties);
-				}
-			}
-			if (ImGui::BeginDragDropTarget()) {
-				if (ImGui::AcceptDragDropPayload("ITEM")) {
-					// TODO check for firts item error
-					LOG("New: %d", sourceGO);
-					sourceGO->parent->DeleteChild(sourceGO);
-					sourceGO->parent = objects[i];
-					objects[i]->children.push_back(sourceGO);
-					sourceGO = nullptr;
-				}
-				ImGui::EndDragDropTarget();
-			}
+			ImGui::EndDragDropTarget();
+		}
 
-			if (ImGui::BeginDragDropSource()) {
-				LOG("Source: %d", objects[i]);
-				sourceGO = objects[i];
-				ImGui::SetDragDropPayload("ITEM", nullptr, 0);
-				ImGui::EndDragDropSource();
-			}
-			DrawHierarchy(objects[i]->children);
-			ImGui::TreePop();
+		if (ImGui::BeginDragDropSource()) {
+			sourceGO = object;
+			ImGui::SetDragDropPayload("ITEM", nullptr, 0);
+			ImGui::EndDragDropSource();
 		}
+		for (auto item : object->children) {
+			DrawHierarchy(item);
+		}
+		ImGui::TreePop();
 	}
 }
 
