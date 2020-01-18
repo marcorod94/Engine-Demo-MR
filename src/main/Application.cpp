@@ -46,7 +46,7 @@ bool Application::Init() {
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
 	float appLag = beginAppTimer.StopTimer() / 1000.0f; //not sure if it is seconds or miliseconds
-	App->imgui->AddLog("Time to initialize Infinity Engine: %.3f seconds", appLag);
+	App->imgui->AddLog("Time to initialize Infinity Engine: %.6f mseconds", appLag);
 	LOG("\nTime to initialize Infinity Engine:%.3f seconds\n", appLag);
 	return ret;
 }

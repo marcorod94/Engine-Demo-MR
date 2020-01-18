@@ -30,5 +30,6 @@ public:
 private:
 	void DrawGameObject(GameObject*, Camera*);
 	void DrawMesh(Camera*, Transform*, Mesh*, Material*);
+	void SearchGO(GameObject* go);
 };
 #endif

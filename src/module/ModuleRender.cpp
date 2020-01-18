@@ -66,6 +66,7 @@ update_status ModuleRender::Update()
 		for (unsigned i = 0; i < App->camera->loadedCameras.size(); i++) {
 			cam = App->camera->loadedCameras[i];
 			cam->GenerateFBOTexture(cam->width, cam->height);
+			
 			glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
 			glViewport(0, 0, cam->width, cam->height);
 			glClearColor(0.2f, 0.2f, 0.2f, 1.f);
@@ -75,7 +76,7 @@ update_status ModuleRender::Update()
 			if (showAxis) {
 				glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
 				float axis_size = max(1.0f, 1.0f);
-				dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);
+				
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
 			if (showGrid) {
@@ -94,7 +95,7 @@ update_status ModuleRender::Update()
 update_status ModuleRender::PostUpdate()
 {
 	SDL_GL_SwapWindow(App->window->window);
-	++App->timer->frameCount;//use for fastforwarding frames later after assignment
+	++App->timer->frameCount;
 	App->timer->End();
 	return UPDATE_CONTINUE;
 }
@@ -196,10 +197,13 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 				}
 			}
 			Mesh* minDistMesh = nullptr;
+			Transform* myTrans = nullptr;
 			if (selected != nullptr)
 			{
 				minDistMesh = (Mesh*)selected->FindComponent(ComponentType::Mesh);
+				myTrans = (Transform*)selected->FindComponent(ComponentType::Transform);
 				showAxis = true;
+				dd::axisTriad(myTrans->worldTransform, 0.125f, 1.25f, 0, false);
 			}
 			
 			if (minDistMesh != nullptr)
@@ -222,4 +226,9 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 	}
 	
 	return selected;
+}
+
+void ModuleRender::SearchGO(GameObject* go)
+{
+
 }

@@ -4,7 +4,7 @@
 
 ModuleTimer::ModuleTimer()
 {
-	realTimeTimer = new Timer();
+	
 }
 
 
@@ -13,6 +13,7 @@ ModuleTimer::~ModuleTimer()
 }
 
 bool ModuleTimer::Init() {
+	realTimeTimer = new Timer();
 	currentTime = SDL_GetTicks();
 	previousTime += currentTime;
 
@@ -21,40 +22,43 @@ bool ModuleTimer::Init() {
 
 	return true;
 }
-
+update_status ModuleTimer::PreUpdate()
+{
+	return UPDATE_CONTINUE;
+}
 update_status ModuleTimer::Update() {
 
-	if (onPlay)
+	if (onPlay && !onPause)
 	{
 		gameTime += (realTimeTimer->ReadTimer() - realTime) * timeScale;
 	}
 	realTime = realTimeTimer->ReadTimer();
-	frameDelay = 1000 / FPS;
-	dt = frameDelay / 1000;
+	
 	
 	return UPDATE_CONTINUE;
 }
-
+update_status ModuleTimer::PostUpdate()
+{
+	return UPDATE_CONTINUE;
+}
 
 void ModuleTimer::Start() {
-
-	// = SDL_GetTicks();
-	//currentTime = 0;
-	//onPlay = true;
 	frameStart = gameTime + (realTimeTimer->ReadTimer() - realTime) * timeScale;
 	frameTime = realTimeTimer->ReadTimer();
 }
 
 void ModuleTimer::End() {
-
-	deltaTime = realTimeTimer->ReadTimer() - frameStart;
-	float timeToWait = 0.0f;
-
+	//frameCount = 0;
+	deltaTime = (realTimeTimer->ReadTimer() - frameStart) * timeScale;
+	realDeltaTime = realTimeTimer->ReadTimer() - frameTime;
+	float timeToWait = 1000.f / limitFPS - realDeltaTime;
+	frameDelay = 1000 / FPS;
+	dt = frameDelay / 1000;
 	if (timeToWait > 0.0f)
 	{
 		SDL_Delay(static_cast<Uint32>(timeToWait));
 	}
-
+	gameTime += (realDeltaTime + timeToWait);
 }
 
 
@@ -73,6 +77,11 @@ float ModuleTimer::Stop() {
 
 void ModuleTimer::Pause() {
 	onPause = true;
+}
+
+void ModuleTimer::SetTimeScale(float timeScale)
+{
+	this->timeScale = timeScale;
 }
 
 

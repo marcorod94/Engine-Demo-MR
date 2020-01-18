@@ -180,6 +180,15 @@ const void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
 		ms_log.push_back(1000.0F / io.Framerate);
 		sprintf_s(title, 25, "Milliseconds %.1F", ms_log[ms_log.size() - 1]);
 		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0F, 40.0F, ImVec2(310, 100));
+		ImGui::Text("Frames:  %d", App->timer->frameCount);
+		sprintf(frameInfo, "Limiting to %d fps means each frame needs to take %f ms", App->timer->limitFPS, 1000.f / App->timer->limitFPS);
+		ImGui::Text(frameInfo);
+		ImGui::SliderInt("FPS", &App->timer->limitFPS, 30, 60);
+		ImGui::Separator();
+		if (ImGui::SliderFloat("Game Clock Scale", &App->timer->timeScale, 0.5, 2))
+		{
+			App->timer->SetTimeScale(App->timer->timeScale);
+		}
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Hardware")) {
@@ -374,6 +383,9 @@ void ModuleImGui::ShowGizmosButtons()
 	if (ImGui::Button(u8"\uf04c"))
 	{
 		App->timer->Pause();
+		AddLog("Game Time: %f", App->timer->gameTime/1000);
+		AddLog("Real Time: %f", App->timer->realTime/1000);
+		
 	}
 	ImGuizmo::Manipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), App->camera->loadedCameras[0]->proj.Transposed().ptr(), gizmoOperation, ImGuizmo::WORLD, goGizmo.ptr());
 	//gizmo = ImGuizmo::IsOver();

@@ -18,7 +18,8 @@ public:
 	float timeScale = 1.0f;
 	float previousTime = 0;
 	float currentTime = 0;
-	float FPS = 60;
+	int FPS = 60;
+	int limitFPS = 60;
 	int frameCount = 0;
 	int frameCounter = 0;
 	float dt = 0;
@@ -36,8 +37,10 @@ public:
 	void Pause();
 	
 	bool Init();
+	update_status PreUpdate();
 	update_status Update();
-
+	update_status PostUpdate();
+	void SetTimeScale(float timeScale);
 	Timer* realTimeTimer;
 	float deltaTime = 0.0f;
 	float gameTime = 0.0f;
