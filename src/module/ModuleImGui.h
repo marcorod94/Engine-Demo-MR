@@ -21,6 +21,7 @@ public:
 
 	const void DrawConsoleWindow();
 	std::string selected = "";
+	GameObject* selectedGO = nullptr;
 	void ShowGizmosButtons();
 	bool gizmo = false;
 private: 

@@ -7,7 +7,9 @@
 #include "main/Application.h"
 #include "module/ModuleScene.h"
 #include "module/ModuleProgram.h"
+#include "module/ModuleImGui.h"
 #include "component/Camera.h"
+#include "component/Mesh.h"
 #include "SDL_scancode.h"
 #include "SDL_mouse.h"
 
@@ -174,10 +176,22 @@ void ModuleCamera::CalculateRotationAngles(float3& vector) {
 }
 
 void ModuleCamera::Focus(Camera* cam) {
-	/*cameraTarget = float3::zero;
-	sceneCamera->frustum.front = -float3::unitZ;
-	CalculateRotationAngles(sceneCamera->frustum.front);*/
-	//sceneCamera->frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * sceneCamera->frustum.front;
+	Mesh* mesh = (Mesh*)App->imgui->selectedGO->FindComponent(ComponentType::Mesh);
+	if (mesh != nullptr)
+	{
+		float3 size = mesh->box.Size();
+		float3 center = (mesh->box.maxPoint - mesh->box.minPoint) / 2;
+
+		float3 direction = (center - cam->frustum.pos).Normalized();
+		float3x3 rotationMatrix = float3x3::LookAt(cam->frustum.front, direction, cam->frustum.up, float3::unitY);
+
+		cam->frustum.pos = mesh->box.CenterPoint() - mesh->box.Size().Normalize() * (cam->frustum.front);
+		cam->frustum.pos.y = (size.Length() / 4);
+		cam->frustum.pos.z -= 10;
+		cam->frustum.front = rotationMatrix * cam->frustum.front;
+		cam->frustum.up = float3::unitY;
+		cam->view = cam->frustum.ViewMatrix();
+	}
 }
 
 void ModuleCamera::ZoomIn(Camera* cam)

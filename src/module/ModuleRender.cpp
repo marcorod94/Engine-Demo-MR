@@ -203,7 +203,8 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 				minDistMesh = (Mesh*)selected->FindComponent(ComponentType::Mesh);
 				myTrans = (Transform*)selected->FindComponent(ComponentType::Transform);
 				showAxis = true;
-				dd::axisTriad(myTrans->worldTransform, 0.2f, 2.25f, 0, false);
+				dd::axisTriad(myTrans->worldTransform, 0.2f, 2.25f, 0, true);
+				//DrawGizmo(selected);
 			}
 			
 			if (minDistMesh != nullptr)
