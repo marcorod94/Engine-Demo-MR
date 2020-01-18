@@ -6,14 +6,19 @@
 #include "IL/il.h"
 #include "IL/ilu.h"
 #include "component/Material.h"
+#include "util/MaterialImporter.h"
 #define TEXTURE_PATH "Textures/"
 #define DEFAULT_TEXTURE "checkers.jpg"
+
+struct Texture;
 
 class GameObject;
 class ModuleTexture : public Module
 {
 public:
 	std::vector<Texture> loadedTextures;
+
+	MaterialImporter* importer = new MaterialImporter();
 	ModuleTexture() {}
 	~ModuleTexture() {}
 

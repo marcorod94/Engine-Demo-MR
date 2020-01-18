@@ -7,6 +7,7 @@
 #include "rapidjson/document.h"
 
 class Component;
+enum class ComponentType;
 class Transform;
 class GameObject {
 public:
@@ -16,19 +17,19 @@ public:
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> children;
 	GameObject() {}
-	GameObject(const std::string& name): name(name) {
-		CreateComponent(ComponentType::Transform);
-	}
+	GameObject(const std::string&);
+
 	GameObject(const std::string& name, const float3& pos, const Quat& rot) : name(name) {
 		CreateTransform(pos, rot);
 	}
+
 	~GameObject() {}
 	Component* CreateComponent(const ComponentType);
 	Component* FindComponent(const ComponentType);
 	GameObject* FindGameObject(std::string * );
 	Transform* myTransform = nullptr;
 	void DeleteChild(const GameObject*);
-	void ShowProperties();
+	void ShowProperties(bool* show);
 	void OnLoad(rapidjson::Document::Object*, GameObject*);
 	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
 private:

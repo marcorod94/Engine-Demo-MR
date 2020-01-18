@@ -23,18 +23,20 @@ bool ModuleTexture::CleanUp() {
 
 unsigned ModuleTexture::LoadTexture(std::string& path) {
 	for (unsigned int i = 0; i < loadedTextures.size(); i++) {
-		if (path.compare(loadedTextures[i].path) == 0) {
-			App->imgui->AddLog("Texture already loaded: %s", loadedTextures[i].path.c_str());
+		if (path.compare(loadedTextures[i].name) == 0) {
+			App->imgui->AddLog("Texture already loaded: %s", loadedTextures[i].name.c_str());
 			return loadedTextures[i].id;
 		}
 	}
+	std::string ot = "";
+	importer->Import(path.c_str(), "/Textures", &ot);
 	Texture texture;
 	ilLoadImage(path.c_str());
 	iluGetImageInfo(&imageInfo);
 	texture.id = ilutGLBindTexImage();
 	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
 	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);
-	texture.path = path;
+	texture.name = path;
 	loadedTextures.push_back(texture);
 	App->imgui->AddLog("Texture succssesfully loaded: %s", path.c_str());
 	return texture.id;
@@ -68,8 +70,7 @@ void ModuleTexture::DrawTextureSelector(unsigned& id) {
 }
 
 void ModuleTexture::DrawTexture(Texture& texture) {
-	ImGui::Text("Path: %s", texture.path.c_str());
-	ImGui::Text("Type: %s", texture.type.c_str());
+	ImGui::Text("Name: %s", texture.name.c_str());
 	ImGui::Text("Width: %d", texture.width);
 	ImGui::Text("Heigth: %d", texture.height);
 }

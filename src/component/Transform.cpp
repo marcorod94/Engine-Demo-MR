@@ -4,21 +4,12 @@
 void Transform::DrawView() {
 	if (ImGui::TreeNode("Transform")) {
 		ImGui::Text("UUID: %s", uuid.c_str());
-		ImGui::DragFloat3("Position", position.ptr(), 1.0F, -100.00F, 100.00F);
-		ImGui::DragFloat3("Rotation", rotationEU.ptr(), 1.0F, -360.00F, 360.00F);
-		ImGui::DragFloat3("Scalling", scaling.ptr(), 0.001F, -50.00F, 50.00F);
-		ImGui::TreePop();
-	}
-}
-
-void Transform::CalculateWorldTransform() {
-	if (owner->parent) {
-		Transform* trans = ((Transform*)owner->parent->FindComponent(ComponentType::Transform));
-		if (trans) {
-			worldTransform = trans->localTransform * localTransform;
+		if (ImGui::DragFloat3("Position", position.ptr(), 1.0F, -100.00F, 100.00F) ||
+			ImGui::DragFloat3("Rotation", rotationEU.ptr(), 1.0F, -360.00F, 360.00F) ||
+			ImGui::DragFloat3("Scalling", scaling.ptr(), 0.001F, -50.00F, 50.00F)) {
+			UpdateDirtyFlag();
 		}
-	} else {
-		worldTransform = localTransform;
+		ImGui::TreePop();
 	}
 }
 
@@ -35,9 +26,23 @@ void Transform::SetTransform(const aiMatrix4x4& trans) {
 }
 
 void Transform::CalculateTransform() {
-	rotation = rotation.FromEulerXYZ(DegToRad(rotationEU.x), DegToRad(rotationEU.y), DegToRad(rotationEU.z));
-	localTransform = localTransform.FromTRS(position, rotation, scaling);
-	CalculateWorldTransform();
+	if (isDirty) {
+		rotation = rotation.FromEulerXYZ(DegToRad(rotationEU.x), DegToRad(rotationEU.y), DegToRad(rotationEU.z));
+		localTransform = localTransform.FromTRS(position, rotation, scaling);
+		CalculateWorldTransform();
+	}
+}
+
+void Transform::CalculateWorldTransform() {
+	if (owner->parent) {
+		Transform* trans = ((Transform*)owner->parent->FindComponent(ComponentType::Transform));
+		if (trans) {
+			worldTransform = trans->localTransform * localTransform;
+		}
+	}
+	else {
+		worldTransform = localTransform;
+	}
 }
 
 void Transform::OnLoad(rapidjson::Document::Object* object) {
@@ -61,4 +66,12 @@ void Transform::OnSave(rapidjson::Document::Array* list, rapidjson::Document::Al
 	Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "rotation", &rotationEU);
 	Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "scalling", &scaling);
 	list->PushBack(object, *allocator);
+}
+
+void Transform::UpdateDirtyFlag() {
+	isDirty = true;
+	for (auto item : owner->children) {
+		Transform* trans = (Transform*)item->FindComponent(ComponentType::Transform);
+		trans->UpdateDirtyFlag();
+	}
 }

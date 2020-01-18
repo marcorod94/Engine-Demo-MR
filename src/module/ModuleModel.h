@@ -60,7 +60,7 @@ private:
 	void processNode(const aiNode*, const aiScene*, GameObject*);
 	void processMesh(const aiMesh*, GameObject*);
 	void processMaterials(const aiMaterial*, GameObject*);
-	void loadMaterialTextures(const aiMaterial*, aiTextureType, const char*, Material*);
+	void loadMaterialTextures(const aiMaterial*, aiTextureType, Material*);
 	int existsFile(const char*) const;
 	void GenerateMesh(GameObject*, par_shapes_mesh_s*);
 

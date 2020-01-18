@@ -67,3 +67,11 @@ void Mesh::OnSave(rapidjson::Document::Array* list, rapidjson::Document::Allocat
 	object.AddMember("indices", indicesJSON, *allocator);
 	list->PushBack(object, *allocator);
 }
+
+void Mesh::TransformAABB(float4x4* transform) {
+	if (originalBox.IsDegenerate()) {
+		originalBox = box;
+	}
+	box = originalBox;
+	box.TransformAsAABB(*transform);
+}

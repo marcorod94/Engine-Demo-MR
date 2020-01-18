@@ -6,6 +6,7 @@
 #include "ModuleTexture.h"
 #include "ModuleCamera.h"
 #include "ModuleModel.h"
+#include "ModuleFileSystem.h"
 #include "component/Mesh.h"
 #include "component/Material.h"
 #include "module/ModuleInput.h"
@@ -94,9 +95,11 @@ void ModuleScene::PickObject(const ImVec2& winSize, const ImVec2& winPos)
 void ModuleScene::LoadScene() {
 	delete root;
 	root = new GameObject();
-	std::ifstream ifs("example.json");
-	rapidjson::IStreamWrapper isw(ifs);
-	config.ParseStream(isw);
+	char* buffer;
+	App->filesys->Load("", "test2.json", &buffer);
+	std::string content = "";
+	content.append(buffer);
+	config.Parse(content.c_str());
 	assert(config.IsArray());
 	for (auto& item : config.GetArray()) {
 		root->OnLoad(&item.GetObjectA(), nullptr);
@@ -110,9 +113,7 @@ void ModuleScene::SaveScene() {
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	config.Accept(writer);
-	App->imgui->AddLog("Test: %s", buffer.GetString());
 
 	std::string json(buffer.GetString(), buffer.GetSize());
-	std::ofstream of("example.json");
-	of << json;
+	App->filesys->Save("test2.json", json.c_str(), json.size());
 }

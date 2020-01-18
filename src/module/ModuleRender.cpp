@@ -71,7 +71,7 @@ update_status ModuleRender::Update()
 			if (showAxis) {
 				glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
 				float axis_size = max(1.0f, 1.0f);
-				dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);
+				/*dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);*/
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
 			if (showGrid) {
@@ -146,13 +146,18 @@ void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material
 
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &(cam->view[0][0]));
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &(cam->proj[0][0]));
-	// TODO resize boundingbox
 	if (mesh) {
-		dd::aabb(mesh->box.minPoint, mesh->box.maxPoint, float3(0, 0, 1));
-		glBindVertexArray(mesh->vao);
-		glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-		glActiveTexture(GL_TEXTURE0);
+		if (trans->isDirty) {
+			mesh->TransformAABB(&trans->worldTransform);
+			trans->isDirty = false;
+		}
+		if(cam->isCollidingFrustum(mesh->box) == IS_IN) {
+			dd::aabb(mesh->box.minPoint, mesh->box.maxPoint, float3(0, 0, 1));
+			glBindVertexArray(mesh->vao);
+			glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+			glBindVertexArray(0);
+			glActiveTexture(GL_TEXTURE0);
+		}
 	}
 }
 
@@ -194,6 +199,7 @@ GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 			{
 				minDistMesh = (Mesh*)selected->FindComponent(ComponentType::Mesh);
 				showAxis = true;
+				dd::axisTriad(((Transform*)selected->FindComponent(ComponentType::Transform))->worldTransform, 0.125f, 1.25f, 0, false);
 			}
 			
 			if (minDistMesh != nullptr)
