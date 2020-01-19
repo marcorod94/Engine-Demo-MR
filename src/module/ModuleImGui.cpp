@@ -252,7 +252,7 @@ const void ModuleImGui::DrawHierarchy(GameObject* object) {
 		}
 		if (selected.compare(object->uuid) == 0 && showProperties) {
 				object->ShowProperties(&showProperties);
-				dd::axisTriad(((Transform*)object->FindComponent(ComponentType::Transform))->worldTransform, 0.125f, 1.25f, 0, false);
+				dd::axisTriad(((Transform*)object->FindComponent(ComponentType::Transform))->worldTransform, 0.125f, 5.25f, 0, false);
 				selectedGO = object;
 				App->renderer->DrawGizmo(object);
 		}
