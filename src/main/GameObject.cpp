@@ -158,3 +158,11 @@ void GameObject::SaveComponents(rapidjson::Document::Array* list, rapidjson::Doc
 		component->OnSave(list, allocator);
 	}
 }
+
+void GameObject::TransformAABB(float4x4* transform) {
+	if (originalBox.IsDegenerate()) {
+		originalBox = box;
+	}
+	box = originalBox;
+	box.TransformAsAABB(*transform);
+}

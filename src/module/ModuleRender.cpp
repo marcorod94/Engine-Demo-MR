@@ -6,6 +6,7 @@
 #include "ModuleProgram.h"
 #include "ModuleScene.h"
 #include "ModuleCamera.h"
+#include "ModuleTimer.h"
 #include "ModuleModel.h"
 #include "util/DebugDraw.h"
 #include "ModuleDebugDraw.h"
@@ -16,7 +17,6 @@
 #include "component/Transform.h"
 #include "SDL.h"
 #include "GL/glew.h"
-#include <map>
 
 // Called before render is available
 bool ModuleRender::Init()
@@ -47,6 +47,7 @@ bool ModuleRender::Init()
 
 update_status ModuleRender::PreUpdate()
 {
+	App->timer->Start();
 	SDL_GetWindowSize(App->window->window, &App->window->screenWidth, &App->window->screenHeight);
 	glViewport(0, 0, App->window->screenWidth, App->window->screenHeight);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -62,16 +63,19 @@ update_status ModuleRender::Update()
 		for (unsigned i = 0; i < App->camera->loadedCameras.size(); i++) {
 			cam = App->camera->loadedCameras[i];
 			cam->GenerateFBOTexture(cam->width, cam->height);
+			
 			glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
 			glViewport(0, 0, cam->width, cam->height);
 			glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			DrawGameObject(App->scene->root, cam);
+			DrawAABB(App->scene->root);
+			App->scene->DrawAABBTree();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			if (showAxis) {
 				glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
 				float axis_size = max(1.0f, 1.0f);
-				/*dd::axisTriad(math::float4x4::identity, axis_size*0.125f, axis_size*1.25f, 0, false);*/
+				
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
 			if (showGrid) {
@@ -90,6 +94,8 @@ update_status ModuleRender::Update()
 update_status ModuleRender::PostUpdate()
 {
 	SDL_GL_SwapWindow(App->window->window);
+	++App->timer->frameCount;
+	App->timer->End();
 	return UPDATE_CONTINUE;
 }
 
@@ -164,62 +170,128 @@ void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material
 GameObject* ModuleRender::RayIntersectsObject(float3 origin, LineSegment &ray)
 {
 	LineSegment localRay = ray;
-	Triangle tri;
-	bool hit_point;
 	std::map<float, GameObject*> intersected;
 	std::map<float, GameObject*>::iterator it;
 	std::vector<Mesh*> intersectedMshes;
 	GameObject* selected = nullptr;
-	float distance = 1000.0f;
 
-	for (unsigned i = 0; i < App->scene->root->children.size(); i++) {
-		Mesh* mesh = (Mesh*)App->scene->root->children[i]->FindComponent(ComponentType::Mesh);
-		Transform* trans = (Transform*)App->scene->root->children[i]->FindComponent(ComponentType::Transform);
-		if (mesh != nullptr)
-		{
-			localRay.Transform(trans->worldTransform.Inverted());
-			
-			hit_point = localRay.Intersects(mesh->box); // ray vs. AABB
-			if (hit_point)
-			{
-				float dist = origin.Distance(mesh->box);
-				intersected[dist] = mesh->owner;
-				intersectedMshes.push_back(mesh);
-			}
-
-			for (std::pair<float, GameObject*> element : intersected) {
-				if (element.first < distance)
-				{
-					distance = element.first;
-					selected = element.second;
-				}
-			}
-			Mesh* minDistMesh = nullptr;
-			if (selected != nullptr)
-			{
-				minDistMesh = (Mesh*)selected->FindComponent(ComponentType::Mesh);
-				showAxis = true;
-				dd::axisTriad(((Transform*)selected->FindComponent(ComponentType::Transform))->worldTransform, 0.125f, 1.25f, 0, false);
-			}
-			
-			if (minDistMesh != nullptr)
-			{
-				for (unsigned int i = 0; i < minDistMesh->indices.size() - 2; i++)
-				{
-					tri = Triangle(mesh->vertices[mesh->indices[i]].Position, mesh->vertices[mesh->indices[i + 1]].Position, mesh->vertices[mesh->indices[i + 2]].Position);
-					bool hit = tri.Intersects(localRay);
-					if (hit)
-					{
-						distance = tri.Distance(origin);
-					}//TODOfix changing the object
-				}
-			}
-		}
+	selected = SearchGO(App->scene->root, &origin, &ray, &intersected);
+	Mesh* minDistMesh = nullptr;
+	Transform* myTrans = nullptr;
+	if (selected != nullptr)
+	{
+		minDistMesh = (Mesh*)selected->FindComponent(ComponentType::Mesh);
+		myTrans = (Transform*)selected->FindComponent(ComponentType::Transform);
+		showAxis = true;
+		dd::axisTriad(myTrans->worldTransform, 0.2f, 2.25f, 0, true);
+		//DrawGizmo(selected);
 	}
 	if (intersected.size() == 0)
 	{
 		return nullptr;
 	}
-	
 	return selected;
 }
+
+GameObject* ModuleRender::SearchGO(GameObject* go, float3* origin, LineSegment* ray, std::map<float, GameObject*>* intersected)
+{
+	GameObject* selected = nullptr;
+	LineSegment localRay = *ray;
+	bool hit_point;
+	float distance = 1000.0f;
+	Mesh* mesh = (Mesh*)go->FindComponent(ComponentType::Mesh);
+	Transform* trans = (Transform*)go->FindComponent(ComponentType::Transform);
+	if (mesh)
+	{
+		localRay.Transform(trans->worldTransform.Inverted());
+
+		hit_point = mesh->box.Intersects(localRay);
+		if (hit_point)
+		{
+			float dist = origin->Distance(mesh->box);
+			intersected->insert_or_assign(dist, mesh->owner);
+			//*intersected[dist] = mesh->owner;
+		}		
+		Mesh* minDistMesh = nullptr;
+		if (mesh)
+		{
+			for (unsigned int i = 0; i < mesh->indices.size() - 2; i++)
+			{
+				Triangle tri;
+				tri.a = mesh->vertices[mesh->indices[i]].Position;
+				tri.b = mesh->vertices[mesh->indices[i + 1]].Position;
+				tri.c = mesh->vertices[mesh->indices[i + 2]].Position;
+				//tri = Triangle(mesh->vertices[mesh->indices[i]].Position, mesh->vertices[mesh->indices[i + 1]].Position, mesh->vertices[mesh->indices[i + 2]].Position);
+				
+				//tri.Transform(trans->worldTransform.Inverted());
+				tri.Transform(trans->localTransform.Inverted());
+				bool hit = tri.Intersects(localRay);
+				if (hit)
+				{
+					distance = tri.Distance(*origin);
+					intersected->insert_or_assign(distance, mesh->owner);
+				}//TODOfix changing the object
+			}
+		}
+		for (std::pair<float, GameObject*> element : *intersected) {
+			if (element.first < distance)
+			{
+				distance = element.first;
+				selected = element.second;
+				return selected;
+			}
+		}
+	}
+	for (auto child : go->children)
+	{
+		selected = SearchGO(child, origin, ray, intersected);
+		if (selected) {
+			return selected;
+		}
+	}
+	return selected;
+}
+
+void ModuleRender::DrawGizmo(GameObject* selected) {
+
+	ImVec2 posW = App->camera->loadedCameras[0]->hoveredWindowPos;
+	float sceneHeight = App->camera->loadedCameras[0]->hoveredWindowSize.x;
+	float sceneWidth = App->camera->loadedCameras[0]->hoveredWindowSize.y;
+	ImGuizmo::SetRect((float)posW.x, (float)posW.y, sceneWidth, sceneHeight);
+	ImGuizmo::SetDrawlist();
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::Enable(true);
+
+	Transform* gizTrans = nullptr;
+	if (selected != nullptr) 
+	{
+		gizTrans = (Transform*)selected->FindComponent(ComponentType::Transform);
+		float4x4 transModel = gizTrans->worldTransform.Transposed();
+		float4x4 transView = App->camera->loadedCameras[0]->view.Transposed();
+		float4x4 transProj = App->camera->loadedCameras[0]->proj.Transposed();
+		ImGuizmo::Manipulate(transView.ptr(), transProj.ptr(), gizmoOperation, gizmoMode, transModel.ptr());
+
+		if (ImGuizmo::IsUsing()) {
+			App->imgui->AddLog("GIZMO ENABLED");
+			gizTrans->SetTransform(&(transModel.Transposed()));
+			gizTrans->UpdateDirtyFlag();
+		}
+	}
+
+}
+
+void ModuleRender::DrawAABB(GameObject* go) 
+{
+	Mesh* mesh = (Mesh*)go->FindComponent(ComponentType::Mesh);
+	if (mesh)
+	{
+		dd::aabb(mesh->box.minPoint, mesh->box.maxPoint, math::float3(0.0f, 0.0f, 0.0f));
+		
+	}
+	for (int i = 0; i < go->children.size(); i++)
+	{
+		DrawAABB(go->children[i]);
+	}
+	
+}
+

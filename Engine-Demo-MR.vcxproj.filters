@@ -193,6 +193,12 @@
     <ClCompile Include="src\module\ModuleFileSystem.cpp">
       <Filter>src\modules</Filter>
     </ClCompile>
+    <ClCompile Include="src\util\microSTimer.cpp" />
+    <ClCompile Include="src\module\ModuleTimer.cpp" />
+    <ClCompile Include="src\util\Timer.cpp" />
+    <ClCompile Include="src\util\AABBTree.cpp">
+      <Filter>src\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\main\Application.h">
@@ -266,6 +272,12 @@
     </ClInclude>
     <ClInclude Include="src\module\ModuleFileSystem.h">
       <Filter>src\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\microSTimer.h" />
+    <ClInclude Include="src\module\ModuleTimer.h" />
+    <ClInclude Include="src\util\Timer.h" />
+    <ClInclude Include="src\util\AABBTree.h">
+      <Filter>src\util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

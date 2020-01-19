@@ -20,6 +20,7 @@ public:
 	}
 	void DrawView();
 	void SetTransform(const aiMatrix4x4&);
+	void SetTransform(const float4x4* trans);
 	void CalculateTransform();
 	void OnLoad(rapidjson::Document::Object*);
 	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);

@@ -82,6 +82,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\util\AABBTree.h" />
+    <ClInclude Include="src\util\microSTimer.h" />
+    <ClInclude Include="src\module\ModuleTimer.h" />
     <ClInclude Include="src\module\ModuleFileSystem.h" />
     <ClInclude Include="src\util\MeshImporter.h" />
     <ClInclude Include="src\util\MaterialImporter.h" />
@@ -105,9 +108,11 @@
     <ClInclude Include="src\module\ModuleTexture.h" />
     <ClInclude Include="src\module\ModuleWindow.h" />
     <ClInclude Include="src\util\DebugDraw.h" />
+    <ClInclude Include="src\util\Timer.h" />
     <ClInclude Include="src\util\Importer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\util\AABBTree.cpp" />
     <ClCompile Include="include\ImGuizmo\ImCurveEdit.cpp" />
     <ClCompile Include="include\ImGuizmo\ImGradient.cpp" />
     <ClCompile Include="include\ImGuizmo\ImGuizmo.cpp" />
@@ -151,6 +156,8 @@
     <ClCompile Include="include\MathGeoLib\Math\SSEMath.cpp" />
     <ClCompile Include="include\MathGeoLib\Math\TransformOps.cpp" />
     <ClCompile Include="include\MathGeoLib\Time\Clock.cpp" />
+    <ClCompile Include="src\util\microSTimer.cpp" />
+    <ClCompile Include="src\module\ModuleTimer.cpp" />
     <ClCompile Include="src\module\ModuleFileSystem.cpp" />
     <ClCompile Include="src\util\MeshImporter.cpp" />
     <ClCompile Include="src\util\MaterialImporter.cpp" />
@@ -172,6 +179,7 @@
     <ClCompile Include="src\module\ModuleScene.cpp" />
     <ClCompile Include="src\module\ModuleTexture.cpp" />
     <ClCompile Include="src\module\ModuleWindow.cpp" />
+    <ClCompile Include="src\util\Timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

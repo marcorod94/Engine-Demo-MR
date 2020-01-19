@@ -22,16 +22,17 @@ public:
 
 	const void DrawConsoleWindow();
 	std::string selected = "";
+	GameObject* selectedGO = nullptr;
 	void ShowGizmosButtons();
 	bool gizmo = false;
-	ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
 private: 
 	bool show_demo_window = true;
 	
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 	ImGuiTextBuffer buffer;
 	bool scrollToBottom;
-	char title[25];
+	char title[100];
+	char frameInfo[2000];
 	std::vector<float> fps_log{0.0F};
 	std::vector<float> ms_log{0.0F};
 	unsigned shape = 0;
