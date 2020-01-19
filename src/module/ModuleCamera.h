@@ -4,6 +4,8 @@
 #include "Module.h"
 #include "MathGeoLib.h"
 #include "GL/glew.h"
+
+class GameObject;
 class Camera;
 class ModuleCamera : public Module {
 public:
@@ -27,7 +29,7 @@ public:
 	void ZoomOut(Camera* cam);
 	void Focus(Camera* cam);
 
-	Camera* CreateComponentCamera();
+	Camera* CreateComponentCamera(GameObject*);
 public:
 	Frustum frustum;
 	Camera* sceneCameras =  nullptr;

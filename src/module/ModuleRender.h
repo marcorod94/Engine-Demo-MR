@@ -30,7 +30,7 @@ public:
 	ImGuizmo::OPERATION gizmoOperation = ImGuizmo::TRANSLATE;
 	ImGuizmo::MODE gizmoMode = ImGuizmo::WORLD;
 	bool CleanUp();
-	Mesh* CreateMesh();
+	Mesh* CreateMesh(GameObject*);
 private:
 	void DrawGameObject(GameObject*, Camera*);
 	void DrawMesh(Camera*, Transform*, Mesh*, Material*);

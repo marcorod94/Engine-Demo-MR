@@ -94,7 +94,6 @@ bool ModuleProgram::Compile(unsigned id, std::string* data) {
 }
 
 std::string* ModuleProgram::LoadFile(const char* path) {
-	std::string fileCode;
 	std::ifstream file;
 	// ensure ifstream objects can throw exceptions:
 	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);

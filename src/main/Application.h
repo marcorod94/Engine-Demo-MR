@@ -18,6 +18,7 @@ class ModuleModel;
 class ModuleDebugDraw;
 class ModuleTimer;
 
+class ModuleFileSystem;
 
 class Application
 {
@@ -42,6 +43,7 @@ public:
 	ModuleModel* model = nullptr;
 	ModuleDebugDraw* debugDraw = nullptr;
 	ModuleTimer* timer = nullptr;
+	ModuleFileSystem* filesys = nullptr;
 
 private:
 

@@ -7,6 +7,7 @@
 #include <vector>
 #include "ImGuizmo.h"
 
+struct Texture;
 class GameObject;
 enum class ShapeType;
 class ModuleImGui : public Module {
@@ -45,13 +46,13 @@ private:
 	bool showConsole = true;
 	bool showModule = false;
 	bool showAbout = false;
-	bool showProperties = false;
+	bool showProperties = true;
 	bool showHierarchy = true;
 
 	const void ShowModulesWindow();
 	const void ShowInformationWindow(ImGuiIO&);
 	const void ShowTextures(std::vector<Texture>&);
-	const void DrawHierarchy(const std::vector<GameObject*>&, int&);
+	const void DrawHierarchy(GameObject*);
 	const void DrawShaderProperties();
 	void LoadShapes(ShapeType s);
 }; 

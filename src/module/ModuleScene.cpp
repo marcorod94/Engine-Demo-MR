@@ -6,6 +6,7 @@
 #include "ModuleTexture.h"
 #include "ModuleCamera.h"
 #include "ModuleModel.h"
+#include "ModuleFileSystem.h"
 #include "component/Mesh.h"
 #include "component/Material.h"
 #include "module/ModuleInput.h"
@@ -14,9 +15,13 @@
 #include <string>
 #include "util/DebugDraw.h"
 #include "imgui.h"
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/istreamwrapper.h"
+#include <fstream>
 
 bool ModuleScene::Init() {
-
 	root = CreateGameObject("Root Scene");
 	App->model->LoadModel(std::string("Models\\Zombunny.fbx"));
 	MeshShape shape;
@@ -27,15 +32,11 @@ bool ModuleScene::Init() {
 	shape.stacks = 20;
 	App->model->LoadShapes(root, "sphere0", float3(1.0f, 1.0f, 1.0f), Quat::identity, shape, ProgramType::Default, float4(0.5f, 0.0f, 0.5f, 1.0f));
     //sceneViewCamera
-	Camera* cam = App->camera->CreateComponentCamera();
-	cam->owner = root;
-	root->components.push_back(cam);
+	Camera* cam = (Camera*) root->CreateComponent(ComponentType::Camera);
 	//activeCamera
 	GameObject* mainCamera = CreateGameObject("Main Camera");
-	Camera* cam2 = App->camera->CreateComponentCamera();
-	cam2->owner = mainCamera;
+	Camera* cam2 = (Camera*)mainCamera->CreateComponent(ComponentType::Camera);
 	mainCamera->parent = root;
-	mainCamera->components.push_back(cam2);
 	root->children.push_back(mainCamera);
 	return true;
 }
@@ -90,4 +91,30 @@ void ModuleScene::PickObject(const ImVec2& winSize, const ImVec2& winPos)
 		return;
 	}
 	
+}
+
+void ModuleScene::LoadScene() {
+	delete root;
+	root = new GameObject();
+	char* buffer;
+	App->filesys->Load("", "test2.json", &buffer);
+	std::string content = "";
+	content.append(buffer);
+	config.Parse(content.c_str());
+	assert(config.IsArray());
+	for (auto& item : config.GetArray()) {
+		root->OnLoad(&item.GetObjectA(), nullptr);
+	}
+	
+}
+
+void ModuleScene::SaveScene() {
+	config.SetArray();
+	root->OnSave(&config.GetArray(), &config.GetAllocator());
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	config.Accept(writer);
+
+	std::string json(buffer.GetString(), buffer.GetSize());
+	App->filesys->Save("test2.json", json.c_str(), json.size());
 }

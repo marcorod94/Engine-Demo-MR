@@ -18,30 +18,6 @@ enum update_status
 	UPDATE_ERROR
 };
 
-enum class ComponentType { Transform, Mesh, Material, Camera };
-
-struct Vertex {
-	// position
-	math::float3 Position;
-	// normal
-	math::float3 Normal;
-	// texCoords
-	math::float2 TexCoords;
-	// tangent
-	math::float3 Tangent;
-	// bitangent
-	math::float3 Bitangent;
-};
-
-struct Texture {
-	unsigned id;
-	std::string  type;
-	unsigned width;
-	unsigned height;
-	std::string path;
-};
-
-
 // Configuration -----------
 #define VSYNC true
 #define SCREEN_SIZE 2

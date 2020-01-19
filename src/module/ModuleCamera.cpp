@@ -19,9 +19,9 @@ bool ModuleCamera::Init() {
 	return true;
 }
 
-Camera* ModuleCamera::CreateComponentCamera()
+Camera* ModuleCamera::CreateComponentCamera(GameObject* owner)
 {
-	Camera* cam = new Camera(nullptr);
+	Camera* cam = new Camera(owner);
 	loadedCameras.push_back(cam);
 	return cam;
 }//dont forget to create a remove component also

@@ -164,3 +164,41 @@ void Camera::DrawView() {
 	}
 }
 
+void Camera::OnLoad(rapidjson::Document::Object* object) {
+	uuid = (object->FindMember("uuid"))->value.GetString();
+	fbo = (object->FindMember("fbo"))->value.GetInt();
+	auto frustumJSON = (object->FindMember("frustum"))->value.GetObjectA();
+	frustum.type = FrustumType((frustumJSON.FindMember("type"))->value.GetInt());
+	frustum.nearPlaneDistance = (frustumJSON.FindMember("nearPlane"))->value.GetFloat();
+	frustum.farPlaneDistance = (frustumJSON.FindMember("farPlane"))->value.GetFloat();
+	frustum.verticalFov = (frustumJSON.FindMember("verticalFov"))->value.GetFloat();
+	frustum.horizontalFov = (frustumJSON.FindMember("horizontalFov"))->value.GetFloat();
+	Component::GetFloat3FromObjectJSON(&(frustumJSON.FindMember("pos"))->value.GetObjectA(), &frustum.pos);
+	Component::GetFloat3FromObjectJSON(&(frustumJSON.FindMember("front"))->value.GetObjectA(), &frustum.front);
+	Component::GetFloat3FromObjectJSON(&(frustumJSON.FindMember("up"))->value.GetObjectA(), &frustum.up);
+	GenerateMatrices();
+}
+
+void Camera::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
+	rapidjson::Value object(rapidjson::kObjectType);
+	object.AddMember("uuid", rapidjson::StringRef(uuid.c_str()), *allocator);
+	object.AddMember("type", int(type), *allocator);
+	std::string owneruuid;
+	if (owner) {
+		owneruuid = owner->uuid;
+	}
+	object.AddMember("owneruuid", rapidjson::StringRef(owneruuid.c_str()), *allocator);
+	object.AddMember("fbo", fbo, *allocator);
+	rapidjson::Value frustumJSON(rapidjson::kObjectType);
+	frustumJSON.AddMember("type", int(frustum.type), *allocator);
+	frustumJSON.AddMember("nearPlane", frustum.nearPlaneDistance, *allocator);
+	frustumJSON.AddMember("farPlane", frustum.farPlaneDistance, *allocator);
+	frustumJSON.AddMember("verticalFov", frustum.verticalFov, *allocator);
+	frustumJSON.AddMember("horizontalFov", frustum.horizontalFov, *allocator);
+	Component::AddFloat3ToObjectJSON(&frustumJSON.GetObjectA(), allocator, "pos", &frustum.pos);
+	Component::AddFloat3ToObjectJSON(&frustumJSON.GetObjectA(), allocator, "up", &frustum.up);
+	Component::AddFloat3ToObjectJSON(&frustumJSON.GetObjectA(), allocator, "front", &frustum.front);
+	object.AddMember("frustum", frustumJSON, *allocator);
+	list->PushBack(object, *allocator);
+}
+
