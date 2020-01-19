@@ -5,7 +5,7 @@
 #include "main/Globals.h"
 #include "SDL.h"
 #include "ImGuizmo.h"
-
+#include<map>
 
 class Camera;
 class GameObject;
@@ -37,7 +37,7 @@ public:
 private:
 	void DrawGameObject(GameObject*, Camera*);
 	void DrawMesh(Camera*, Transform*, Mesh*, Material*);
-	void SearchGO(GameObject* go);
+	GameObject* SearchGO(GameObject* go, float3* origin, LineSegment* ray, std::map<float, GameObject*>* intersected);
 	
 };
 #endif
