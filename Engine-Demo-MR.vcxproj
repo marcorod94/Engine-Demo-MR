@@ -82,6 +82,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\util\AABBTree.h" />
     <ClInclude Include="src\util\microSTimer.h" />
     <ClInclude Include="src\module\ModuleTimer.h" />
     <ClInclude Include="src\module\ModuleFileSystem.h" />
@@ -107,13 +108,11 @@
     <ClInclude Include="src\module\ModuleTexture.h" />
     <ClInclude Include="src\module\ModuleWindow.h" />
     <ClInclude Include="src\util\DebugDraw.h" />
-<<<<<<< HEAD
     <ClInclude Include="src\util\Timer.h" />
-=======
     <ClInclude Include="src\util\Importer.h" />
->>>>>>> refs/remotes/origin/develop
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\util\AABBTree.cpp" />
     <ClCompile Include="include\ImGuizmo\ImCurveEdit.cpp" />
     <ClCompile Include="include\ImGuizmo\ImGradient.cpp" />
     <ClCompile Include="include\ImGuizmo\ImGuizmo.cpp" />
@@ -157,14 +156,11 @@
     <ClCompile Include="include\MathGeoLib\Math\SSEMath.cpp" />
     <ClCompile Include="include\MathGeoLib\Math\TransformOps.cpp" />
     <ClCompile Include="include\MathGeoLib\Time\Clock.cpp" />
-<<<<<<< HEAD
     <ClCompile Include="src\util\microSTimer.cpp" />
     <ClCompile Include="src\module\ModuleTimer.cpp" />
-=======
     <ClCompile Include="src\module\ModuleFileSystem.cpp" />
     <ClCompile Include="src\util\MeshImporter.cpp" />
     <ClCompile Include="src\util\MaterialImporter.cpp" />
->>>>>>> refs/remotes/origin/develop
     <ClCompile Include="src\component\Camera.cpp" />
     <ClCompile Include="src\component\Material.cpp" />
     <ClCompile Include="src\component\Transform.cpp" />

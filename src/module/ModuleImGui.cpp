@@ -39,7 +39,8 @@ bool ModuleImGui::Init() {
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-regular-400.ttf", 16.0F, &icons_config, iconsRanges);
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-brands-400.ttf", 16.0F, &icons_config, iconsBrandRange);
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigWindowsMoveFromTitleBarOnly = true;
 	return true;
 }
 
@@ -252,6 +253,7 @@ const void ModuleImGui::DrawHierarchy(GameObject* object) {
 		if (selected.compare(object->uuid) == 0 && showProperties) {
 				object->ShowProperties(&showProperties);
 				dd::axisTriad(((Transform*)object->FindComponent(ComponentType::Transform))->worldTransform, 0.125f, 1.25f, 0, false);
+				selectedGO = object;
 				//TODO---App->render->ShowGizmo(object);
 		}
 		if (ImGui::BeginDragDropTarget()) {

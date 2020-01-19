@@ -70,6 +70,8 @@ update_status ModuleRender::Update()
 			glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			DrawGameObject(App->scene->root, cam);
+			DrawAABB(App->scene->root);
+			App->scene->DrawAABBTree();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			if (showAxis) {
 				glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
@@ -261,5 +263,20 @@ void ModuleRender::DrawGizmo(GameObject* selected) {
 		}
 	}
 
+}
+
+void ModuleRender::DrawAABB(GameObject* go) 
+{
+	Mesh* mesh = (Mesh*)go->FindComponent(ComponentType::Mesh);
+	if (mesh)
+	{
+		dd::aabb(mesh->box.minPoint, mesh->box.maxPoint, math::float3(0.0f, 0.0f, 0.0f));
+		
+	}
+	for (int i = 0; i < go->children.size(); i++)
+	{
+		DrawAABB(go->children[i]);
+	}
+	
 }
 

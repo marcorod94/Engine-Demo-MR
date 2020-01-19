@@ -87,19 +87,19 @@ update_status ModuleInput::PreUpdate()
 				mouse_scroll.y = (float) event.wheel.y;
 				if (event.wheel.y > 0)
 				{
-					/*if(sceneCamera->isHovered == true)
+					if(App->camera->loadedCameras[0]->isHovered == true)
 					{
-						App->camera->ZoomIn();
-					}*/
+						App->camera->ZoomIn(App->camera->loadedCameras[0]);
+					}
 					
 					//App->imgui->AddLogInput("Input: Mouse Scroll Up\n");
 				}
 				else if (event.wheel.y < 0)
 				{
-					/*if (sceneCamera->isHovered == true)
+					if (App->camera->loadedCameras[0]->isHovered == true)
 					{
-						App->camera->ZoomOut();
-					}*/
+						App->camera->ZoomOut(App->camera->loadedCameras[0]);
+					}
 					
 					//App->imgui->AddLogInput("Input: Mouse Scroll Down\n");
 				}

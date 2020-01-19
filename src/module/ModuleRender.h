@@ -6,6 +6,7 @@
 #include "SDL.h"
 #include "ImGuizmo.h"
 
+
 class Camera;
 class GameObject;
 class Mesh;
@@ -31,9 +32,12 @@ public:
 	ImGuizmo::MODE gizmoMode = ImGuizmo::WORLD;
 	bool CleanUp();
 	Mesh* CreateMesh(GameObject*);
+	void DrawAABB(GameObject* go);
+	
 private:
 	void DrawGameObject(GameObject*, Camera*);
 	void DrawMesh(Camera*, Transform*, Mesh*, Material*);
 	void SearchGO(GameObject* go);
+	
 };
 #endif

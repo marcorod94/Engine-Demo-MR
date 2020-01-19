@@ -23,6 +23,7 @@
 
 bool ModuleScene::Init() {
 	root = CreateGameObject("Root Scene");
+	abbTree = new AABBTree(5);
 	App->model->LoadModel(std::string("Models\\Zombunny.fbx"));
 	MeshShape shape;
 	shape.type = ShapeType::Torus;
@@ -117,4 +118,19 @@ void ModuleScene::SaveScene() {
 
 	std::string json(buffer.GetString(), buffer.GetSize());
 	App->filesys->Save("test2.json", json.c_str(), json.size());
+}
+
+void ModuleScene::DrawAABBTree() {
+	abbTree = new AABBTree(5);
+	
+	for (auto go : root->children) 
+	{
+		Mesh* mesh = (Mesh*)go->FindComponent(ComponentType::Mesh);
+		if (mesh != nullptr)
+		{
+			abbTree->insertObject(go);
+		}
+	}
+	abbTree->DrawTree();
+	abbTree = nullptr;
 }

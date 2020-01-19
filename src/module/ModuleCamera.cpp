@@ -177,6 +177,10 @@ void ModuleCamera::CalculateRotationAngles(float3& vector) {
 
 void ModuleCamera::Focus(Camera* cam) {
 	Mesh* mesh = (Mesh*)App->imgui->selectedGO->FindComponent(ComponentType::Mesh);
+	if (mesh == nullptr && App->imgui->selectedGO->children.size()> 0)
+	{
+		 mesh = (Mesh*)App->imgui->selectedGO->children[0]->FindComponent(ComponentType::Mesh);
+	}
 	if (mesh != nullptr)
 	{
 		float3 size = mesh->box.Size();
