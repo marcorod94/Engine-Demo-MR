@@ -8,11 +8,13 @@
 #include "ModuleScene.h"
 #include "ModuleInput.h"
 #include "ModuleProgram.h"
+#include "ModuleTimer.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
 #include "GL/glew.h"
 #include "assimp/version.h"
+#include "util/DebugDraw.h"
 #include "main/GameObject.h"
 #include "component/Camera.h"
 #include "component/Transform.h"
@@ -37,7 +39,8 @@ bool ModuleImGui::Init() {
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-regular-400.ttf", 16.0F, &icons_config, iconsRanges);
 	io.Fonts->AddFontFromFileTTF("Fonts/fa-brands-400.ttf", 16.0F, &icons_config, iconsBrandRange);
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigWindowsMoveFromTitleBarOnly = true;
 	return true;
 }
 
@@ -123,7 +126,7 @@ update_status ModuleImGui::Update() {
 		ImGui::End();
 	}
 	ShowGizmosButtons();
-	ImGuizmo::ViewManipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), 1.f, ImVec2(io.DisplaySize.x - 128, 0), ImVec2(128, 128), 0x10101010);
+	//ImGuizmo::ViewManipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), 1.f, ImVec2(io.DisplaySize.x - 128, 0), ImVec2(128, 128), 0x10101010);
 	// Render
 	ImGui::Render();
 	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
@@ -194,6 +197,15 @@ const void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
 		ms_log.push_back(1000.0F / io.Framerate);
 		sprintf_s(title, 25, "Milliseconds %.1F", ms_log[ms_log.size() - 1]);
 		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0F, 40.0F, ImVec2(310, 100));
+		ImGui::Text("Frames:  %d", App->timer->frameCount);
+		sprintf(frameInfo, "Limiting to %d fps means each frame needs to take %f ms", App->timer->limitFPS, 1000.f / App->timer->limitFPS);
+		ImGui::Text(frameInfo);
+		ImGui::SliderInt("FPS", &App->timer->limitFPS, 30, 60);
+		ImGui::Separator();
+		if (ImGui::SliderFloat("Game Clock Scale", &App->timer->timeScale, 0.5, 2))
+		{
+			App->timer->SetTimeScale(App->timer->timeScale);
+		}
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode(u8"\uf2db Hardware")) {
@@ -240,7 +252,9 @@ const void ModuleImGui::DrawHierarchy(GameObject* object) {
 		}
 		if (selected.compare(object->uuid) == 0 && showProperties) {
 				object->ShowProperties(&showProperties);
-				dd::axisTriad(((Transform*)object->FindComponent(ComponentType::Transform))->worldTransform, 0.125f, 1.25f, 0, false);
+				dd::axisTriad(((Transform*)object->FindComponent(ComponentType::Transform))->worldTransform, 0.125f, 5.25f, 0, false);
+				selectedGO = object;
+				App->renderer->DrawGizmo(object);
 		}
 		if (ImGui::BeginDragDropTarget()) {
 			if (ImGui::AcceptDragDropPayload("ITEM")) {
@@ -344,47 +358,31 @@ const void ModuleImGui::DrawConsoleWindow()
 
 void ModuleImGui::ShowGizmosButtons()
 {
-	ImGuizmo::SetRect(App->camera->loadedCameras[0]->hoveredWindowPos.x, App->camera->loadedCameras[0]->hoveredWindowPos.y, App->camera->loadedCameras[0]->hoveredWindowSize.x, App->camera->loadedCameras[0]->hoveredWindowSize.y);
-	ImGuizmo::SetDrawlist();
-	ImGuizmo::SetOrthographic(false);
-	ImGuizmo::Enable(true);
-	const std::vector<GameObject*>&objects = App->scene->root->children;
-	Transform* trans;
-	float4x4 goGizmo;
-	for (unsigned i = 0; i < App->scene->root->children.size(); ++i)
-	{
-		if (objects[i]->uuid == selected)
-		{
-			trans = (Transform*)App->scene->root->children[i]->FindComponent(ComponentType::Transform);
-			goGizmo = trans->worldTransform.Transposed();
-		}
-	}
-	ImGuiIO& io = ImGui::GetIO();
-	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 	if (ImGui::Button(u8"\uf0b2"))
 	{
-		gizmoOperation = ImGuizmo::TRANSLATE;
+		App->renderer->gizmoOperation = ImGuizmo::TRANSLATE;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(u8"\uf021"))
 	{
-		gizmoOperation = ImGuizmo::ROTATE;
+		App->renderer->gizmoOperation = ImGuizmo::ROTATE;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(u8"\uf31e"))
 	{
-		gizmoOperation = ImGuizmo::SCALE;
+		App->renderer->gizmoOperation = ImGuizmo::SCALE;
 	}
 	ImGui::SameLine(0.0f, 700.0f);
 	if (ImGui::Button(u8"\uf04b"))
 	{
+		App->timer->Play();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button(u8"\uf04c"))
 	{
+		App->timer->Pause();
+		AddLog("Game Time: %f", App->timer->gameTime/1000);
+		AddLog("Real Time: %f", App->timer->realTime/1000);
 	}
-	ImGuizmo::Manipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), App->camera->loadedCameras[0]->proj.Transposed().ptr(), gizmoOperation, ImGuizmo::WORLD, goGizmo.ptr());
-	//gizmo = ImGuizmo::IsOver();
-	
 }
 

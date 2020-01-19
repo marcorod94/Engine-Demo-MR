@@ -16,6 +16,8 @@ class ModuleTexture;
 class ModuleCamera;
 class ModuleModel;
 class ModuleDebugDraw;
+class ModuleTimer;
+
 class ModuleFileSystem;
 
 class Application
@@ -40,6 +42,7 @@ public:
 	ModuleCamera* camera = nullptr;
 	ModuleModel* model = nullptr;
 	ModuleDebugDraw* debugDraw = nullptr;
+	ModuleTimer* timer = nullptr;
 	ModuleFileSystem* filesys = nullptr;
 
 private:

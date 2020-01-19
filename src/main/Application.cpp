@@ -8,13 +8,17 @@
 #include "module/ModuleTexture.h"
 #include "module/ModuleCamera.h"
 #include "module/ModuleModel.h"
+#include "module/ModuleTimer.h"
 #include "module//ModuleDebugDraw.h"
+#include "util/Timer.h"
+#include "util/microSTimer.h"
 #include "module/ModuleFileSystem.h"
 
 using namespace std;
 
 Application::Application() {
 	// Order matters: they will Init/start/update in this order
+	modules.push_back(timer = new ModuleTimer());
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(input = new ModuleInput());
@@ -36,11 +40,16 @@ Application::~Application() {
 }
 
 bool Application::Init() {
+	microSTimer beginAppTimer;
+	beginAppTimer.StartTimer();
+
 	bool ret = true;
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
-
+	float appLag = beginAppTimer.StopTimer() / 1000.0f; //not sure if it is seconds or miliseconds
+	App->imgui->AddLog("Time to initialize Infinity Engine: %.6f mseconds", appLag);
+	LOG("\nTime to initialize Infinity Engine:%.3f seconds\n", appLag);
 	return ret;
 }
 

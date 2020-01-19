@@ -24,6 +24,13 @@ void Transform::SetTransform(const aiMatrix4x4& trans) {
 	rotationEU = RadToDeg(rotationEU);
 	CalculateWorldTransform();
 }
+void Transform::SetTransform(const float4x4* trans) {
+	localTransform = *trans;
+	localTransform.Decompose(position, rotation, scaling);
+	rotationEU = rotation.ToEulerXYZ();
+	rotationEU = RadToDeg(rotationEU);
+	CalculateWorldTransform();
+}
 
 void Transform::CalculateTransform() {
 	if (isDirty) {
@@ -42,6 +49,11 @@ void Transform::CalculateWorldTransform() {
 	}
 	else {
 		worldTransform = localTransform;
+	}
+	owner->TransformAABB(&worldTransform);
+	if (owner->parent) {
+		owner->parent->originalBox.Enclose(owner->originalBox);
+		owner->parent->box.Enclose(owner->box);
 	}
 }
 

@@ -5,6 +5,7 @@
 #include "main/Globals.h"
 #include "GL/glew.h"
 #include "rapidjson/document.h"
+#include "util/AABBTree.h"
 
 struct ImVec2;
 
@@ -23,6 +24,8 @@ public:
 	bool CleanUp();
 	void LoadScene();
 	void SaveScene();
+	AABBTree* abbTree = nullptr;
+	void DrawAABBTree();
 private:
 	rapidjson::Document config;
 };

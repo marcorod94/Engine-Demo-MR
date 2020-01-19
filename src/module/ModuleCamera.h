@@ -37,7 +37,7 @@ public:
 	std::vector<Camera*> loadedCameras;
 	float3 helper1 = float3(0.0f, -1.0f, -4.0f);
 	float3 helper2 = float3(1.0f, 1.0f, 1.0f);
-	float cameraSpeed = 0.05f;
+	float cameraSpeed = 0.1f;
 	float sensitivity = 0.2F;
 
 private:
