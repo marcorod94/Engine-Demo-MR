@@ -2,51 +2,41 @@
 #include "ModuleTexture.h"
 #include "ModuleProgram.h"
 #include "ModuleImGui.h"
-#include "IL/il.h"
-#include "IL/ilu.h"
-#include "IL/ilut.h"
 
 bool ModuleTexture::Init() {
-	ilInit();
-	iluInit();
-	ilutInit();
-	ilutRenderer(ILUT_OPENGL);
-	ilGenImages(1, &imageName);
-	ilBindImage(imageName);
 	return true;
 }
 
 bool ModuleTexture::CleanUp() {
-	ilDeleteImages(1, &imageName);
 	return true;
 }
 
-unsigned ModuleTexture::LoadTexture(std::string& path) {
+unsigned ModuleTexture::LoadTexture(const char* file) {
+	std::string name = file;
+	name = name.substr(name.find_last_of('\\') + 1, name.size());
+	name = name.substr(name.find_last_of('/') + 1, name.size());
+	name = name.substr(0, name.find_last_of('.'));
 	for (unsigned int i = 0; i < loadedTextures.size(); i++) {
-		if (path.compare(loadedTextures[i].path) == 0) {
-			App->imgui->AddLog("Texture already loaded: %s", loadedTextures[i].path.c_str());
+		if (name.compare(loadedTextures[i].name) == 0) {
+			App->imgui->AddLog("Texture already loaded: %s", loadedTextures[i].name.c_str());
 			return loadedTextures[i].id;
 		}
 	}
 	Texture texture;
-	ilLoadImage(path.c_str());
-	iluGetImageInfo(&imageInfo);
-	texture.id = ilutGLBindTexImage();
-	texture.width = ilGetInteger(IL_IMAGE_WIDTH);
-	texture.height = ilGetInteger(IL_IMAGE_HEIGHT);
-	texture.path = path;
+	importer->Load(file, &texture);
+	glGenTextures(1, &texture.id);
 	loadedTextures.push_back(texture);
-	App->imgui->AddLog("Texture succssesfully loaded: %s", path.c_str());
+	App->imgui->AddLog("Texture succssesfully loaded: %s", file);
 	return texture.id;
 }
 
-void ModuleTexture::DrawTexture(unsigned& id) {
+void ModuleTexture::DrawTexture(unsigned id) {
 	if (drawSelector) {
 		DrawTextureSelector(id);
 	}
 	for (unsigned int i = 0; i < loadedTextures.size(); i++) {
 		if (loadedTextures[i].id == id) {
-			DrawTexture(loadedTextures[i]);
+			DrawTexture(&loadedTextures[i]);
 		}
 	}
 	if (ImGui::ImageButton((void*)(intptr_t)id, ImVec2(128, 128))) {
@@ -55,10 +45,10 @@ void ModuleTexture::DrawTexture(unsigned& id) {
 
 }
 
-void ModuleTexture::DrawTextureSelector(unsigned& id) {
+void ModuleTexture::DrawTextureSelector(unsigned id) {
 	ImGui::Begin("Textures");
 	for (unsigned int i = 0; i < loadedTextures.size(); i++) {
-		DrawTexture(loadedTextures[i]);
+		DrawTexture(&loadedTextures[i]);
 		if (ImGui::ImageButton((void*)(intptr_t)loadedTextures[i].id, ImVec2(128, 128))) {
 			id = loadedTextures[i].id;
 			drawSelector = false;
@@ -67,14 +57,18 @@ void ModuleTexture::DrawTextureSelector(unsigned& id) {
 	ImGui::End();
 }
 
-void ModuleTexture::DrawTexture(Texture& texture) {
-	ImGui::Text("Path: %s", texture.path.c_str());
-	ImGui::Text("Type: %s", texture.type.c_str());
-	ImGui::Text("Width: %d", texture.width);
-	ImGui::Text("Heigth: %d", texture.height);
+void ModuleTexture::DrawTexture(Texture* texture) {
+	ImGui::Text("Name: %s", texture->name.c_str());
+	ImGui::Text("Width: %d", texture->width);
+	ImGui::Text("Heigth: %d", texture->height);
 }
 
 
-Material* ModuleTexture::CreateMaterial() {
-	return new Material(nullptr);
+Material* ModuleTexture::CreateMaterial(GameObject* owner) {
+	return new Material(owner);
+}
+
+void ModuleTexture::LoadSkybox(std::vector<std::string> faces)const
+{
+	
 }

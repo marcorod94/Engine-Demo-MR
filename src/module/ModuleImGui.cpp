@@ -8,13 +8,17 @@
 #include "ModuleScene.h"
 #include "ModuleInput.h"
 #include "ModuleProgram.h"
+#include "ModuleTimer.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
 #include "GL/glew.h"
 #include "assimp/version.h"
+#include "util/DebugDraw.h"
 #include "main/GameObject.h"
 #include "component/Camera.h"
+#include "component/Transform.h"
+#include "util/DebugDraw.h"
 
 bool ModuleImGui::Init() {
 	IMGUI_CHECKVERSION();
@@ -29,11 +33,14 @@ bool ModuleImGui::Init() {
 	ImFontConfig icons_config;
 	icons_config.MergeMode = true;
 	icons_config.PixelSnapH = true;
-	io.Fonts->AddFontFromFileTTF("Fonts/fa-solid-900.ttf", 16.0F, &icons_config, iconsRanges);
-	io.Fonts->AddFontFromFileTTF("Fonts/fa-regular-400.ttf", 16.0F, &icons_config, iconsRanges);
-	io.Fonts->AddFontFromFileTTF("Fonts/fa-brands-400.ttf", 16.0F, &icons_config, iconsBrandRange);
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
+	
+	io.Fonts->AddFontFromFileTTF("Assets/Fonts/fa-solid-900.ttf", 16.0F, &icons_config, iconsRanges);
+	io.Fonts->AddFontFromFileTTF("Assets/Fonts/fa-regular-400.ttf", 16.0F, &icons_config, iconsRanges);
+	io.Fonts->AddFontFromFileTTF("Assets/Fonts/fa-brands-400.ttf", 16.0F, &icons_config, iconsBrandRange);
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigWindowsMoveFromTitleBarOnly = true;
 	return true;
 }
 
@@ -42,26 +49,51 @@ update_status ModuleImGui::Update() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
-	if (App->scene->root) {
-		Camera* cam = (Camera*)App->scene->root->FindComponent(ComponentType::Camera);
-		cam->Draw();
+	if (App->camera->loadedCameras[0]->isHovered) 
+	{
+		//ImGui::lo
 	}
+	//ImGui::ShowDemoWindow();
+	Camera* cam = nullptr;
+	if (App->scene->root) {
+		for (unsigned i = 0; i < App->camera->loadedCameras.size(); i++) {
+			cam = App->camera->loadedCameras[i];
+			cam->Draw(cam->owner->name.c_str());
+			cam->DrawFrustumPlanes();
+		}
+	}
+	if (showProperties) {
+		App->scene->root->ShowProperties(&showProperties);
+	}
+	
 	if (showHierarchy) {
 		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
-		if (ImGui::TreeNode(App->scene->root->name.c_str())) {
-			int root = 0;
-			DrawHierarchy(App->scene->root->children, root);
-			ImGui::TreePop();
-		}
+		DrawHierarchy(App->scene->root);
 		ImGui::End();
 	}
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu(u8"\uf0c9 Menu")) {
-		showModule = ImGui::MenuItem("Module Configuration");
-		showProperties = ImGui::MenuItem("Properties");
-		showInfo = ImGui::MenuItem("System Information");
-		showConsole = ImGui::MenuItem("Console Window");
-		showHierarchy = ImGui::MenuItem("Hierarchy");
+		if (ImGui::MenuItem("Module Configuration")) {
+			showModule = true;
+		}
+		if (ImGui::MenuItem("Properties")) {
+			showProperties = true;
+		}
+		if (ImGui::MenuItem("System Information")) {
+			showInfo = true;
+		}
+		if (ImGui::MenuItem(u8"\uf120 Console Window")) {
+			showConsole = true;
+		}
+		if (ImGui::MenuItem(u8"\uf542 Hierarchy")) {
+			showHierarchy = true;
+		}
+		if (ImGui::MenuItem(u8"\uf093 Load")) {
+			App->scene->LoadScene();
+		}
+		if (ImGui::MenuItem(u8"\uf019 Save")) {
+			App->scene->SaveScene();
+		}
 		ImGui::EndMenu();
 	}
 	if (ImGui::BeginMenu(u8"\uf059 Help")) {
@@ -79,6 +111,7 @@ update_status ModuleImGui::Update() {
 	if (showConsole) {
 		DrawConsoleWindow();
 	}
+
 	if (showInfo) {
 		ShowInformationWindow(io);
 	}
@@ -87,12 +120,13 @@ update_status ModuleImGui::Update() {
 	}
 	if (showAbout) {
 		ImGui::Begin("About", &showAbout);
-		ImGui::Text("Engine: EM ENGINE");
+		ImGui::Text(u8"Engine: \uf534 Engine");
 		ImGui::Text("Desciption: Super Cool Engine develop with love <3");
-		ImGui::Text("Author: Marco Rodriguez");
+		ImGui::Text("Author: Artemis Georgakopoulou && Marco Rodriguez");
 		ImGui::End();
 	}
-	
+	ShowGizmosButtons();
+	//ImGuizmo::ViewManipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), 1.f, ImVec2(io.DisplaySize.x - 128, 0), ImVec2(128, 128), 0x10101010);
 	// Render
 	ImGui::Render();
 	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
@@ -116,7 +150,6 @@ void ModuleImGui::AddLog(const char* fmt, ...) {
 	buffer.append("\n");
 	scrollToBottom = true;
 }
-
 
 const void  ModuleImGui::ShowModulesWindow() {
 	ImGui::Begin("Module Configuration", &showModule);
@@ -164,20 +197,29 @@ const void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
 		ms_log.push_back(1000.0F / io.Framerate);
 		sprintf_s(title, 25, "Milliseconds %.1F", ms_log[ms_log.size() - 1]);
 		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0F, 40.0F, ImVec2(310, 100));
+		ImGui::Text("Frames:  %d", App->timer->frameCount);
+		sprintf(frameInfo, "Limiting to %d fps means each frame needs to take %f ms", App->timer->limitFPS, 1000.f / App->timer->limitFPS);
+		ImGui::Text(frameInfo);
+		ImGui::SliderInt("FPS", &App->timer->limitFPS, 30, 60);
+		ImGui::Separator();
+		if (ImGui::SliderFloat("Game Clock Scale", &App->timer->timeScale, 0.5, 2))
+		{
+			App->timer->SetTimeScale(App->timer->timeScale);
+		}
 		ImGui::TreePop();
 	}
-	if (ImGui::TreeNode("Hardware")) {
+	if (ImGui::TreeNode(u8"\uf2db Hardware")) {
 		ImGui::Text("CPU cores: %d (Cache: %d Kb)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
 		ImGui::Text("System RAM: %d Mb", SDL_GetSystemRAM());
 		ImGui::Text("GPU Vendor: %s", glGetString(GL_VENDOR));
 		ImGui::Text("GPU Model: %s", glGetString(GL_RENDERER));
 		ImGui::TreePop();
 	}
-	if (ImGui::TreeNode("Libraries")) {
+	if (ImGui::TreeNode(u8"\uf02d Libraries")) {
 		SDL_version compiled;
 		SDL_VERSION(&compiled);
 		ImGui::Text("SDL: %d.%d.%d", compiled.major, compiled.minor, compiled.patch);
-		ImGui::Text("DevIL: %d", IL_VERSION);
+		//ImGui::Text("DevIL: %d", IL_VERSION);
 		ImGui::Text("Glew: %s", glewGetString(GLEW_VERSION));
 		ImGui::Text("ImGui: %s", IMGUI_VERSION);
 		ImGui::Text("Assimp: %d.%d.%d", ASSIMP_API::aiGetVersionMajor(), ASSIMP_API::aiGetVersionMinor(), ASSIMP_API::aiGetVersionRevision());
@@ -188,8 +230,7 @@ const void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
 
 const void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
 	for (unsigned int i = 0; i < textures.size(); i++) {
-		ImGui::Text("Path: %s", textures[i].path.c_str());
-		ImGui::Text("Type: %s", textures[i].type.c_str());
+		ImGui::Text("Name: %s", textures[i].name.c_str());
 		ImGui::Text("Width: %d", textures[i].width);
 		ImGui::Text("Heigth: %d", textures[i].height);
 		if (ImGui::ImageButton((void*)(intptr_t)textures[i].id, ImVec2(128, 128))) {
@@ -198,43 +239,44 @@ const void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
 	}
 }
 
-const void ModuleImGui::DrawHierarchy(const std::vector<GameObject*>& objects, int& index) {
-	for (unsigned i = 0; i < objects.size(); ++i)
-	{
-		++index;
-		unsigned flags = ImGuiTreeNodeFlags_None;
-		if (objects[i]->children.size() == 0) {
-			flags = ImGuiTreeNodeFlags_Leaf;
+const void ModuleImGui::DrawHierarchy(GameObject* object) {
+	
+	unsigned flags = ImGuiTreeNodeFlags_None;
+	if (object->children.size() == 0) {
+		flags = ImGuiTreeNodeFlags_Leaf;
+	}
+	flags |= selected.compare(object->uuid) == 0 ? ImGuiTreeNodeFlags_Selected : 0;
+	if (ImGui::TreeNodeEx(object->name.c_str(), flags)) {
+		if (ImGui::IsItemClicked()) {
+			selected = object->uuid;
 		}
-		flags |= index == selected ? ImGuiTreeNodeFlags_Selected : 0;
-		if (ImGui::TreeNodeEx(objects[i]->name.c_str(), flags)) {
-			if (selected == index) {
-				objects[i]->ShowProperties();
+		if (selected.compare(object->uuid) == 0 && showProperties) {
+				object->ShowProperties(&showProperties);
+				dd::axisTriad(((Transform*)object->FindComponent(ComponentType::Transform))->worldTransform, 0.125f, 5.25f, 0, false);
+				selectedGO = object;
+				App->renderer->DrawGizmo(object);
+		}
+		if (ImGui::BeginDragDropTarget()) {
+			if (ImGui::AcceptDragDropPayload("ITEM")) {
+				sourceGO->parent->DeleteChild(sourceGO);
+				sourceGO->parent = object;
+				object->children.push_back(sourceGO);
+				Transform* trans = (Transform*)object->FindComponent(ComponentType::Transform);
+				trans->UpdateDirtyFlag();
+				sourceGO = nullptr;
 			}
-			if (ImGui::IsItemClicked()) {
-				selected = index;
-			}
-			if (ImGui::BeginDragDropTarget()) {
-				if (ImGui::AcceptDragDropPayload("ITEM")) {
-					// TODO check for firts item error
-					LOG("New: %d", sourceGO);
-					sourceGO->parent->DeleteChild(sourceGO);
-					sourceGO->parent = objects[i];
-					objects[i]->children.push_back(sourceGO);
-					sourceGO = nullptr;
-				}
-				ImGui::EndDragDropTarget();
-			}
+			ImGui::EndDragDropTarget();
+		}
 
-			if (ImGui::BeginDragDropSource()) {
-				LOG("Source: %d", objects[i]);
-				sourceGO = objects[i];
-				ImGui::SetDragDropPayload("ITEM", nullptr, 0);
-				ImGui::EndDragDropSource();
-			}
-			DrawHierarchy(objects[i]->children, index);
-			ImGui::TreePop();
+		if (ImGui::BeginDragDropSource()) {
+			sourceGO = object;
+			ImGui::SetDragDropPayload("ITEM", nullptr, 0);
+			ImGui::EndDragDropSource();
 		}
+		for (auto item : object->children) {
+			DrawHierarchy(item);
+		}
+		ImGui::TreePop();
 	}
 }
 
@@ -284,11 +326,11 @@ void ModuleImGui::LoadShapes(ShapeType s) {
 	shape.radius = 1.0F;
 	shape.slices = 30;
 	shape.stacks = 30;
-	App->model->LoadShapes(root, "shape0", float3(2.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape1", float3(5.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape2", float3(8.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape3", float3(11.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape4", float3(14.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape0", &float3(2.0F, 2.0F, 0.0F), &Quat::identity, &shape, ProgramType::Default, &float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape1", &float3(5.0F, 2.0F, 0.0F), &Quat::identity, &shape, ProgramType::Default, &float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape2", &float3(8.0F, 2.0F, 0.0F), &Quat::identity, &shape, ProgramType::Default, &float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape3", &float3(11.0F, 2.0F, 0.0F), &Quat::identity, &shape,ProgramType::Default, &float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape4", &float3(14.0F, 2.0F, 0.0F), &Quat::identity, &shape, ProgramType::Default, &float4(1.0F, 1.0F, 1.0F, 1.0F));
 }
 
 const void ModuleImGui::DrawConsoleWindow()
@@ -298,13 +340,13 @@ const void ModuleImGui::DrawConsoleWindow()
 	ImGui::Begin("Console", &showConsole);
 	ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
 	ImGui::SetWindowPos(ImVec2(0, App->window->screenHeight - consoleH));
-	ImVec2 size = ImGui::GetWindowSize();//to be able to resize it
-	if (size.x != consoleW && size.y != consoleH)
-	{
-		consoleW = size.x;
-		consoleH = size.y;
-		ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
-	}
+	//ImVec2 size = ImGui::GetWindowSize();//to be able to resize it
+	//if (size.x != consoleW && size.y != consoleH)
+	//{
+	//	consoleW = size.x;
+	//	consoleH = size.y;
+	//	ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
+	//}
 
 	ImGui::TextUnformatted(buffer.begin());
 	if (scrollToBottom)
@@ -313,8 +355,34 @@ const void ModuleImGui::DrawConsoleWindow()
 	ImGui::End();
 }
 
-const void ModuleImGui::DrawInspectorWindow()
-{
 
+void ModuleImGui::ShowGizmosButtons()
+{
+	if (ImGui::Button(u8"\uf0b2"))
+	{
+		App->renderer->gizmoOperation = ImGuizmo::TRANSLATE;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(u8"\uf021"))
+	{
+		App->renderer->gizmoOperation = ImGuizmo::ROTATE;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(u8"\uf31e"))
+	{
+		App->renderer->gizmoOperation = ImGuizmo::SCALE;
+	}
+	ImGui::SameLine(0.0f, 700.0f);
+	if (ImGui::Button(u8"\uf04b"))
+	{
+		App->timer->Play();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button(u8"\uf04c"))
+	{
+		App->timer->Pause();
+		AddLog("Game Time: %f", App->timer->gameTime/1000);
+		AddLog("Real Time: %f", App->timer->realTime/1000);
+	}
 }
 

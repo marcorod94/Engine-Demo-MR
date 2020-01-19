@@ -16,6 +16,10 @@ enum class ProgramType
 class ModuleProgram : public Module {
 public:
 	unsigned programs[int(ProgramType::Count)];
+	unsigned int skyboxProg = 0;
+	unsigned int gridProg = 0;
+	unsigned int defaultProg = 0;
+	unsigned int uniformsBuffer = 0;
 	ModuleProgram() {}
 	~ModuleProgram() {}
 

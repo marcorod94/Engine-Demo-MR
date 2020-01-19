@@ -3,21 +3,13 @@
 
 void Transform::DrawView() {
 	if (ImGui::TreeNode("Transform")) {
-		DrawFloat3View("Position", &position, -100.00F, 100.00F);
-		DrawFloat3View("Rotation", &rotationEU, -360.00F, 360.00F);
-		DrawFloat3View("Scalling", &scaling, 0.000001, 50.00F, 0.001F, "%.6F");
-		ImGui::TreePop();
-	}
-}
-
-void Transform::CalculateWorldTransform() {
-	if (owner->parent) {
-		Transform* trans = ((Transform*)owner->parent->FindComponent(ComponentType::Transform));
-		if (trans) {
-			worldTransform = trans->localTransform * localTransform;
+		ImGui::Text("UUID: %s", uuid.c_str());
+		if (ImGui::DragFloat3("Position", position.ptr(), 1.0F, -100.00F, 100.00F) ||
+			ImGui::DragFloat3("Rotation", rotationEU.ptr(), 1.0F, -360.00F, 360.00F) ||
+			ImGui::DragFloat3("Scalling", scaling.ptr(), 0.001F, -50.00F, 50.00F)) {
+			UpdateDirtyFlag();
 		}
-	} else {
-		worldTransform = localTransform;
+		ImGui::TreePop();
 	}
 }
 
@@ -32,19 +24,66 @@ void Transform::SetTransform(const aiMatrix4x4& trans) {
 	rotationEU = RadToDeg(rotationEU);
 	CalculateWorldTransform();
 }
-
-void Transform::CalculateTransform() {
-	rotation = rotation.FromEulerXYZ(DegToRad(rotationEU.x), DegToRad(rotationEU.y), DegToRad(rotationEU.z));
-	localTransform = localTransform.FromTRS(position, rotation, scaling);
+void Transform::SetTransform(const float4x4* trans) {
+	localTransform = *trans;
+	localTransform.Decompose(position, rotation, scaling);
+	rotationEU = rotation.ToEulerXYZ();
+	rotationEU = RadToDeg(rotationEU);
 	CalculateWorldTransform();
 }
 
+void Transform::CalculateTransform() {
+	if (isDirty) {
+		rotation = rotation.FromEulerXYZ(DegToRad(rotationEU.x), DegToRad(rotationEU.y), DegToRad(rotationEU.z));
+		localTransform = localTransform.FromTRS(position, rotation, scaling);
+		CalculateWorldTransform();
+	}
+}
 
-void Transform::DrawFloat3View(const char* label, float3* vector, float min, float max, float speed, const char* format) {
-	if (ImGui::TreeNode(label)) {
-		ImGui::DragFloat("X", &vector->x, speed, min, max, format);
-		ImGui::DragFloat("Y", &vector->y, speed, min, max, format);
-		ImGui::DragFloat("Z", &vector->z, speed, min, max, format);
-		ImGui::TreePop();
+void Transform::CalculateWorldTransform() {
+	if (owner->parent) {
+		Transform* trans = ((Transform*)owner->parent->FindComponent(ComponentType::Transform));
+		if (trans) {
+			worldTransform = trans->localTransform * localTransform;
+		}
+	}
+	else {
+		worldTransform = localTransform;
+	}
+	owner->TransformAABB(&worldTransform);
+	if (owner->parent) {
+		owner->parent->originalBox.Enclose(owner->originalBox);
+		owner->parent->box.Enclose(owner->box);
+	}
+}
+
+void Transform::OnLoad(rapidjson::Document::Object* object) {
+	uuid = (object->FindMember("uuid"))->value.GetString();
+	Component::GetFloat3FromObjectJSON(&(object->FindMember("position"))->value.GetObjectA(), &position);
+	Component::GetFloat3FromObjectJSON(&(object->FindMember("rotation"))->value.GetObjectA(), &rotationEU);
+	Component::GetFloat3FromObjectJSON(&(object->FindMember("scalling"))->value.GetObjectA(), &scaling);
+	CalculateTransform();
+}
+
+void Transform::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
+	rapidjson::Value object(rapidjson::kObjectType);
+	object.AddMember("uuid", rapidjson::StringRef(uuid.c_str()), *allocator);
+	object.AddMember("type", int(type), *allocator);
+	std::string owneruuid;
+	if (owner) {
+		owneruuid = owner->uuid;
+	}
+	object.AddMember("owneruuid", rapidjson::StringRef(owneruuid.c_str()), *allocator);
+	Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "position", &position);
+	Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "rotation", &rotationEU);
+	Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "scalling", &scaling);
+	list->PushBack(object, *allocator);
+}
+
+void Transform::UpdateDirtyFlag() {
+	isDirty = true;
+	for (auto item : owner->children) {
+		Transform* trans = (Transform*)item->FindComponent(ComponentType::Transform);
+		trans->UpdateDirtyFlag();
 	}
 }

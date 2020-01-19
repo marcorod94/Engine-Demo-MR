@@ -40,21 +40,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>./src;./include/util;./include/imgui;./include/MathGeoLib;./include/SDL;./include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./include/ImGuizmo;./src;./include/util;./include/imgui;./include/MathGeoLib;./include/SDL;./include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>./lib/x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;assimp-vc140-mt.lib;DevIL.lib;ILU.lib;ILUT.lib;glew32.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>crossguid.lib;SDL2.lib;SDL2main.lib;assimp-vc140-mt.lib;DevIL.lib;ILU.lib;ILUT.lib;glew32.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -65,19 +69,27 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>./Libraries/assimp/include;./Libraries/DevIL/include;./Libraries/imgui;./Libraries/MathGeoLib/include;./Libraries/glew-2.1.0/include;./Libraries/SDL/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./include/ImGuizmo;./src;./include/util;./include/imgui;./include/MathGeoLib;./include/SDL;./include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;WINDOWS_IGNORE_PACKING_MISMATCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>./Libraries/assimp/lib/x86;./Libraries/DevIL/lib/x86/Release;./Libraries/SDL/lib/x86;./Libraries/glew-2.1.0/lib/Release/Win32</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc140-mt.lib;DevIL.lib;ILU.lib;ILUT.lib;glew32.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>./lib/x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>crossguid.lib;SDL2.lib;SDL2main.lib;assimp-vc140-mt.lib;DevIL.lib;ILU.lib;ILUT.lib;glew32.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\util\AABBTree.h" />
+    <ClInclude Include="src\util\microSTimer.h" />
+    <ClInclude Include="src\module\ModuleTimer.h" />
+    <ClInclude Include="src\module\ModuleFileSystem.h" />
+    <ClInclude Include="src\util\MeshImporter.h" />
+    <ClInclude Include="src\util\MaterialImporter.h" />
     <ClInclude Include="src\component\Camera.h" />
     <ClInclude Include="src\component\Component.h" />
     <ClInclude Include="src\component\Material.h" />
@@ -98,8 +110,15 @@
     <ClInclude Include="src\module\ModuleTexture.h" />
     <ClInclude Include="src\module\ModuleWindow.h" />
     <ClInclude Include="src\util\DebugDraw.h" />
+    <ClInclude Include="src\util\Timer.h" />
+    <ClInclude Include="src\util\Importer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\util\AABBTree.cpp" />
+    <ClCompile Include="include\ImGuizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="include\ImGuizmo\ImGradient.cpp" />
+    <ClCompile Include="include\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="include\ImGuizmo\ImSequencer.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
@@ -139,6 +158,11 @@
     <ClCompile Include="include\MathGeoLib\Math\SSEMath.cpp" />
     <ClCompile Include="include\MathGeoLib\Math\TransformOps.cpp" />
     <ClCompile Include="include\MathGeoLib\Time\Clock.cpp" />
+    <ClCompile Include="src\util\microSTimer.cpp" />
+    <ClCompile Include="src\module\ModuleTimer.cpp" />
+    <ClCompile Include="src\module\ModuleFileSystem.cpp" />
+    <ClCompile Include="src\util\MeshImporter.cpp" />
+    <ClCompile Include="src\util\MaterialImporter.cpp" />
     <ClCompile Include="src\component\Camera.cpp" />
     <ClCompile Include="src\component\Material.cpp" />
     <ClCompile Include="src\component\Transform.cpp" />
@@ -157,6 +181,7 @@
     <ClCompile Include="src\module\ModuleScene.cpp" />
     <ClCompile Include="src\module\ModuleTexture.cpp" />
     <ClCompile Include="src\module\ModuleWindow.cpp" />
+    <ClCompile Include="src\util\Timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
