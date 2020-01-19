@@ -15,8 +15,8 @@ public:
 	float4x4 worldTransform = float4x4::identity;
 
 	Transform(GameObject* owner): Component(owner, ComponentType::Transform) {}
-	Transform(GameObject* owner, const float3& position, const Quat& rotation) : Component(owner, ComponentType::Transform), position(position), rotation(rotation) {
-		localTransform = float4x4(rotation, position);
+	Transform(GameObject* owner, const float3* position, const Quat* rotation) : Component(owner, ComponentType::Transform), position(*position), rotation(*rotation) {
+		localTransform = float4x4(*rotation, *position);
 	}
 	void DrawView();
 	void SetTransform(const aiMatrix4x4&);

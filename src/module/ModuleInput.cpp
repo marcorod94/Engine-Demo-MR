@@ -64,11 +64,11 @@ update_status ModuleInput::PreUpdate()
 			case SDL_DROPFILE:
 				path = event.drop.file;
 				extension = path.substr(path.find_last_of(".") + 1);
-				if (extension.compare("png") == 0 || extension.compare("bmp") == 0 || extension.compare("jpg") == 0 || extension.compare("tif") == 0) {
-					App->texture->LoadTexture(path);
+				if (extension.compare("tbin") == 0) {
+					App->texture->LoadTexture(path.c_str());
 				}
-				if (extension.compare("fbx") == 0 || extension.compare("FBX") == 0) {
-					App->model->LoadModel(path);
+				if (extension.compare("mbin") == 0) {
+					App->model->LoadModel(path.c_str());
 				}
 				break;
 			

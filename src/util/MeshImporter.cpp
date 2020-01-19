@@ -3,6 +3,8 @@
 #include "module/ModuleImGui.h"
 #include "module/ModuleFileSystem.h"
 #include "module/ModuleTexture.h"
+#include "module/ModuleScene.h"
+#include "main/GameObject.h"
 #include "component/Mesh.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -16,63 +18,88 @@ MeshImporter::~MeshImporter() {
 
 }
 bool MeshImporter::Import(const char* file, const char* path, std::string* output) {
+	std::string name = file;
+	name = name.substr(name.find_last_of('\\') + 1, name.size());
+	name = name.substr(name.find_last_of('/') + 1, name.size());
+	name = name.substr(0, name.find_last_of('.'));
 	Assimp::DefaultLogger::create("", Assimp::Logger::VERBOSE);
 	const unsigned int severity = Assimp::Logger::Debugging | Assimp::Logger::Info | Assimp::Logger::Err | Assimp::Logger::Warn;
 	Assimp::Importer importer;
 	Assimp::DefaultLogger::get()->attachStream(new AssimpLog, severity);
-	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(file, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		App->imgui->AddLog("ERROR::ASSIMP:: %s", importer.GetErrorString());
 		return false;
 	}
-	processNode(scene->mRootNode, scene);
-
+	std::string newFile = path;
+	newFile.append("/").append(name.c_str()).append(".mbin");
+	processNode(scene->mRootNode, scene, newFile.c_str());
 	Assimp::DefaultLogger::kill();
 	return true;
 }
 
-bool MeshImporter::Load(const char* file, Mesh* mesh) {
+bool MeshImporter::Load(const char* file, GameObject* parent) {
+	std::string name = file;
+	name = name.substr(name.find_last_of('\\') + 1, name.size());
+	name = name.substr(name.find_last_of('/') + 1, name.size());
+	name = name.substr(0, name.find_last_of('.'));
+	std::string fileName = name;
 	char * data;
-	App->filesys->Load(file, "", &data);
+	int size;
+	App->filesys->Load(file, &data, &size);
+	GameObject* child;
 	char* cursor = data;
+	int cursorAux = 0;
+	int i = 1;
+	while (cursorAux < size) {
+		fileName = name;
+		fileName.append(std::to_string(i));
+		child = App->scene->CreateGameObject(fileName.c_str());
+		Mesh* mesh = (Mesh*)child->CreateComponent(ComponentType::Mesh);
+		//cursor += cursorAux;
+		unsigned int ranges[2];
+		unsigned int bytes = sizeof(ranges);
+		memcpy(ranges, cursor, bytes);
 
-	unsigned int ranges[3];
-	unsigned int bytes = sizeof(ranges);
-	memcpy(ranges, cursor, bytes);
+		mesh->indices.resize(ranges[0]);
 
-	std::vector<unsigned int> indices;
-	std::vector<Vertex> vertexs;
+		cursor += bytes;
+		cursorAux += bytes;
+		bytes = sizeof(unsigned int) * ranges[0];
+		memcpy(&mesh->indices.front(), cursor, bytes);
 
-	indices.resize(ranges[0]);
+		mesh->vertices.resize(ranges[1]);
 
-	cursor += bytes; // Get indices
-	bytes = sizeof(uint32_t) * ranges[0];
-	memcpy(&indices.front(), cursor, bytes);
-
-	vertexs.resize(ranges[1]);
-
-	cursor += bytes; // Get vertices
-	bytes = sizeof(Vertex) * ranges[1];
-	memcpy(&vertexs.front(), cursor, bytes);
+		cursor += bytes;
+		cursorAux += bytes;
+		bytes = sizeof(Vertex) * ranges[1];
+		memcpy(&mesh->vertices.front(), cursor, bytes);
+		++i;
+		mesh->Setup();
+		child->parent = parent;
+		parent->children.push_back(child);
+		cursor += bytes;
+		cursorAux += bytes;
+	}
+	
 
 	return true;
 }
 
-void MeshImporter::processNode(const aiNode *node, const aiScene *scene) {
+void MeshImporter::processNode(const aiNode *node, const aiScene *scene, const char* file) {
 
 	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		processMesh(mesh);
-		processMaterials(scene->mMaterials[mesh->mMaterialIndex]);
+		processMesh(mesh, file);
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++) {
-		processNode(node->mChildren[i], scene);
+		processNode(node->mChildren[i], scene, file);
 	}
 }
 
 
-void MeshImporter::processMesh(const aiMesh* mesh) {
+void MeshImporter::processMesh(const aiMesh* mesh, const char* file) {
 	std::vector<Vertex> vertexs;
 	std::vector<unsigned int> indices;
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -134,40 +161,6 @@ void MeshImporter::processMesh(const aiMesh* mesh) {
 	bytes = sizeof(Vertex) *  vertexs.size();
 	memcpy(cursor, &vertexs.front(), bytes);
 
-	App->filesys->Save("test.bin", data, size);
-}
-
-void MeshImporter::processMaterials(const aiMaterial* mat) {
-	for (int i = 0; i <= aiTextureType_UNKNOWN; i++) {
-		loadMaterialTextures(mat, aiTextureType(i));
-	}
-}
-
-void MeshImporter::loadMaterialTextures(const aiMaterial* mat, aiTextureType type) {
-	for (unsigned i = 0; i < mat->GetTextureCount(type); ++i) {
-		aiString str;
-		aiTextureMapping mapping;
-		unsigned uvindex = 0;
-		mat->GetTexture(type, i, &str, &mapping, &uvindex);
-		std::string path = str.C_Str();
-		std::string textureName = path.substr(path.find_last_of('\\') + 1, path.size());
-		App->imgui->AddLog("Trying to load texture: %s", path.c_str());
-		if (App->filesys->Exists(path.c_str())) {
-			path = directory;
-			path = path.append(textureName);
-			App->imgui->AddLog("Trying to load texture: %s", path.c_str());
-			if (App->filesys->Exists(path.c_str())) {
-				path = TEXTURE_PATH;
-				path = path.append(textureName);
-				App->imgui->AddLog("Trying to load texture: %s", path.c_str());
-				if (App->filesys->Exists(path.c_str())) {
-					path = TEXTURE_PATH;
-					path = path.append(DEFAULT_TEXTURE);
-					App->imgui->AddLog("Trying to load texture: %s", path.c_str());
-				}
-			}
-		}
-		App->texture->importer->Import(path.c_str(), "", nullptr);
-	}
+	App->filesys->Save(file, data, size, true);
 }
 

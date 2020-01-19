@@ -24,14 +24,13 @@
 bool ModuleScene::Init() {
 	root = CreateGameObject("Root Scene");
 	abbTree = new AABBTree(5);
-	App->model->LoadModel(std::string("Models\\Zombunny.fbx"));
 	MeshShape shape;
 	shape.type = ShapeType::Torus;
 	shape.size = 0.5F;
 	shape.radius = 1.0F;
 	shape.slices = 20;
 	shape.stacks = 20;
-	App->model->LoadShapes(root, "sphere0", float3(1.0f, 1.0f, 1.0f), Quat::identity, shape, ProgramType::Default, float4(0.5f, 0.0f, 0.5f, 1.0f));
+	App->model->LoadShapes(root, "sphere0", &float3(1.0f, 1.0f, 1.0f), &Quat::identity, &shape, ProgramType::Default, &float4(0.5f, 0.0f, 0.5f, 1.0f));
     //sceneViewCamera
 	Camera* cam = (Camera*) root->CreateComponent(ComponentType::Camera);
 	//activeCamera
@@ -55,12 +54,12 @@ bool ModuleScene::CleanUp() {
 }
 
 
-GameObject* ModuleScene::CreateGameObject(const std::string& name) const {
+GameObject* ModuleScene::CreateGameObject(const char* name) const {
 	return new GameObject(name);
 
 }
 
-GameObject* ModuleScene::CreateGameObject(const std::string& name, const float3& pos, const Quat& rot) const {
+GameObject* ModuleScene::CreateGameObject(const char* name, const float3* pos, const Quat* rot) const {
 	return new GameObject(name, pos, rot);
 }
 
@@ -97,7 +96,7 @@ void ModuleScene::LoadScene() {
 	delete root;
 	root = new GameObject();
 	char* buffer;
-	App->filesys->Load("", "test2.json", &buffer);
+	App->filesys->Load("test2.json", &buffer);
 	std::string content = "";
 	content.append(buffer);
 	config.Parse(content.c_str());

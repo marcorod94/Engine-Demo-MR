@@ -13,7 +13,7 @@
 //#include "rapidjson/rapidjson.h"
 //#include "rapidjson/document.h"
 
-GameObject::GameObject(const std::string& name) : name(name) {
+GameObject::GameObject(const char* name) : name(name) {
 	CreateComponent(ComponentType::Transform);
 }
 
@@ -91,7 +91,7 @@ void GameObject::ShowProperties(bool* show) {
 	ImGui::End();
 }
 
-void GameObject::CreateTransform(const float3& pos, const Quat& rot) {
+void GameObject::CreateTransform(const float3* pos, const Quat* rot) {
 	components.push_back(new Transform(this, pos, rot));
 }
 

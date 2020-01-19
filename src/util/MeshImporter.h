@@ -12,19 +12,17 @@ struct aiNode;
 struct aiMesh;
 struct aiMaterial;
 enum aiTextureType;
-class Mesh;
+class GameObject;
 class MeshImporter : public Importer {
 public:
 	MeshImporter();
 	~MeshImporter();
 	bool Import(const char*, const char*, std::string*);
-	bool Load(const char*, Mesh*);
+	bool Load(const char*, GameObject*);
 private:
 	std::string directory;
-	void processNode(const aiNode*, const aiScene*);
-	void processMesh(const aiMesh*);
-	void processMaterials(const aiMaterial*);
-	void loadMaterialTextures(const aiMaterial*, aiTextureType);
+	void processNode(const aiNode*, const aiScene*, const char*);
+	void processMesh(const aiMesh*, const char*);
 };
 
 class AssimpLog : public Assimp::LogStream {
