@@ -254,7 +254,7 @@ const void ModuleImGui::DrawHierarchy(GameObject* object) {
 				object->ShowProperties(&showProperties);
 				dd::axisTriad(((Transform*)object->FindComponent(ComponentType::Transform))->worldTransform, 0.125f, 1.25f, 0, false);
 				selectedGO = object;
-				//TODO---App->render->ShowGizmo(object);
+				App->renderer->DrawGizmo(object);
 		}
 		if (ImGui::BeginDragDropTarget()) {
 			if (ImGui::AcceptDragDropPayload("ITEM")) {

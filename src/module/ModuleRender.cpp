@@ -259,7 +259,8 @@ void ModuleRender::DrawGizmo(GameObject* selected) {
 
 		if (ImGuizmo::IsUsing()) {
 			App->imgui->AddLog("GIZMO ENABLED");
-			//gizTrans = transModel.;
+			gizTrans->SetTransform(&(transModel.Transposed()));
+			gizTrans->UpdateDirtyFlag();
 		}
 	}
 

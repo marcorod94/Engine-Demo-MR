@@ -91,7 +91,6 @@ void ModuleScene::PickObject(const ImVec2& winSize, const ImVec2& winPos)
 	{
 		return;
 	}
-	
 }
 
 void ModuleScene::LoadScene() {

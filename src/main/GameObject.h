@@ -15,6 +15,8 @@ public:
 	std::string name;
 	std::vector<Component*> components;
 	GameObject* parent = nullptr;
+	AABB originalBox;
+	AABB box;
 	std::vector<GameObject*> children;
 	GameObject() {}
 	GameObject(const std::string&);
@@ -32,6 +34,7 @@ public:
 	void ShowProperties(bool* show);
 	void OnLoad(rapidjson::Document::Object*, GameObject*);
 	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
+	void TransformAABB(float4x4* transform);
 private:
 	void CreateTransform(const float3&, const Quat&);
 	void LoadChildren(rapidjson::Document::Array*, GameObject*);
