@@ -2,6 +2,10 @@
 #define ModuleFileSystem_h
 #include "Module.h"
 #include <fstream>
+#define ASSETS_FOLDER "Assets"
+#define LIBRARY_FOLDER "Library"
+#define TEXTURES_FOLDER "Textures"
+#define MODELS_FOLDER "Models"
 
 class ModuleFileSystem : public Module {
 public:
@@ -12,8 +16,9 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	void Load(const char* , const char*, char**) const;
-	unsigned Save(const char*, const void*, unsigned, bool append = false) const;
+	void Load(const char*, char**) const;
+	void Load(const char*, char**, int*) const;
+	unsigned Save(const char*, const void*, unsigned, bool append = false);
 	bool Remove(const char*);
 	bool Exists(const char*);
 	bool MakeDirectory(const char*);

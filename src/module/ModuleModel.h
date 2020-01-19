@@ -4,10 +4,7 @@
 #include "main/Globals.h"
 #include "Module.h"
 #include "ModuleImGui.h"
-#include <assimp/scene.h>
-#include <assimp/IOStream.hpp>
-#include <assimp/IOSystem.hpp>
-#include <assimp/DefaultLogger.hpp>
+#include "util/MeshImporter.h"
 #include <vector>
 #include <string>
 
@@ -39,6 +36,7 @@ struct Light {
 };
 class ModuleModel: public Module {
 public:
+	MeshImporter* importer = new MeshImporter();
 	Sphere bsphere;
 	Light light;
 	float ambient = 0.0f;
@@ -47,43 +45,17 @@ public:
 	~ModuleModel() {}
 	bool Init();
 	bool CleanUp();
-	void LoadShapes(GameObject*, const char*, const float3&, const Quat&, MeshShape&, ProgramType, const float4&);
+	void LoadShapes(GameObject*, const char*, const float3*, const Quat*, MeshShape*, ProgramType, const float4*);
 	par_shapes_mesh_s* LoadSphere(float, unsigned, unsigned);
 	par_shapes_mesh_s* LoadCylinder(float, float, unsigned, unsigned);
 	par_shapes_mesh_s* LoadTorus(float, float, unsigned, unsigned);
 	par_shapes_mesh_s* LoadCube(float);
-	const void LoadModel(std::string&);
+	const void LoadModel(const char*);
 	void UpdateTexture(Texture&);
 
 private:
 	std::string directory;
-	void processNode(const aiNode*, const aiScene*, GameObject*);
-	void processMesh(const aiMesh*, GameObject*);
-	void processMaterials(const aiMaterial*, GameObject*);
-	void loadMaterialTextures(const aiMaterial*, aiTextureType, Material*);
-	int existsFile(const char*) const;
 	void GenerateMesh(GameObject*, par_shapes_mesh_s*);
 
-};
-
-class AssimpLog : public Assimp::LogStream
-{
-public:
-	// Constructor
-	AssimpLog()
-	{
-		// empty
-	}
-
-	// Destructor
-	~AssimpLog()
-	{
-		// empty
-	}
-	// Write womethink using your own functionality
-	void write(const char* message)
-	{
-		App->imgui->AddLog("Assimp INFO %s", message);
-	}
 };
 #endif

@@ -17,9 +17,9 @@ public:
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> children;
 	GameObject() {}
-	GameObject(const std::string&);
+	GameObject(const char*);
 
-	GameObject(const std::string& name, const float3& pos, const Quat& rot) : name(name) {
+	GameObject(const char* name, const float3* pos, const Quat* rot) : name(name) {
 		CreateTransform(pos, rot);
 	}
 
@@ -33,7 +33,7 @@ public:
 	void OnLoad(rapidjson::Document::Object*, GameObject*);
 	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
 private:
-	void CreateTransform(const float3&, const Quat&);
+	void CreateTransform(const float3*, const Quat*);
 	void LoadChildren(rapidjson::Document::Array*, GameObject*);
 	void LodComponents(rapidjson::Document::Array*);
 	void SaveChildren(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);

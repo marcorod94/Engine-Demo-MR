@@ -33,10 +33,12 @@ bool ModuleImGui::Init() {
 	icons_config.PixelSnapH = true;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	
-	io.Fonts->AddFontFromFileTTF("Fonts/fa-solid-900.ttf", 16.0F, &icons_config, iconsRanges);
-	io.Fonts->AddFontFromFileTTF("Fonts/fa-regular-400.ttf", 16.0F, &icons_config, iconsRanges);
-	io.Fonts->AddFontFromFileTTF("Fonts/fa-brands-400.ttf", 16.0F, &icons_config, iconsBrandRange);
+	io.Fonts->AddFontFromFileTTF("Assets/Fonts/fa-solid-900.ttf", 16.0F, &icons_config, iconsRanges);
+	io.Fonts->AddFontFromFileTTF("Assets/Fonts/fa-regular-400.ttf", 16.0F, &icons_config, iconsRanges);
+	io.Fonts->AddFontFromFileTTF("Assets/Fonts/fa-brands-400.ttf", 16.0F, &icons_config, iconsBrandRange);
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
 	return true;
 }
@@ -207,7 +209,7 @@ const void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
 		SDL_version compiled;
 		SDL_VERSION(&compiled);
 		ImGui::Text("SDL: %d.%d.%d", compiled.major, compiled.minor, compiled.patch);
-		ImGui::Text("DevIL: %d", IL_VERSION);
+		//ImGui::Text("DevIL: %d", IL_VERSION);
 		ImGui::Text("Glew: %s", glewGetString(GLEW_VERSION));
 		ImGui::Text("ImGui: %s", IMGUI_VERSION);
 		ImGui::Text("Assimp: %d.%d.%d", ASSIMP_API::aiGetVersionMajor(), ASSIMP_API::aiGetVersionMinor(), ASSIMP_API::aiGetVersionRevision());
@@ -312,11 +314,11 @@ void ModuleImGui::LoadShapes(ShapeType s) {
 	shape.radius = 1.0F;
 	shape.slices = 30;
 	shape.stacks = 30;
-	App->model->LoadShapes(root, "shape0", float3(2.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape1", float3(5.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape2", float3(8.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape3", float3(11.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
-	App->model->LoadShapes(root, "shape4", float3(14.0F, 2.0F, 0.0F), Quat::identity, shape, ProgramType::Default, float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape0", &float3(2.0F, 2.0F, 0.0F), &Quat::identity, &shape, ProgramType::Default, &float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape1", &float3(5.0F, 2.0F, 0.0F), &Quat::identity, &shape, ProgramType::Default, &float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape2", &float3(8.0F, 2.0F, 0.0F), &Quat::identity, &shape, ProgramType::Default, &float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape3", &float3(11.0F, 2.0F, 0.0F), &Quat::identity, &shape,ProgramType::Default, &float4(1.0F, 1.0F, 1.0F, 1.0F));
+	App->model->LoadShapes(root, "shape4", &float3(14.0F, 2.0F, 0.0F), &Quat::identity, &shape, ProgramType::Default, &float4(1.0F, 1.0F, 1.0F, 1.0F));
 }
 
 const void ModuleImGui::DrawConsoleWindow()
