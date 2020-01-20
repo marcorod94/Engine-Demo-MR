@@ -42,8 +42,6 @@ public:
 	float yaw = 0.0f;
 	float pitch = 0.0f;
 private:
-	
-	float aspect = 1.f;
 	unsigned fb_depth = 0;
 	unsigned fb_tex = 0;
 	unsigned fb_width = 0;

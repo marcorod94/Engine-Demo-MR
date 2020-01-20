@@ -14,7 +14,8 @@
 #include "SDL_mouse.h"
 
 bool ModuleCamera::Init() {
-	int windowWidth, windowHeight;
+	int windowWidth;
+	int windowHeight;
 	SDL_GetWindowSize(App->window->window, &windowWidth, &windowHeight);
 	return true;
 }
@@ -27,41 +28,40 @@ Camera* ModuleCamera::CreateComponentCamera(GameObject* owner)
 }//dont forget to create a remove component also
 
 update_status  ModuleCamera::PreUpdate() {
-	for (int i = 0; i < loadedCameras.size(); i++)
+	for (auto cam : loadedCameras)
 	{
-		loadedCameras[i]->proj = loadedCameras[i]->frustum.ProjectionMatrix();
+		cam->proj = cam->frustum.ProjectionMatrix();
 
-		loadedCameras[i]->model = float4x4::FromTRS(helper1, float3x3::RotateY(loadedCameras[i]->frustum.verticalFov), helper2);
-		loadedCameras[i]->view = LookAt(loadedCameras[i]->frustum.pos, loadedCameras[i]->frustum.front + loadedCameras[i]->frustum.pos, loadedCameras[i]->frustum.up);
-		UpdateAspectRatio(loadedCameras[i], loadedCameras[i]->width, loadedCameras[i]->height);
+		cam->model = float4x4::FromTRS(helper1, float3x3::RotateY(cam->frustum.verticalFov), helper2);
+		cam->view = LookAt(cam->frustum.pos, cam->frustum.front + cam->frustum.pos, cam->frustum.up);
+		UpdateAspectRatio(cam, cam->width, cam->height);
 	}
 	return UPDATE_CONTINUE;
 }
 
 update_status  ModuleCamera::Update() {
-	for (int i = 0; i < loadedCameras.size(); i++)
+	for (auto cam : loadedCameras)
 	{
-		if (loadedCameras[i]->isHovered)
+		if (cam->isHovered)
 		{
 			orbit = false;
-			//App->imgui->AddLog("CAMERA name: %s", loadedCameras[i]->owner->name.c_str());
 			if (App->input->GetKey(SDL_SCANCODE_W)) {
 
-				loadedCameras[i]->frustum.pos += movementSpeed * loadedCameras[i]->frustum.front;
+				cam->frustum.pos += movementSpeed * cam->frustum.front;
 			}
 			if (App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT)) {
-				MouseMove(loadedCameras[i]);
+				MouseMove(cam);
 				if (App->input->GetKey(SDL_SCANCODE_W)) {
-					loadedCameras[i]->frustum.pos += movementSpeed * loadedCameras[i]->frustum.front;
+					cam->frustum.pos += movementSpeed * cam->frustum.front;
 				}
 				if (App->input->GetKey(SDL_SCANCODE_S)) {
-					loadedCameras[i]->frustum.pos -= movementSpeed * loadedCameras[i]->frustum.front;
+					cam->frustum.pos -= movementSpeed * cam->frustum.front;
 				}
 				if (App->input->GetKey(SDL_SCANCODE_A)) {
-					loadedCameras[i]->frustum.pos -= movementSpeed * (loadedCameras[i]->frustum.front.Cross(loadedCameras[i]->frustum.up)).Normalized();
+					cam->frustum.pos -= movementSpeed * (cam->frustum.front.Cross(cam->frustum.up)).Normalized();
 				}
 				if (App->input->GetKey(SDL_SCANCODE_D)) {
-					loadedCameras[i]->frustum.pos += movementSpeed * (loadedCameras[i]->frustum.front.Cross(loadedCameras[i]->frustum.up)).Normalized();
+					cam->frustum.pos += movementSpeed * (cam->frustum.front.Cross(cam->frustum.up)).Normalized();
 				}
 			}
 			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT)) {
@@ -69,13 +69,13 @@ update_status  ModuleCamera::Update() {
 			}
 			if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) && (App->input->GetKey(SDL_SCANCODE_LALT) || App->input->GetKey(SDL_SCANCODE_RALT))) {
 				orbit = true;
-				MouseMove(loadedCameras[i]);
+				MouseMove(cam);
 			}
 			if (App->input->GetKey(SDL_SCANCODE_F)) {
-				Focus(loadedCameras[i]);
+				Focus(cam);
 			}
 			if (App->input->GetMouseButtonDown(SDL_BUTTON_MIDDLE)) {
-				MouseScrolling(loadedCameras[i]);
+				MouseScrolling(cam);
 			}
 			if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT)) {
 			
@@ -84,7 +84,7 @@ update_status  ModuleCamera::Update() {
 			}
 			movementSpeed = cameraSpeed;
 			
-			UpdateAspectRatio(loadedCameras[i], loadedCameras[i]->width, loadedCameras[i]->height);
+			UpdateAspectRatio(cam, cam->width, cam->height);
 		}
 	}
 	return UPDATE_CONTINUE;
@@ -125,10 +125,8 @@ void ModuleCamera::MouseMove(Camera* cam)
 	direction.y = sin(DegToRad(cam->pitch));
 	direction.z = sin(DegToRad(cam->yaw)) * cos(DegToRad(cam->pitch));
 	if (orbit) {
-		/*frustum.pos = App->model->box.CenterPoint() - App->model->box.Size().Normalize() * direction.Normalized();*/
 		cameraTarget = cam->frustum.pos + cam->frustum.front;
 	} else {
-		//cameraTarget = float3::zero;
 		cam->frustum.front = direction.Normalized();
 	}
 	UpdateAspectRatio(cam, cam->width, cam->height);
@@ -148,7 +146,6 @@ void ModuleCamera::MouseScrolling(Camera* cam)
 void ModuleCamera::SetFOV(Camera* cam, float fov)
 {
 	cam->frustum.verticalFov = fov;
-	//UpdateAspectRatio();
 	cam->proj = cam->frustum.ProjectionMatrix();
 	
 }
@@ -168,11 +165,6 @@ void ModuleCamera::SetFarDistance(Camera* cam, const float farDist)
 {
 	cam->frustum.farPlaneDistance = farDist;
 	cam->proj = cam->frustum.ProjectionMatrix();
-}
-
-void ModuleCamera::CalculateRotationAngles(float3& vector) {
-	/*pitch = -RadToDeg(asin(vector.y));
-	yaw = -RadToDeg(acos(vector.x / cos(DegToRad(pitch))));*/
 }
 
 void ModuleCamera::Focus(Camera* cam) {
@@ -210,11 +202,10 @@ void ModuleCamera::ZoomOut(Camera* cam)
 
 bool ModuleCamera::CleanUp()
 {
-	sceneCameras = nullptr;
-	for (std::vector<Camera*>::iterator it = loadedCameras.begin(); it != loadedCameras.end(); ++it)
-		sceneCameras = *it;
-	delete sceneCameras;
-	//sceneCamera = nullptr;
+	for (auto item : loadedCameras) {
+		delete item;
+	}
+	loadedCameras.clear();
 	return true;
 }
 

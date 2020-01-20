@@ -6,6 +6,7 @@
 #include "GL/glew.h"
 #include "rapidjson/document.h"
 #include "util/AABBTree.h"
+#define SCENE_FILE "Scene.json"
 
 struct ImVec2;
 

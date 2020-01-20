@@ -2,14 +2,7 @@
 #define MaterialImporter_h
 #include "Importer.h"
 
-struct Texture {
-	unsigned id;
-	unsigned width;
-	unsigned height;
-	unsigned char* data;
-	std::string name;
-};
-
+struct Texture;
 class MaterialImporter : public Importer {
 public:
 	MaterialImporter();

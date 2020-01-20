@@ -63,6 +63,7 @@ update_status ModuleInput::PreUpdate()
 
 			case SDL_DROPFILE:
 				path = event.drop.file;
+				std::replace(path.begin(), path.end(), '\\', '/');
 				extension = path.substr(path.find_last_of(".") + 1);
 				if (extension.compare("tbin") == 0) {
 					App->texture->LoadTexture(path.c_str());
@@ -78,7 +79,7 @@ update_status ModuleInput::PreUpdate()
 				break;
 
 			case SDL_MOUSEBUTTONDOWN:
-				mousePos = float2(event.button.x, event.button.y);
+				mousePos = float2((float)event.button.x, (float)event.button.y);
 				/*mousePos.x = (float)(event.motion.x / SCREEN_SIZE);
 				mousePos.y = (float)(event.motion.y / SCREEN_SIZE);*/
 

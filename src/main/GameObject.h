@@ -28,13 +28,14 @@ public:
 	~GameObject() {}
 	Component* CreateComponent(const ComponentType);
 	Component* FindComponent(const ComponentType);
-	GameObject* FindGameObject(std::string * );
+	GameObject* FindGameObject(const std::string * );
 	Transform* myTransform = nullptr;
 	void DeleteChild(const GameObject*);
 	void ShowProperties(bool* show);
 	void OnLoad(rapidjson::Document::Object*, GameObject*);
 	void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*);
 	void TransformAABB(float4x4* transform);
+	void CleanUp();
 private:
 	void CreateTransform(const float3*, const Quat*);
 	void LoadChildren(rapidjson::Document::Array*, GameObject*);

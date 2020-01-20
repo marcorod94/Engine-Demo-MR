@@ -13,23 +13,35 @@ public:
 	bool active = true;
 	GameObject* owner = nullptr;
 	Component() {}
+	~Component() {}
 	Component(GameObject* owner, const ComponentType type): owner(owner), type(type) {}
-	virtual ~Component() {}
 	virtual void Enable() { active = true; }
 	virtual void Disable() { active = false; }
 	virtual void DrawView() {}
 	virtual void OnLoad(rapidjson::Document::Object*) {}
 	virtual void OnSave(rapidjson::Document::Array*, rapidjson::Document::AllocatorType*) {}
 protected:
+	virtual void GetFloat2FromObjectJSON(rapidjson::Document::Object* object, float2* vector) {
+		vector->x = (object->FindMember("x"))->value.GetFloat();
+		vector->y = (object->FindMember("y"))->value.GetFloat();
+	}
+
 	virtual void GetFloat3FromObjectJSON(rapidjson::Document::Object* object, float3* vector) {
 		vector->x = (object->FindMember("x"))->value.GetFloat();
 		vector->y = (object->FindMember("y"))->value.GetFloat();
 		vector->z = (object->FindMember("z"))->value.GetFloat();
 	}
 
-	virtual void AddFloat3ToObjectJSON(rapidjson::Document::Object* object, rapidjson::Document::AllocatorType* allocator, const char* label, float3* vector) {
+	virtual void AddFloat2ToObjectJSON(rapidjson::Document::Object* object, rapidjson::Document::AllocatorType* allocator, const char* label, float2* vector) {
 		rapidjson::Value ob(rapidjson::kObjectType);
 		ob.AddMember("x", vector->x, * allocator);
+		ob.AddMember("y", vector->y, *allocator);
+		object->AddMember(rapidjson::StringRef(label), ob, *allocator);
+	}
+
+	virtual void AddFloat3ToObjectJSON(rapidjson::Document::Object* object, rapidjson::Document::AllocatorType* allocator, const char* label, float3* vector) {
+		rapidjson::Value ob(rapidjson::kObjectType);
+		ob.AddMember("x", vector->x, *allocator);
 		ob.AddMember("y", vector->y, *allocator);
 		ob.AddMember("z", vector->z, *allocator);
 		object->AddMember(rapidjson::StringRef(label), ob, *allocator);

@@ -24,7 +24,6 @@ bool ModuleModel::CleanUp() {
 
 const void ModuleModel::LoadModel(const char* file) {
 	std::string name = file;
-	name = name.substr(name.find_last_of('\\') + 1, name.size());
 	name = name.substr(name.find_last_of('/') + 1, name.size());
 	name = name.substr(0, name.find_last_of('.'));
 	GameObject* object = App->scene->CreateGameObject(name.c_str());

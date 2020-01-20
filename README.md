@@ -1,4 +1,4 @@
-# EM ENGINE
+# Infinity Engine
 A demo of an engine for game development develop from scratch, it has a camera system, a grad and drop model and texture loader system, you can find the source code [here.](https://github.com/marcorod94/Engine-Demo-MR)
 
 ### Libraries

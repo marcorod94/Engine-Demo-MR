@@ -50,6 +50,7 @@ update_status ModuleScene::Update() {
 }
 
 bool ModuleScene::CleanUp() {
+	root->CleanUp();
 	return true;
 }
 
@@ -93,10 +94,11 @@ void ModuleScene::PickObject(const ImVec2& winSize, const ImVec2& winPos)
 }
 
 void ModuleScene::LoadScene() {
-	delete root;
-	root = new GameObject();
+	App->camera->CleanUp();
+	App->texture->CleanUp();
+	CleanUp();
 	char* buffer;
-	App->filesys->Load("test2.json", &buffer);
+	App->filesys->Load(SCENE_FILE, &buffer);
 	std::string content = "";
 	content.append(buffer);
 	config.Parse(content.c_str());
@@ -115,7 +117,7 @@ void ModuleScene::SaveScene() {
 	config.Accept(writer);
 
 	std::string json(buffer.GetString(), buffer.GetSize());
-	App->filesys->Save("test2.json", json.c_str(), json.size());
+	App->filesys->Save(SCENE_FILE, json.c_str(), json.size());
 }
 
 void ModuleScene::DrawAABBTree() {
