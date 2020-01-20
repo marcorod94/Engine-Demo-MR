@@ -49,9 +49,13 @@ private:
 	bool showProperties = true;
 	bool showHierarchy = true;
 
+	const void ShowMainMenu(update_status*);
 	const void ShowModulesWindow();
 	const void ShowInformationWindow(ImGuiIO&);
-	const void ShowTextures(std::vector<Texture>&);
+	const void ShowTextures(std::vector<Texture*>*);
+	const void ShowHierarchyWindow();
+	const void ShowPropertiesWindow();
+	const void ShowAboutWindow();
 	const void DrawHierarchy(GameObject*);
 	const void DrawShaderProperties();
 	void LoadShapes(ShapeType s);
