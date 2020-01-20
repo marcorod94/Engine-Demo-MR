@@ -11,8 +11,10 @@ bool ModuleFileSystem::Init() {
 	std::string assetsPath = ASSETS_FOLDER;
 	std::string libraryPath = LIBRARY_FOLDER;
 	if (Exists(libraryPath.c_str())) {
-		if(filesys::remove_all(libraryPath.c_str())) {
-			MakeDirectory(libraryPath.c_str());
+		for (auto& entry : filesys::recursive_directory_iterator(libraryPath.c_str())) {
+			if (!IsDirectory(entry.path().string().c_str())) {
+				Remove(entry.path().string().c_str());
+			}
 		}
 	}
 	else {

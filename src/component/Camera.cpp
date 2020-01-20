@@ -14,7 +14,6 @@
 
 Camera::Camera(GameObject* theOwner) : Component(owner, ComponentType::Camera)
 {
-	aspect = 1.0F;
 	frustum.type = FrustumType::PerspectiveFrustum;
 	frustum.pos = float3(0,5,0);
 	frustum.front = float3::unitX;
@@ -22,7 +21,7 @@ Camera::Camera(GameObject* theOwner) : Component(owner, ComponentType::Camera)
 	frustum.nearPlaneDistance = 5.f;
 	frustum.farPlaneDistance = 50.0f;
 	frustum.verticalFov = math::pi / 4.0f;
-	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * aspect);
+	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f));
 	
 	GenerateMatrices();
 	glGenFramebuffers(1, &fbo);

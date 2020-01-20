@@ -7,23 +7,23 @@ void Material::DrawView() {
 	if (ImGui::TreeNode("Material")) {
 		ImGui::Text("UUID: %s", uuid.c_str());
 		if (ImGui::TreeNode("Ambient")) {
-			App->texture->DrawTexture(occlusionMap);
+			App->texture->DrawTextureButton(&occlusionTex);
 			ImGui::SliderFloat("K ambient", &kAmbient, 0.0f, 1.0f);
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Diffue")) {
-			App->texture->DrawTexture(diffuseMap);
+			App->texture->DrawTextureButton(&diffuseTex);
 			ImGui::ColorEdit4("object color", (float*)&diffuseColor);
 			ImGui::SliderFloat("K diffuse", &kDiffuse, 0.0f, 1.0f);
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Emissive")) {
-			App->texture->DrawTexture(emissiveMap);
+			App->texture->DrawTextureButton(&emissiveTex);
 			ImGui::ColorEdit4("object color", (float*)&emissiveColor);
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("Specular")) {
-			App->texture->DrawTexture(specularMap);
+			App->texture->DrawTextureButton(&specularTex);
 			ImGui::ColorEdit4("object color", (float*)&specularColor);
 			ImGui::SliderFloat("K specular", &kSpecular, 0.0f, 1.0f);
 			ImGui::SliderFloat("shininess", &shininess, 0, 128.0f);

@@ -18,7 +18,10 @@ GameObject::GameObject(const char* name) : name(name) {
 }
 
 Component* GameObject::CreateComponent(ComponentType type) {
-	Component* newComponent;
+	Component* newComponent = FindComponent(type);
+	if (newComponent) {
+		return newComponent;
+	}
 	switch (type)
 	{
 	case ComponentType::Transform :
@@ -57,7 +60,7 @@ Component* GameObject::FindComponent(ComponentType type) {
 	return nullptr;
 }
 
-GameObject* GameObject::FindGameObject(std::string* uuid) {
+GameObject* GameObject::FindGameObject(const std::string* uuid) {
 	GameObject* obj = nullptr;
 	if (this->uuid.compare(*uuid) == 0) {
 		return this;
@@ -83,6 +86,21 @@ void GameObject::ShowProperties(bool* show) {
 	ImGui::Begin("Properties", show);
 	if (parent) {
 		ImGui::Text("UUID: %s", uuid.c_str());
+		if (ImGui::BeginCombo("Add Component", "Material")) {
+			if (ImGui::Selectable("Camera")) {
+				CreateComponent(ComponentType::Camera);
+			}
+			if (ImGui::Selectable("Material")) {
+				CreateComponent(ComponentType::Material);
+			}
+			if (ImGui::Selectable("Mesh")) {
+				CreateComponent(ComponentType::Mesh);
+			}
+			if (ImGui::Selectable("Transform")) {
+				CreateComponent(ComponentType::Transform);
+			}
+			ImGui::EndCombo();
+		}
 		ImGui::InputText("Name", &name);
 		for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it) {
 			(*it)->DrawView();
@@ -165,4 +183,12 @@ void GameObject::TransformAABB(float4x4* transform) {
 	}
 	box = originalBox;
 	box.TransformAsAABB(*transform);
+}
+
+void GameObject::CleanUp() {
+	for (auto item : children) {
+		item->CleanUp();
+	}
+	components.clear();
+	children.clear();
 }

@@ -45,32 +45,50 @@ bool ModuleImGui::Init() {
 }
 
 update_status ModuleImGui::Update() {
+	update_status status = UPDATE_CONTINUE;
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
-	if (App->camera->loadedCameras[0]->isHovered) 
-	{
-		//ImGui::lo
-	}
-	//ImGui::ShowDemoWindow();
-	Camera* cam = nullptr;
 	if (App->scene->root) {
-		for (unsigned i = 0; i < App->camera->loadedCameras.size(); i++) {
-			cam = App->camera->loadedCameras[i];
+		for (auto cam : App->camera->loadedCameras) {
 			cam->Draw(cam->owner->name.c_str());
 			cam->DrawFrustumPlanes();
 		}
 	}
-	if (showProperties) {
-		App->scene->root->ShowProperties(&showProperties);
-	}
-	
-	if (showHierarchy) {
-		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
-		DrawHierarchy(App->scene->root);
-		ImGui::End();
-	}
+	ShowPropertiesWindow();
+	ShowHierarchyWindow();
+	ShowMainMenu(&status);
+	DrawConsoleWindow();
+	ShowInformationWindow(io);
+	ShowModulesWindow();
+	ShowAboutWindow();
+	ShowGizmosButtons();
+	ImGui::Render();
+	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	return status;
+}
+
+bool ModuleImGui::CleanUp() {
+	buffer.clear();
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+	return true;
+}
+
+void ModuleImGui::AddLog(const char* fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	buffer.appendfv(fmt, args);
+	va_end(args);
+	buffer.append("\n");
+	scrollToBottom = true;
+}
+
+const void ModuleImGui::ShowMainMenu(update_status* status) {
+
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu(u8"\uf0c9 Menu")) {
 		if (ImGui::MenuItem("Module Configuration")) {
@@ -102,22 +120,110 @@ update_status ModuleImGui::Update() {
 			ShellExecute(0, 0, "https://github.com/marcorod94/Engine-Demo-MR", 0, 0, SW_SHOW);
 		}
 		if (ImGui::MenuItem("Quit")) {
-			return UPDATE_STOP;
+			*status = UPDATE_STOP;
 		}
 		ImGui::EndMenu();
 	}
 	ImGui::EndMainMenuBar();
-	
-	if (showConsole) {
-		DrawConsoleWindow();
-	}
+}
 
-	if (showInfo) {
-		ShowInformationWindow(io);
-	}
+const void  ModuleImGui::ShowModulesWindow() {
 	if (showModule) {
-		ShowModulesWindow();
+		ImGui::Begin("Module Configuration", &showModule);
+		if (ImGui::TreeNode("Window")) {
+			if (ImGui::SliderInt("Width", &(App->window->screenWidth), App->window->minScreenWidth, App->window->maxScreenWidth)) {
+				App->window->UpdateScreenSize();
+			}
+			if (ImGui::SliderInt("Height", &(App->window->screenHeight), App->window->minScreenHeight, App->window->maxScreenHeight)) {
+				App->window->UpdateScreenSize();
+			}
+			if (ImGui::Checkbox("Resizable", &(App->window->resizable))) {
+				App->window->UpdateResizable();
+			}
+			if (ImGui::Checkbox("Full Screen", &(App->window->fullScreen))) {
+				App->window->UpdateFullScreen();
+			}
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Render")) {
+			ImGui::Checkbox("Show Grid", &(App->renderer->showGrid));
+			ImGui::Checkbox("Show Axis", &(App->renderer->showAxis));
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Input")) {
+			ImGui::Text("Last key Pressed: %s", App->input->currentKey.c_str());
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Camera")) {
+			ImGui::SliderFloat("Camera Speed", &(App->camera->cameraSpeed), 0.01F, 2.0F);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Textures")) {
+			ShowTextures(&App->texture->loadedTextures);
+			ImGui::TreePop();
+		}
+		ImGui::End();
 	}
+}
+
+const void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
+	if (showInfo) {
+
+		ImGui::Begin("System Information", &showInfo);
+		if (ImGui::TreeNode("Frame rate")) {
+			fps_log.push_back(io.Framerate);
+			sprintf_s(title, 25, "Framerate %.1F", fps_log[fps_log.size() - 1]);
+			ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0F, 100.0F, ImVec2(310, 100));
+			ms_log.push_back(1000.0F / io.Framerate);
+			sprintf_s(title, 25, "Milliseconds %.1F", ms_log[ms_log.size() - 1]);
+			ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0F, 40.0F, ImVec2(310, 100));
+			ImGui::Text("Frames:  %d", App->timer->frameCount);
+			sprintf(frameInfo, "Limiting to %d fps means each frame needs to take %f ms", App->timer->limitFPS, 1000.f / App->timer->limitFPS);
+			ImGui::Text(frameInfo);
+			ImGui::SliderInt("FPS", &App->timer->limitFPS, 30, 60);
+			ImGui::Separator();
+			if (ImGui::SliderFloat("Game Clock Scale", &App->timer->timeScale, 0.5, 2))
+			{
+				App->timer->SetTimeScale(App->timer->timeScale);
+			}
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode(u8"\uf2db Hardware")) {
+			ImGui::Text("CPU cores: %d (Cache: %d Kb)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
+			ImGui::Text("System RAM: %d Mb", SDL_GetSystemRAM());
+			ImGui::Text("GPU Vendor: %s", glGetString(GL_VENDOR));
+			ImGui::Text("GPU Model: %s", glGetString(GL_RENDERER));
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode(u8"\uf02d Libraries")) {
+			SDL_version compiled;
+			SDL_VERSION(&compiled);
+			ImGui::Text("SDL: %d.%d.%d", compiled.major, compiled.minor, compiled.patch);
+			//ImGui::Text("DevIL: %d", IL_VERSION);
+			ImGui::Text("Glew: %s", glewGetString(GLEW_VERSION));
+			ImGui::Text("ImGui: %s", IMGUI_VERSION);
+			ImGui::Text("Assimp: %d.%d.%d", ASSIMP_API::aiGetVersionMajor(), ASSIMP_API::aiGetVersionMinor(), ASSIMP_API::aiGetVersionRevision());
+			ImGui::TreePop();
+		}
+		ImGui::End();
+	}
+}
+
+const void ModuleImGui::ShowHierarchyWindow() {
+	if (showHierarchy) {
+		ImGui::Begin(u8"\uf542 GameObjects Hierarchy", &showHierarchy);
+		DrawHierarchy(App->scene->root);
+		ImGui::End();
+	}
+}
+
+const void ModuleImGui::ShowPropertiesWindow() {
+	if (showProperties) {
+		App->scene->root->ShowProperties(&showProperties);
+	}
+}
+
+const void ModuleImGui::ShowAboutWindow() {
 	if (showAbout) {
 		ImGui::Begin("About", &showAbout);
 		ImGui::Text(u8"Engine: \uf534 Engine");
@@ -125,116 +231,15 @@ update_status ModuleImGui::Update() {
 		ImGui::Text("Author: Artemis Georgakopoulou && Marco Rodriguez");
 		ImGui::End();
 	}
-	ShowGizmosButtons();
-	//ImGuizmo::ViewManipulate(App->camera->loadedCameras[0]->view.Transposed().ptr(), 1.f, ImVec2(io.DisplaySize.x - 128, 0), ImVec2(128, 128), 0x10101010);
-	// Render
-	ImGui::Render();
-	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	return UPDATE_CONTINUE;
 }
 
-bool ModuleImGui::CleanUp() {
-	buffer.clear();
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-	return true;
-}
-
-void ModuleImGui::AddLog(const char* fmt, ...) {
-	va_list args;
-	va_start(args, fmt);
-	buffer.appendfv(fmt, args);
-	va_end(args);
-	buffer.append("\n");
-	scrollToBottom = true;
-}
-
-const void  ModuleImGui::ShowModulesWindow() {
-	ImGui::Begin("Module Configuration", &showModule);
-	if (ImGui::TreeNode("Window")) {
-		if (ImGui::SliderInt("Width", &(App->window->screenWidth), App->window->minScreenWidth, App->window->maxScreenWidth)) {
-			App->window->UpdateScreenSize();
-		}
-		if (ImGui::SliderInt("Height", &(App->window->screenHeight), App->window->minScreenHeight, App->window->maxScreenHeight)) {
-			App->window->UpdateScreenSize();
-		}
-		if (ImGui::Checkbox("Resizable", &(App->window->resizable))) {
-			App->window->UpdateResizable();
-		}
-		if (ImGui::Checkbox("Full Screen", &(App->window->fullScreen))) {
-			App->window->UpdateFullScreen();
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("Render")) {
-		ImGui::Checkbox("Show Grid", &(App->renderer->showGrid));
-		ImGui::Checkbox("Show Axis", &(App->renderer->showAxis));
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("Input")) {
-		ImGui::Text("Last key Pressed: %s", App->input->currentKey.c_str());
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("Camera")) {
-		ImGui::SliderFloat("Camera Speed", &(App->camera->cameraSpeed), 0.01F, 2.0F);
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode("Textures")) {
-		ShowTextures(App->texture->loadedTextures);
-		ImGui::TreePop();
-	}
-	ImGui::End();
-}
-
-const void ModuleImGui::ShowInformationWindow(ImGuiIO& io) {
-	ImGui::Begin("System Information", &showInfo);
-	if (ImGui::TreeNode("Frame rate")) {
-		fps_log.push_back(io.Framerate);
-		sprintf_s(title, 25, "Framerate %.1F", fps_log[fps_log.size() - 1]);
-		ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0F, 100.0F, ImVec2(310, 100));
-		ms_log.push_back(1000.0F / io.Framerate);
-		sprintf_s(title, 25, "Milliseconds %.1F", ms_log[ms_log.size() - 1]);
-		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0F, 40.0F, ImVec2(310, 100));
-		ImGui::Text("Frames:  %d", App->timer->frameCount);
-		sprintf(frameInfo, "Limiting to %d fps means each frame needs to take %f ms", App->timer->limitFPS, 1000.f / App->timer->limitFPS);
-		ImGui::Text(frameInfo);
-		ImGui::SliderInt("FPS", &App->timer->limitFPS, 30, 60);
-		ImGui::Separator();
-		if (ImGui::SliderFloat("Game Clock Scale", &App->timer->timeScale, 0.5, 2))
-		{
-			App->timer->SetTimeScale(App->timer->timeScale);
-		}
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode(u8"\uf2db Hardware")) {
-		ImGui::Text("CPU cores: %d (Cache: %d Kb)", SDL_GetCPUCount(), SDL_GetCPUCacheLineSize());
-		ImGui::Text("System RAM: %d Mb", SDL_GetSystemRAM());
-		ImGui::Text("GPU Vendor: %s", glGetString(GL_VENDOR));
-		ImGui::Text("GPU Model: %s", glGetString(GL_RENDERER));
-		ImGui::TreePop();
-	}
-	if (ImGui::TreeNode(u8"\uf02d Libraries")) {
-		SDL_version compiled;
-		SDL_VERSION(&compiled);
-		ImGui::Text("SDL: %d.%d.%d", compiled.major, compiled.minor, compiled.patch);
-		//ImGui::Text("DevIL: %d", IL_VERSION);
-		ImGui::Text("Glew: %s", glewGetString(GLEW_VERSION));
-		ImGui::Text("ImGui: %s", IMGUI_VERSION);
-		ImGui::Text("Assimp: %d.%d.%d", ASSIMP_API::aiGetVersionMajor(), ASSIMP_API::aiGetVersionMinor(), ASSIMP_API::aiGetVersionRevision());
-		ImGui::TreePop();
-	}
-	ImGui::End();
-}
-
-const void ModuleImGui::ShowTextures(std::vector<Texture>& textures) {
-	for (unsigned int i = 0; i < textures.size(); i++) {
-		ImGui::Text("Name: %s", textures[i].name.c_str());
-		ImGui::Text("Width: %d", textures[i].width);
-		ImGui::Text("Heigth: %d", textures[i].height);
-		if (ImGui::ImageButton((void*)(intptr_t)textures[i].id, ImVec2(128, 128))) {
-			App->model->UpdateTexture(textures[i]);
+const void ModuleImGui::ShowTextures(std::vector<Texture*>* textures) {
+	for (auto texture : *textures) {
+		ImGui::Text("Name: %s", texture->name.c_str());
+		ImGui::Text("Width: %d", texture->width);
+		ImGui::Text("Heigth: %d", texture->height);
+		if (ImGui::ImageButton((void*)(intptr_t)texture->id, ImVec2(128, 128))) {
+			//App->model->UpdateTexture(texture);
 		}
 	}
 }
@@ -335,24 +340,19 @@ void ModuleImGui::LoadShapes(ShapeType s) {
 
 const void ModuleImGui::DrawConsoleWindow()
 {
-	int consoleW = 1120;
-	int consoleH = 270;
-	ImGui::Begin("Console", &showConsole);
-	ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
-	ImGui::SetWindowPos(ImVec2(0, App->window->screenHeight - consoleH));
-	//ImVec2 size = ImGui::GetWindowSize();//to be able to resize it
-	//if (size.x != consoleW && size.y != consoleH)
-	//{
-	//	consoleW = size.x;
-	//	consoleH = size.y;
-	//	ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
-	//}
+	if (showConsole) {
+		int consoleW = 1120;
+		int consoleH = 270;
+		ImGui::Begin("Console", &showConsole);
+		ImGui::SetWindowSize(ImVec2(consoleW, consoleH));
+		ImGui::SetWindowPos(ImVec2(0.0F, (float)(App->window->screenHeight - consoleH)));
+		ImGui::TextUnformatted(buffer.begin());
+		if (scrollToBottom)
+			ImGui::SetScrollHere(1.0F);
+		scrollToBottom = false;
+		ImGui::End();
 
-	ImGui::TextUnformatted(buffer.begin());
-	if (scrollToBottom)
-		ImGui::SetScrollHere(1.0F);
-	scrollToBottom = false;
-	ImGui::End();
+	}
 }
 
 

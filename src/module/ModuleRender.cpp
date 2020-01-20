@@ -62,10 +62,10 @@ update_status ModuleRender::Update()
 	if (App->scene->root) {
 		for (unsigned i = 0; i < App->camera->loadedCameras.size(); i++) {
 			cam = App->camera->loadedCameras[i];
-			cam->GenerateFBOTexture(cam->width, cam->height);
+			cam->GenerateFBOTexture((unsigned)cam->width, (unsigned)cam->height);
 			
 			glBindFramebuffer(GL_FRAMEBUFFER, cam->fbo);
-			glViewport(0, 0, cam->width, cam->height);
+			glViewport(0, 0, (GLsizei)cam->width, (GLsizei)cam->height);
 			glClearColor(0.2f, 0.2f, 0.2f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			DrawGameObject(App->scene->root, cam);
@@ -134,15 +134,15 @@ void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material
 		glUniform1f(glGetUniformLocation(program, "k_ambient"), material->kAmbient);
 		glUniform1f(glGetUniformLocation(program, "k_diffuse"), material->kDiffuse);
 		glUniform1f(glGetUniformLocation(program, "k_specular"), material->kSpecular);
-		if (material->diffuseMap == 0) {
-			glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 0);
-			glUniform4fv(glGetUniformLocation(program, "object_color"), 1, (const float*)&material->diffuseColor);
-		}
-		else {
+		if (material->diffuseTex) {
 			glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 1);
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, material->diffuseMap);
+			glBindTexture(GL_TEXTURE_2D, material->diffuseTex->id);
 			glUniform1i(glGetUniformLocation(program, "diffuse_map"), 0);
+		}
+		else {
+			glUniform1i(glGetUniformLocation(program, "use_diffuse_map"), 0);
+			glUniform4fv(glGetUniformLocation(program, "object_color"), 1, (const float*)&material->diffuseColor);
 		}
 	}
 	if (trans) {
@@ -288,9 +288,9 @@ void ModuleRender::DrawAABB(GameObject* go)
 		dd::aabb(mesh->box.minPoint, mesh->box.maxPoint, math::float3(0.0f, 0.0f, 0.0f));
 		
 	}
-	for (int i = 0; i < go->children.size(); i++)
+	for (auto child : go->children)
 	{
-		DrawAABB(go->children[i]);
+		DrawAABB(child);
 	}
 	
 }

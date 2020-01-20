@@ -45,7 +45,5 @@ private:
 	float movementSpeed = cameraSpeed;
 	float3 cameraTarget = float3::zero;
 	bool orbit = false;
-	
-	void CalculateRotationAngles(float3&);
 };
 #endif

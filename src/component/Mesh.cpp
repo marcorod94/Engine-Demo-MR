@@ -3,6 +3,7 @@
 #include "imgui.h"
 
 void Mesh::Setup() {
+	CalculateBoundigBox();
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glGenBuffers(1, &ebo);
@@ -43,28 +44,51 @@ void Mesh::DrawView() {
 
 void Mesh::OnLoad(rapidjson::Document::Object* object) {
 	uuid = (object->FindMember("uuid"))->value.GetString();
-	vao = (object->FindMember("vao"))->value.GetInt();
+	src = (object->FindMember("src"))->value.GetString();
 	auto indicesJSON = (object->FindMember("indices"))->value.GetArray();
 	for (auto& indice : indicesJSON) {
 		indices.push_back(indice.GetInt());
 	}
+	auto vertexsJSON = (object->FindMember("vertexs"))->value.GetArray();
+	for (auto& item : vertexsJSON) {
+		auto vertexJSON = item.GetObjectA();
+		Vertex vertex;
+		Component::GetFloat3FromObjectJSON(&(vertexJSON.FindMember("position"))->value.GetObjectA(), &vertex.Position);
+		Component::GetFloat3FromObjectJSON(&(vertexJSON.FindMember("normal"))->value.GetObjectA(), &vertex.Normal);
+		Component::GetFloat2FromObjectJSON(&(vertexJSON.FindMember("texcoords"))->value.GetObjectA(), &vertex.TexCoords);
+		Component::GetFloat3FromObjectJSON(&(vertexJSON.FindMember("tagent"))->value.GetObjectA(), &vertex.Tangent);
+		Component::GetFloat3FromObjectJSON(&(vertexJSON.FindMember("bitagent"))->value.GetObjectA(), &vertex.Bitangent);
+		vertices.push_back(vertex);
+	}
+	Setup();
 }
 
 void Mesh::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
 	rapidjson::Value object(rapidjson::kObjectType);
 	object.AddMember("uuid", rapidjson::StringRef(uuid.c_str()), *allocator);
+	object.AddMember("src", rapidjson::StringRef(src.c_str()), *allocator);
 	object.AddMember("type", int(type), *allocator);
 	std::string owneruuid;
 	if (owner) {
 		owneruuid = owner->uuid;
 	}
 	object.AddMember("owneruuid", rapidjson::StringRef(owneruuid.c_str()), *allocator);
-	object.AddMember("vao", vao, *allocator);
 	rapidjson::Value indicesJSON(rapidjson::kArrayType);
 	for (unsigned index : indices) {
 		indicesJSON.PushBack(index, *allocator);
 	}
 	object.AddMember("indices", indicesJSON, *allocator);
+	rapidjson::Value vertexsJSON(rapidjson::kArrayType);
+	for (auto vertex : vertices) {
+		rapidjson::Value object(rapidjson::kObjectType);
+		Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "position", &vertex.Position);
+		Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "normal", &vertex.Normal);
+		Component::AddFloat2ToObjectJSON(&object.GetObjectA(), allocator, "texcoords", &vertex.TexCoords);
+		Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "tagent", &vertex.Tangent);
+		Component::AddFloat3ToObjectJSON(&object.GetObjectA(), allocator, "bitagent", &vertex.Bitangent);
+		vertexsJSON.PushBack(object, *allocator);
+	}
+	object.AddMember("vertexs", vertexsJSON, *allocator);
 	list->PushBack(object, *allocator);
 }
 
@@ -74,4 +98,10 @@ void Mesh::TransformAABB(float4x4* transform) {
 	}
 	box = originalBox;
 	box.TransformAsAABB(*transform);
+}
+
+void Mesh::CalculateBoundigBox() {
+	for (auto item : vertices) {
+		originalBox.Enclose(item.Position);
+	}
 }

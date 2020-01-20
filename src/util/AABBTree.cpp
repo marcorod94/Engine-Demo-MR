@@ -75,9 +75,9 @@ void AABBTree::insertObject(GameObject* go)
 		insertLeaf(nodeIndex);
 		_objectNodeIndexMap[go] = nodeIndex;
 	}
-	for (int i = 0; i < go->children.size(); i++)
+	for (auto child : go->children)
 	{
-		insertObject(go->children[i]);
+		insertObject(child);
 	}
 
 }
@@ -100,9 +100,9 @@ void AABBTree::updateObject(GameObject* go)
 		updateLeaf(nodeIndex, mesh->box);
 		
 	}
-	for (int i = 0; i < go->children.size(); i++)
+	for (auto child : go->children)
 	{
-		updateObject(go->children[i]);
+		updateObject(child);
 	}
 }
 
@@ -137,9 +137,9 @@ std::forward_list<GameObject*> AABBTree::queryOverlaps(GameObject* go) const
 			}
 		}
 	}
-	for (int i = 0; i < go->children.size(); i++)
+	for (auto child : go->children)
 	{
-		queryOverlaps(go->children[i]);
+		queryOverlaps(child);
 	}
 	return overlaps;
 }
