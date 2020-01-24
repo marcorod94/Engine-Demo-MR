@@ -48,6 +48,7 @@ private:
 	bool showAbout = false;
 	bool showProperties = true;
 	bool showHierarchy = true;
+	bool showLight = false;
 
 	const void ShowMainMenu(update_status*);
 	const void ShowModulesWindow();
