@@ -15,21 +15,21 @@ bool ModuleTexture::CleanUp() {
 	return true;
 }
 
-unsigned ModuleTexture::LoadTexture(const char* file) {
+Texture* ModuleTexture::LoadTexture(const char* file) {
 	std::string name = file;
 	name = name.substr(name.find_last_of('/') + 1, name.size());
 	name = name.substr(0, name.find_last_of('.'));
 	for (auto item : loadedTextures) {
 		if (name.compare(item->name) == 0) {
 			App->imgui->AddLog("Texture already loaded: %s", item->name.c_str());
-			return item->id;
+			return item;
 		}
 	}
 	Texture* texture = new Texture;
 	importer->Load(file, texture);
 	loadedTextures.push_back(texture);
 	App->imgui->AddLog("Texture succssesfully loaded: %s", file);
-	return texture->id;
+	return texture;
 }
 
 void ModuleTexture::DrawTextureButton(Texture** texture) {	

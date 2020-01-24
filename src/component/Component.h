@@ -32,6 +32,13 @@ protected:
 		vector->z = (object->FindMember("z"))->value.GetFloat();
 	}
 
+	virtual void GetFloat4FromObjectJSON(rapidjson::Document::Object* object, float4* vector) {
+		vector->x = (object->FindMember("x"))->value.GetFloat();
+		vector->y = (object->FindMember("y"))->value.GetFloat();
+		vector->z = (object->FindMember("z"))->value.GetFloat();
+		vector->w = (object->FindMember("w"))->value.GetFloat();
+	}
+
 	virtual void AddFloat2ToObjectJSON(rapidjson::Document::Object* object, rapidjson::Document::AllocatorType* allocator, const char* label, float2* vector) {
 		rapidjson::Value ob(rapidjson::kObjectType);
 		ob.AddMember("x", vector->x, * allocator);
@@ -44,6 +51,15 @@ protected:
 		ob.AddMember("x", vector->x, *allocator);
 		ob.AddMember("y", vector->y, *allocator);
 		ob.AddMember("z", vector->z, *allocator);
+		object->AddMember(rapidjson::StringRef(label), ob, *allocator);
+	}
+
+	virtual void AddFloat4ToObjectJSON(rapidjson::Document::Object* object, rapidjson::Document::AllocatorType* allocator, const char* label, float4* vector) {
+		rapidjson::Value ob(rapidjson::kObjectType);
+		ob.AddMember("x", vector->x, *allocator);
+		ob.AddMember("y", vector->y, *allocator);
+		ob.AddMember("z", vector->z, *allocator);
+		ob.AddMember("w", vector->w, *allocator);
 		object->AddMember(rapidjson::StringRef(label), ob, *allocator);
 	}
 };

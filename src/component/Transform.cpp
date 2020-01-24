@@ -4,9 +4,9 @@
 void Transform::DrawView() {
 	if (ImGui::TreeNode("Transform")) {
 		ImGui::Text("UUID: %s", uuid.c_str());
-		if (ImGui::DragFloat3("Position", position.ptr(), 1.0F, -100.00F, 100.00F) ||
+		if (ImGui::DragFloat3("Position", position.ptr(), 1.0F, -300.00F, 300.00F) ||
 			ImGui::DragFloat3("Rotation", rotationEU.ptr(), 1.0F, -360.00F, 360.00F) ||
-			ImGui::DragFloat3("Scalling", scaling.ptr(), 0.001F, -50.00F, 50.00F)) {
+			ImGui::DragFloat3("Scalling", scaling.ptr(), 0.001F, -300.00F, 300.00F)) {
 			UpdateDirtyFlag();
 		}
 		ImGui::TreePop();
@@ -62,7 +62,7 @@ void Transform::OnLoad(rapidjson::Document::Object* object) {
 	Component::GetFloat3FromObjectJSON(&(object->FindMember("position"))->value.GetObjectA(), &position);
 	Component::GetFloat3FromObjectJSON(&(object->FindMember("rotation"))->value.GetObjectA(), &rotationEU);
 	Component::GetFloat3FromObjectJSON(&(object->FindMember("scalling"))->value.GetObjectA(), &scaling);
-	CalculateTransform();
+	UpdateDirtyFlag();
 }
 
 void Transform::OnSave(rapidjson::Document::Array* list, rapidjson::Document::AllocatorType* allocator) {
