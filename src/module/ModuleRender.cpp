@@ -157,7 +157,8 @@ void  ModuleRender::DrawMesh(Camera* cam, Transform* trans, Mesh* mesh, Material
 			mesh->TransformAABB(&trans->worldTransform);
 			trans->isDirty = false;
 		}
-		if(cam->isCollidingFrustum(mesh->box) == IS_IN) {
+		if (cam->isCollidingFrustum(mesh->box) == IS_IN ||
+			cam->isCollidingFrustum(mesh->box) == INTERSECT) {
 			dd::aabb(mesh->box.minPoint, mesh->box.maxPoint, float3(0, 0, 1));
 			glBindVertexArray(mesh->vao);
 			glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);

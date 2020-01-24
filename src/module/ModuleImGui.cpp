@@ -64,6 +64,7 @@ update_status ModuleImGui::Update() {
 	ShowModulesWindow();
 	ShowAboutWindow();
 	ShowGizmosButtons();
+	DrawShaderProperties();
 	ImGui::Render();
 	glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -99,6 +100,9 @@ const void ModuleImGui::ShowMainMenu(update_status* status) {
 		}
 		if (ImGui::MenuItem("System Information")) {
 			showInfo = true;
+		}
+		if (ImGui::MenuItem(u8"\uf0eb Light Configuration")) {
+			showLight = true;
 		}
 		if (ImGui::MenuItem(u8"\uf120 Console Window")) {
 			showConsole = true;
@@ -287,38 +291,12 @@ const void ModuleImGui::DrawHierarchy(GameObject* object) {
 
 
 const void ModuleImGui::DrawShaderProperties() {
-	ImGui::Begin("Parameters");
-	char* shape_names[int(ShapeType::Count)] = { "Sphere", "Torus", "Cube", "Cylinder"};
-	if (ImGui::CollapsingHeader("Shape and material"))
-	{
-		for (unsigned i = 0; i < int(ShapeType::Count); ++i)
-		{
-			if (ImGui::RadioButton(shape_names[i], shape == int(ShapeType(i)))) {
-				LoadShapes(ShapeType(i));
-				shape = i;
-			}
-		}
-
-		/*ImGui::ColorEdit4("object color", (float*)&material.object_color);
-		ImGui::SliderFloat("shininess", &material.shininess, 0, 128.0f);
-		ImGui::SliderFloat("K ambient", &material.k_ambient, 0.0f, 1.0f);
-		ImGui::SliderFloat("K diffuse", &material.k_diffuse, 0.0f, 1.0f);
-		ImGui::SliderFloat("K specular", &material.k_specular, 0.0f, 1.0f);*/
-	}
-
-	if (ImGui::CollapsingHeader("Light"))
-	{
+	if (showLight) {
+		ImGui::Begin(u8"\uf0eb Light Config", &showLight);
 		ImGui::SliderFloat3("light position", (float*)&App->model->light.pos, -15.0f, 15.0f);
 		ImGui::SliderFloat("ambient", (float*)&App->model->ambient, 0.0f, 1.0f);
+		ImGui::End();
 	}
-
-	if (ImGui::CollapsingHeader("Options"))
-	{
-		/*ImGui::Checkbox("show axis", &show_axis);
-		ImGui::Checkbox("show grid", &show_grid);
-		ImGui::Checkbox("auto rotate", &auto_rotate);*/
-	}
-	ImGui::End();
 }
 
 void ModuleImGui::LoadShapes(ShapeType s) {

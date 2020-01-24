@@ -21,7 +21,7 @@ public:
 
 	bool Init();
 	bool CleanUp();
-	unsigned LoadTexture(const char*);
+	Texture* LoadTexture(const char*);
 	Material* CreateMaterial(GameObject*);
 	void DrawTextureButton(Texture**);
 	Texture* DrawTextureSelector();

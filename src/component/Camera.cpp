@@ -19,7 +19,7 @@ Camera::Camera(GameObject* theOwner) : Component(owner, ComponentType::Camera)
 	frustum.front = float3::unitX;
 	frustum.up = float3::unitY;
 	frustum.nearPlaneDistance = 5.f;
-	frustum.farPlaneDistance = 50.0f;
+	frustum.farPlaneDistance = 500.0f;
 	frustum.verticalFov = math::pi / 4.0f;
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f));
 	
@@ -158,14 +158,14 @@ void Camera::CreateRay(const float2& normalizedPos, LineSegment &value) const
 void Camera::DrawView() {
 	if (ImGui::TreeNode("Camera")) {
 		ImGui::Text("UUID: %s", uuid.c_str());
-		ImGui::SliderFloat("Far Plane Distance", &frustum.farPlaneDistance, frustum.nearPlaneDistance + 4.0F, 100.0F);
+		ImGui::SliderFloat("Far Plane Distance", &frustum.farPlaneDistance, frustum.nearPlaneDistance + 4.0F, 10000.0F);
 		ImGui::TreePop();
 	}
 }
 
 void Camera::OnLoad(rapidjson::Document::Object* object) {
 	uuid = (object->FindMember("uuid"))->value.GetString();
-	fbo = (object->FindMember("fbo"))->value.GetInt();
+	//fbo = (object->FindMember("fbo"))->value.GetInt();
 	auto frustumJSON = (object->FindMember("frustum"))->value.GetObjectA();
 	frustum.type = FrustumType((frustumJSON.FindMember("type"))->value.GetInt());
 	frustum.nearPlaneDistance = (frustumJSON.FindMember("nearPlane"))->value.GetFloat();
